@@ -12,6 +12,7 @@
     <link rel="stylesheet" href="{% static 'owl.carousel.css' %}" type="text/css" media="all">
     <link rel="stylesheet" href="{% static 'chocolat.css' %}" type="text/css" media="all">
     <link rel="stylesheet" href="{% static 'animate-custom.css' %}" type="text/css" media="all">
+    <link rel="stylesheet" href="{% static 'btn-custom.css' %}" type="text/css" media="all">
 
     <!-- Fonts -->
     <link rel="stylesheet" href="{% static 'fonts/Montserrat_400_700.css' %}" type="text/css" media="all">
@@ -73,15 +74,15 @@
 
                 <div id="navbar" class="navbar-collapse navbar-right collapse">
                     <ul class="nav navbar-nav navbar-right cross-effect" id="cross-effect">
-                        <li><a class="scroll" href="#w3lsaboutaits">ĐIỂM SỐ</a></li>
+                        <li><a class="scroll" href="{% url 'score' %}">ĐIỂM SỐ</a></li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">LUẬT CHƠI<b class="caret"></b></a>
                             <div class="dropdown-menu">
                                 <ul>
-                                    <li><a class="scroll" href="#">NHỔ NEO</a></li>
-                                    <li><a class="scroll" href="#">VƯỢT SÓNG</a></li>
-                                    <li><a class="scroll" href="#">BỨT PHÁ</a></li>
-                                    <li><a class="scroll" href="#">CHINH PHỤC</a></li>
+                                    <li><a class="scroll nhoNeoRule" href="#">NHỔ NEO</a></li>
+                                    <li><a class="scroll vuotSongRule" href="#">VƯỢT SÓNG</a></li>
+                                    <li><a class="scroll butPhaRule" href="#">BỨT PHÁ</a></li>
+                                    <li><a class="scroll chinhPhucRule" href="#">CHINH PHỤC</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -224,8 +225,16 @@
         <span>Report bugs: <a href="mailto:duc.mtle@gmail.com">duc.mtle@gmail.com</a> or <a href="mailto:luongd@unist.ac.kr">luongd@unist.ac.kr</a href="mailto:hoanghai123098@gmail.com"> or <a>hoanghai123098@gmail.com</a></span>
         </b><br />
         {% endif %}
-        <button class="btn btn-success" id="toggleNavbar">Ẩn/hiện menu</button>
-        <button class="btn btn-info" id="playOST">Nhạc nền</button>
+        <center>
+            <nav class="btn-bar nav-dark">
+                <a href="#" class="btn btn-glass new-btn-success" id="toggleNavbar">
+                  <i class="fa fa-bars"></i> Ẩn/hiện menu
+                </a>
+                <a href="#" class="btn btn-glass new-btn-primary" id="playOST">
+                  <i class="fa fa-music"></i> Nhạc nền
+                </a>
+            </nav>
+        </center>
     </div>
 </footer>
 
