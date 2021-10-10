@@ -56,7 +56,7 @@
     <div class="agileheader" id="agileitshome">
         <!-- Navigation -->
         <div class="w3lsnavigation">
-            <nav class="navbar navbar-inverse agilehover-effect wthreeeffect navbar-default">
+            <nav class="navbar navbar-inverse agilehover-effect wthreeeffect navbar-default" id="mainNavbar">
 
                 <div class="navbar-header">
                     <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
@@ -163,10 +163,14 @@
     <div id="nhoNeoRuleDialog" title="NHỔ NEO" class="ruleDialog">
         <p id="nhoNeoRuleContent" style="font-size: 24px; text-align: justify;">
             Tất cả các thí sinh trả lời 12 câu hỏi hình ảnh, audio hoặc video, mỗi câu hỏi trong vòng 15s. Thí sinh trả lời đúng và nhanh nhất được 15 điểm, những thí sinh khác trả lời đúng được 10 điểm.
-            <br>
+            <br /><br />
         </p>
         <center>
-            <button class="btn btn-success closeDialogBtn">Đóng</button>
+            <nav class="btn-bar nav-dark nav-dialog">
+                <a href="#" class="btn btn-glass new-btn-success closeDialogBtn">
+                  <i class="fa fa-check"></i> Đóng
+                </a>
+            </nav>
         </center>
     </div>
 
@@ -179,9 +183,14 @@
             - Trả lời đúng CNV sau khi mở n hàng ngang được <b>(7-n)*15 điểm</b>.
             <br><br>
             - Sau khi mở tất cả các hàng ngang mà vẫn chưa có thí sinh nào trả lời đúng CNV. Cơ hội sẽ dành cho khán giả.
+            <br /><br />
         </p>
         <center>
-            <button class="btn btn-success closeDialogBtn">Đóng</button>
+            <nav class="btn-bar nav-dark nav-dialog">
+                <a href="#" class="btn btn-glass new-btn-success closeDialogBtn">
+                  <i class="fa fa-check"></i> Đóng
+                </a>
+            </nav>
         </center>
     </div>
 
@@ -193,7 +202,11 @@
             <br><br>
         </p>
         <center>
-            <button class="btn btn-success closeDialogBtn">Đóng</button>
+            <nav class="btn-bar nav-dark nav-dialog">
+                <a href="#" class="btn btn-glass new-btn-success closeDialogBtn">
+                  <i class="fa fa-check"></i> Đóng
+                </a>
+            </nav>
         </center>
     </div>
 
@@ -211,7 +224,11 @@
             <br><br>
         </p>
         <center>
-            <button class="btn btn-success closeDialogBtn">Đóng</button>
+            <nav class="btn-bar nav-dark nav-dialog">
+                <a href="#" class="btn btn-glass new-btn-success closeDialogBtn">
+                  <i class="fa fa-check"></i> Đóng
+                </a>
+            </nav>
         </center>
     </div>
 
@@ -220,13 +237,15 @@
 <footer class="page-footer">
     <div class="container">
         {% if footerDisplay %}
+        <div class="developers-footer">
         <b>
-        <span>Developers: LE_MAI_THANH_DUC, DOAN_NGUYEN_THANH_LUONG, NGUYEN_HOANG_HAI - 2021.</span><br/>
+        <span>Developers: Duc Le, Luong Doan, Hai Nguyen - 2021.</span><br/>
         <span>Report bugs: <a href="mailto:duc.mtle@gmail.com">duc.mtle@gmail.com</a> or <a href="mailto:luongd@unist.ac.kr">luongd@unist.ac.kr</a href="mailto:hoanghai123098@gmail.com"> or <a>hoanghai123098@gmail.com</a></span>
-        </b><br />
+        </b>
+        </div>
         {% endif %}
         <center>
-            <nav class="btn-bar nav-dark">
+            <nav class="btn-bar nav-dark nav-bottom">
                 <a href="#" class="btn btn-glass new-btn-success" id="toggleNavbar">
                   <i class="fa fa-bars"></i> Ẩn/hiện menu
                 </a>
@@ -244,7 +263,7 @@
 <script src="{% static 'bootstrap.min.js' %}"></script>
 <script src="{% static 'bootstrap-colorselector.min.js' %}"></script>
 
-<!-- Resopnsive-Slider-JavaScript -->
+<!-- Responsive-Slider-JavaScript -->
     <script src="{% static 'js/responsiveslides.min.js' %}"></script>
     <script>
         $(function () {
@@ -257,7 +276,7 @@
             });
         });
     </script>
-<!-- //Resopnsive-Slider-JavaScript -->
+<!-- //Responsive-Slider-JavaScript -->
 
 <!-- Tab-JavaScript -->
     <script src="{% static 'js/cbpFWTabs.js' %}"></script>

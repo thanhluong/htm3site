@@ -2178,7 +2178,12 @@ ul.social-icons li a.youtube:hover {
 }
 
 
+.page-footer {
+	color: white;
+}
 
-
+.developers-footer {
+	margin-bottom: 1em;
+}
 
 /*-- //Responsive-Code --*/

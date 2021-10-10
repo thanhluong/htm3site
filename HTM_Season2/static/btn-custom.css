@@ -196,5 +196,12 @@ nav.btn-bar {
   display: flex;
   justify-content: flex-end;
   flex-wrap: wrap;
+}
+
+nav.nav-dialog {
+  width: 10em;
+}
+
+nav.nav-bottom {
   width: 30em;
 }
