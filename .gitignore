@@ -1,0 +1,15 @@
+# Ignore python cache
+__pycache__/
+
+# Ignore the Virutal env
+venv/
+env/
+
+# Ignore the database
+db.sqlite3
+
+# Ignore vscode settings
+.vscode/
+
+# Ignore the media file
+media/*

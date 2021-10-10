@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'style.css' %}" type="text/css" media="all">
+    <link rel="stylesheet" href="{% static 'jquery-ui.min.css' %}">
+    <link rel="stylesheet" href="{% static 'bootstrap-colorselector.min.css' %}">
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}"/>
+    <link rel="stylesheet" href="{% static 'owl.carousel.css' %}" type="text/css" media="all">
+    <link rel="stylesheet" href="{% static 'chocolat.css' %}" type="text/css" media="all">
+    <link rel="stylesheet" href="{% static 'animate-custom.css' %}" type="text/css" media="all">
+
+    <!-- Fonts -->
+    <link rel="stylesheet" href="{% static 'fonts/Montserrat_400_700.css' %}" type="text/css" media="all">
+    <link rel="stylesheet" href="{% static 'fonts/Roboto_400_100_300_500.css' %}" type="text/css" media="all">
+    <link rel="stylesheet" href="{% static 'fonts/Press_Start_2P.css' %}" type="text/css" media="all">
+    <!-- //Fonts -->
+
+    <!-- Font-Awesome-File-Links -->
+    <!-- CSS --> <link rel="stylesheet" href="{% static 'fonts/font-awesome.min.css' %}" type="text/css" media="all">
+    <!-- TTF --> <link rel="stylesheet" href="{% static 'fonts/fontawesome-webfont.ttf' %}" type="text/css" media="all">
+    <!-- //Font-Awesome-File-Links -->
+
+    <title>Hành trình Magellan</title>
+    <style>
+        html {
+            min-height: 100%;
+            position: relative;
+        }
+        body {
+            background-color: #4c4c4c;
+;
+            /* min-width: 860px; */
+            margin-bottom: 30px;
+        }
+        .nav-item {
+            margin-left: 1em;
+        }
+        footer {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            bottom: 0;
+            font-style: italic;
+        }
+    </style>
+    {% block style %}
+    {% endblock %}
+</head>
+
+<body>
+    <div class="agileheader" id="agileitshome">
+        <!-- Navigation -->
+        <div class="w3lsnavigation">
+            <nav class="navbar navbar-inverse agilehover-effect wthreeeffect navbar-default">
+
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <!-- Logo -->
+                    <div class="logo">
+                        <a class="navbar-brand logo-w3l button" href="{% url 'home' %}">HTM3</a>
+                    </div>
+                    <!-- //Logo -->
+                </div>
+
+                <div id="navbar" class="navbar-collapse navbar-right collapse">
+                    <ul class="nav navbar-nav navbar-right cross-effect" id="cross-effect">
+                        <li><a class="scroll" href="#w3lsaboutaits">ĐIỂM SỐ</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">LUẬT CHƠI<b class="caret"></b></a>
+                            <div class="dropdown-menu">
+                                <ul>
+                                    <li><a class="scroll" href="#">NHỔ NEO</a></li>
+                                    <li><a class="scroll" href="#">VƯỢT SÓNG</a></li>
+                                    <li><a class="scroll" href="#">BỨT PHÁ</a></li>
+                                    <li><a class="scroll" href="#">CHINH PHỤC</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">PHẦN THI<b class="caret"></b></a>
+                            <div class="dropdown-menu">
+                                <ul>
+                                    <li><a class="scroll" href="{% url 'khoidong' %}">NHỔ NEO</a></li>
+                                    <li><a class="scroll" href="{% url 'vuotsong' %}">VƯỢT SÓNG</a></li>
+                                    <li><a class="scroll" href="{% url 'tangtoc' %}">BỨT PHÁ</a></li>
+                                    <li><a class="scroll" href="{% url 'chinhphuc' %}">CHINH PHỤC</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">PHÂN LƯỢT<b class="caret"></b></a>
+                            <div class="dropdown-menu">
+                                <ul>
+                                    <li><a class="scroll" href="#">BỨT PHÁ</a></li><br />
+                                    <li><a class="scroll" href="#">CHINH PHỤC</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">THÊM CÂU HỎI<b class="caret"></b></a>
+                            <div class="dropdown-menu">
+                                <ul>
+                                    <li><a class="scroll" href="#">NHỔ NEO</a></li>
+                                    <li><a class="scroll" href="#">VƯỢT SÓNG</a></li>
+                                    <li><a class="scroll" href="#">BỨT PHÁ</a></li>
+                                    <li><a class="scroll" href="#">CHINH PHỤC</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li><a class="scroll" href="#wthreeblogsaits">LOG OUT</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login<b class="caret"></b></a>
+                            <div class="dropdown-menu">
+                                <form action="#" method="post">
+                                    <div id="login" class="animate w3loginagile form">
+                                        <h3>Login</h3>
+                                        <input type="text" Name="Userame" placeholder="Username" required="">
+                                        <input type="password" Name="Password" placeholder="Password" required="">
+                                        <div class="send-button wthree agileits">
+                                            <input type="submit" value="Login">
+                                        </div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                </form>
+                                <form action="#" method="post">
+                                    <div id="register" class="animate w3registeragile form">
+                                        <h3>Sign Up</h3>
+                                        <input type="text" Name="Name" placeholder="Name" required="">
+                                        <input type="text" Name="Email" placeholder="Email" required="">
+                                        <input type="password" Name="Password" placeholder="Password" required="">
+                                        <input type="text" Name="Phone Number" placeholder="Phone Number" required="">
+                                        <div class="send-button wthree agileits">
+                                            <input type="submit" value="Sign Up">
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </li>
+                    </ul>
+                </div><!-- //Navbar-Collapse -->
+
+            </nav>
+        </div>
+        <!-- //Navigation -->
+    </div>
+    <div class="container">
+        <div class="row" id="content">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+
+    <div id="nhoNeoRuleDialog" title="NHỔ NEO" class="ruleDialog">
+        <p id="nhoNeoRuleContent" style="font-size: 24px; text-align: justify;">
+            Tất cả các thí sinh trả lời 12 câu hỏi hình ảnh, audio hoặc video, mỗi câu hỏi trong vòng 15s. Thí sinh trả lời đúng và nhanh nhất được 15 điểm, những thí sinh khác trả lời đúng được 10 điểm.
+            <br>
+        </p>
+        <center>
+            <button class="btn btn-success closeDialogBtn">Đóng</button>
+        </center>
+    </div>
+
+    <div id="vuotSongRuleDialog" title="VƯỢT SÓNG" class="ruleDialog">
+        <p id="vuotSongRuleContent" style="font-size: 24px; text-align: justify;">
+            - Các thí sinh sẽ phải tìm ra một CNV nhưng <b>không cho biết số lượng chữ cái</b> của CNV, 6 hàng ngang gợi ý liên quan đến CNV được sắp xếp ngang dọc tùy ý và có thể giao nhau ở các kí tự chung. Mở mỗi hàng ngang có các ô <b>được tô màu xanh gợi ý các chữ cái có trong CNV</b>. Các thí sinh ấn chuông giành quyền trả lời CNV bất cứ lúc nào nhưng sai sẽ bị loại khỏi phần thi. 
+            <br><br>
+            - Thí sinh trả lời đúng và nhanh nhất được 15 điểm, các thí sinh khác trả lời đúng được 10 điểm. 
+            <br><br>
+            - Trả lời đúng CNV sau khi mở n hàng ngang được <b>(7-n)*15 điểm</b>.
+            <br><br>
+            - Sau khi mở tất cả các hàng ngang mà vẫn chưa có thí sinh nào trả lời đúng CNV. Cơ hội sẽ dành cho khán giả.
+        </p>
+        <center>
+            <button class="btn btn-success closeDialogBtn">Đóng</button>
+        </center>
+    </div>
+
+    <div id="butPhaRuleDialog" title="BỨT PHÁ" class="ruleDialog">
+        <p id="butPhaRuleContent" style="font-size: 24px; text-align: justify;">
+            - Các thí sinh giành lượt đi trước bằng <b>câu hỏi phân lượt</b>, thí sinh nào trả lời đúng và nhanh hơn sẽ giành được quyền ưu tiên trong phần thi này.
+            <br><br>
+            - Các thí sinh sẽ thi đấu 2 lượt. Sẽ có những gói câu hỏi thuộc nhiều lĩnh vực và tới lượt mỗi thí sinh, chọn 1 lĩnh vực trong số những lĩnh vực chưa được chọn trước đó và trả lời trong vòng 60s. Tối đa 15 câu trong mỗi gói, trả lời đúng mỗi câu được 10 điểm.
+            <br><br>
+        </p>
+        <center>
+            <button class="btn btn-success closeDialogBtn">Đóng</button>
+        </center>
+    </div>
+
+    <div id="chinhPhucRuleDialog" title="CHINH PHỤC" class="ruleDialog">
+        <p id="chinhPhucRuleContent" style="font-size: 24px; text-align: justify;">
+            - Các thí sinh tiếp tục giành quyền chọn thứ tự của mình bằng <b>câu hỏi phân lượt</b>. Ai trả lời đúng và nhanh hơn theo thứ tự sẽ <b>được chọn thứ tự của mình</b>.
+            <br><br>
+            - Sẽ có một bảng số gồm 6*6 ô vuông gồm các ô vuông trống, ô vuông chấm than và ô vuông chấm hỏi với các mức điểm tương ứng lần lượt là 10, 20, 30. 
+            <br><br>
+            - Mỗi thí sinh tới lượt mình chọn một ô và trả lời câu hỏi, đúng được tô màu của mình vào ô đó, sai các thí sinh khác ấn chuông giành quyền trả lời sau hiệu lệnh của MC. Trả lời đúng được tô màu của mình vào ô đó và lấy đi số điểm của câu hỏi từ người chọn. Sai sẽ bị trừ một nửa số điểm của câu hỏi. 
+            <br><br>
+            - Mỗi thí sinh có quyền đặt <b>ngôi sao hy vọng</b> vào bất kỳ lúc nào (chỉ được đặt một lần). Trả lời đúng câu hỏi có NSHV được thêm số điểm câu hỏi và được chọn thêm một ô nữa để trả lời, trả lời sai bị trừ số điểm bằng số điểm của câu hỏi.
+            <br><br> 
+            - Mỗi thí có 4 lượt chơi và nếu có một thí sinh tạo được một đường ngang dọc hoặc chéo với 4 ô màu của mình liên tiếp thì sẽ được cộng thêm 50 điểm. Mỗi thí sinh chỉ được + 50 điểm một lần.
+            <br><br>
+        </p>
+        <center>
+            <button class="btn btn-success closeDialogBtn">Đóng</button>
+        </center>
+    </div>
+
+</body>
+
+<footer class="page-footer">
+    <div class="container">
+        {% if footerDisplay %}
+        <b>
+        <span>Developers: LE_MAI_THANH_DUC, DOAN_NGUYEN_THANH_LUONG, NGUYEN_HOANG_HAI - 2021.</span><br/>
+        <span>Report bugs: <a href="mailto:duc.mtle@gmail.com">duc.mtle@gmail.com</a> or <a href="mailto:luongd@unist.ac.kr">luongd@unist.ac.kr</a href="mailto:hoanghai123098@gmail.com"> or <a>hoanghai123098@gmail.com</a></span>
+        </b><br />
+        {% endif %}
+        <button class="btn btn-success" id="toggleNavbar">Ẩn/hiện menu</button>
+        <button class="btn btn-info" id="playOST">Nhạc nền</button>
+    </div>
+</footer>
+
+<script src="{% static 'jquery.js' %}"></script>
+<script src="{% static 'jquery-ui.min.js' %}"></script>
+<script src="{% static 'popper.min.js' %}"></script>
+<script src="{% static 'bootstrap.min.js' %}"></script>
+<script src="{% static 'bootstrap-colorselector.min.js' %}"></script>
+
+<!-- Resopnsive-Slider-JavaScript -->
+    <script src="{% static 'js/responsiveslides.min.js' %}"></script>
+    <script>
+        $(function () {
+            $("#slider").responsiveSlides({
+                auto: true,
+                nav: true,
+                speed: 2000,
+                namespace: "callbacks",
+                pager: true,
+            });
+        });
+    </script>
+<!-- //Resopnsive-Slider-JavaScript -->
+
+<!-- Tab-JavaScript -->
+    <script src="{% static 'js/cbpFWTabs.js' %}"></script>
+    <script>
+        (function() {
+            [].slice.call( document.querySelectorAll( '.tabs' ) ).forEach( function( el ) {
+                new CBPFWTabs( el );
+            });
+        })();
+    </script>
+<!-- //Tab-JavaScript -->
+
+<!-- Owl-Carousel-JavaScript -->
+    <script src="{% static 'js/owl.carousel.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+            $("#owl-demo, #owl-demo1, #owl-demo2, #owl-demo3, #owl-demo4").owlCarousel({
+                autoPlay: 3000,
+                items : 5,
+                itemsDesktop : [1024,4],
+                itemsDesktopSmall : [414,3]
+            });
+        });
+    </script>
+<!-- //Owl-Carousel-JavaScript -->
+
+<!-- Popup-Box-JavaScript -->
+    <script src="{% static 'js/jquery.chocolat.js' %}"></script>
+    <script type="text/javascript">
+        $(function() {
+            $('.w3portfolioaits-item a').Chocolat();
+        });
+    </script>
+<!-- //Popup-Box-JavaScript -->
+
+
+<script>
+    $("#playOST").click(function(){
+        var ost = new Audio(ost_path);
+        ost.play();
+        $(this).hide();
+    });
+
+    $("#toggleNavbar").click(function(){
+        $("#mainNavbar").toggle();
+    });
+
+    $(".closeDialogBtn").click(function(){
+        $(".ruleDialog").dialog("close");
+    });
+
+    nhoNeoRuleDialog = $("#nhoNeoRuleDialog");
+
+    nhoNeoRuleDialog.dialog({
+        modal: true,
+        autoOpen: false,
+        minWidth: 600,
+    });
+
+    $(".nhoNeoRule").click(function(){
+        if(nhoNeoRuleDialog.dialog("isOpen")){
+            // already open
+        }
+        else{
+            // the dialog has not been opened yet
+            nhoNeoRuleDialog.dialog("open");
+        }
+    });
+
+    vuotSongRuleDialog = $("#vuotSongRuleDialog");
+
+    vuotSongRuleDialog.dialog({
+        modal: true,
+        autoOpen: false,
+        minWidth: 800,
+    });
+
+    $(".vuotSongRule").click(function(){
+        if(vuotSongRuleDialog.dialog("isOpen")){
+            // already open
+        }
+        else{
+            // the dialog has not been opened yet
+            vuotSongRuleDialog.dialog("open");
+        }
+    });
+
+
+    butPhaRuleDialog = $("#butPhaRuleDialog");
+
+    butPhaRuleDialog.dialog({
+        modal: true,
+        autoOpen: false,
+        minWidth: 750,
+    });
+
+    $(".butPhaRule").click(function(){
+        if(butPhaRuleDialog.dialog("isOpen")){
+            // already open
+        }
+        else{
+            // the dialog has not been opened yet
+            butPhaRuleDialog.dialog("open");
+        }
+    });
+
+
+    chinhPhucRuleDialog = $("#chinhPhucRuleDialog");
+
+    chinhPhucRuleDialog.dialog({
+        modal: true,
+        autoOpen: false,
+        minWidth: 900,
+    });
+
+    $(".chinhPhucRule").click(function(){
+        if(chinhPhucRuleDialog.dialog("isOpen")){
+            // already open
+        }
+        else{
+            // the dialog has not been opened yet
+            chinhPhucRuleDialog.dialog("open");
+        }
+    });
+
+</script>
+{% block scripts %}
+{% endblock %}
+</html>

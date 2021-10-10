@@ -1,0 +1,261 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+    <style>
+        .col, .row {
+            text-align: center;
+        }
+        button {
+            margin-bottom: 0.3em;
+            margin-top: 0.5em;
+        }
+        #question {
+            background-color: bisque;
+            margin-top: 2em;
+        }
+        #questionContent, .questionNumber {
+            font-size: 40px;
+        }
+        #questionAnswer{
+            font-size: 30px;
+        }
+        .questionNumber {
+            margin-top: 0.1em;
+        }
+        .questionNumber {
+            margin-bottom: 0;
+            color: red;
+        }
+
+        .col, .row {
+           text-align: center;
+        }
+
+        .answer {
+            text-align: left;
+            background-color: bisque;
+            font-size: 20px;
+            margin: 10px;
+            min-height: 70px;
+            /* min-width: 300px; */
+        }
+
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="col-9" id="question">
+        <div class="row">
+            <div class="col-12">
+                <p class="questionNumber"><span id="questionNumber">0</span><span>/12</span></p>
+                <button class="btn btn-outline-info" id="showAnswer">Hiện đáp án</button>
+                <button class="btn btn-outline-primary" id="nextQuestion">Câu hỏi tiếp theo</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <p id="questionContent"></p>
+            </div>
+            <div class="col-12">
+                <i><b><p id="questionAnswer"></p></b></i>
+            </div>
+            <div class="col-12" id="questionFile">
+                
+            </div>
+        </div>
+    </div>
+    <div class="col-3" id="manageAnswer">
+        <div class="row">
+            <div class="col-12">
+                <button type="button" id="countDown" class="btn btn-danger" style="width:150px; height:150px; font-size: 70px">15</button>
+            </div>
+        <!-- </div> -->
+        <!-- <div class="row"> -->
+            <div class="col-12">
+                <button type="button" id="showDapAnThiSinh" class="btn btn-primary">Đáp án thí sinh</button>
+            </div>
+            <div class="col-12" id="dapAnThiSinh" style="display:none">
+            </div>
+        </div>
+    </div>
+    {% csrf_token %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
+
+    function updateRound(roundName){
+        $.ajax({
+            url: "{% url 'updateRound' %}",
+            method: "POST",
+            data: {"roundName": roundName},
+            traditional: true,
+            success: function(data){
+                // do nothing
+            }
+        });
+    }
+
+    updateRound("khoidong");
+
+
+    function makeAjaxCall(questionContent, currentQuestionID) {
+        // Make the AJAX call to notify the current question to the server and other screen of contestant
+        $.ajax({
+            url: "{% url 'currentQuestion'%}",
+            method: "POST",
+            data: {"question":questionContent, "questionID":currentQuestionID, "round": "khoidong"},
+            dataType: "json",
+            traditional: true,
+            success: function (data) {
+                // Do nothing
+            }
+        });
+    }
+
+    
+    // Send signal to handleAcceptingAnswer
+    function signalHandleAcceptingAnswer() {
+        $.ajax({
+            url: "{% url 'handleAcceptingAnswer' %}",
+            method: "GET",
+            traditional: true,
+            success: function (data) {
+                // Do nothing
+            }
+        })
+    }
+
+    let countDownBox = $("#countDown");
+
+    countDownBox.click(function() {
+        // Disable the button to avoid second click
+        countDownBox.attr("disabled", "disabled");
+
+        // Signal the server to accept answers
+        signalHandleAcceptingAnswer();
+        
+        var demgio = new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");
+        demgio.play();
+
+        // Countdown 10s
+        var countDownInterval = null;
+        countDownInterval =  setInterval(function () {
+            var newTime = parseInt(countDownBox.text()) - 1;
+            if (newTime >= 0) {
+                countDownBox.text(newTime);
+            } else {
+                // Send the request to server to stop received data
+                signalHandleAcceptingAnswer();
+
+                // Make request to get the final answer
+                $.ajax({
+                    url: "{% url 'getDapAnThiSinh' %}",
+                    success: function (data) {
+                        data = JSON.parse(data);
+                        $("#dapAnThiSinh").html("");
+                        // Loop over data and update to the view
+                        for (let i = 0; i < data.length; i++) {
+                            const answer = data[i];
+                            var newAnswer = document.createElement("div");
+                            newAnswer.setAttribute("class", "answer col");
+                            newAnswer.innerHTML = "<span style='font-weight: bold'> " + answer.thisinh + "</span>" + ": " + answer.answer
+                            $("#dapAnThiSinh").append(newAnswer);
+                        }
+
+                    }
+                })
+
+                clearInterval(countDownInterval);
+                countDownBox.text("15");
+                // Enable the box again for next question
+                countDownBox.removeAttr("disabled");
+            }
+        }, 1000);
+    });
+
+
+    // Store all questions in an array
+    let questions = {{ questions|safe }};
+
+    var currentQuestionID = 0;
+
+    $("#nextQuestion").click(function(event) {
+        $("#questionAnswer").text("");
+        if (currentQuestionID >= questions.length) {
+            $("#questionContent").text("Kết thúc phần thi");
+        } else {
+            let currentQuestion = questions[currentQuestionID]
+            
+            // Get all the information of this question
+            let questionContent = currentQuestion["questionText"];
+            let questionFileType = currentQuestion["fileType"];
+            let questionFile = currentQuestion["file"];
+            let fileDisplay = $("#questionFile");
+            fileDisplay.empty();
+            console.log(`====> Question file ${questionFile}`);
+
+            if (questionFile) {
+                console.log(`=====> ${questionFileType}`);
+                
+                if (questionFileType == "image") {
+                    fileDisplay.append("<img width='576' height='432' src=" + questionFile + ">");
+                } else if (questionFileType == "video") {
+                    fileDisplay.append("<video width='576' height='432' controls><source src=" + questionFile + " type='video/mp4'></video>");
+                } else if (questionFileType == "sound") {
+                    let htmlString = "<audio controls><source src="+ questionFile + " type='audio/mpeg'>Your browser does not support the audio element.</audio>"
+                    fileDisplay.append(htmlString);
+                }
+            }
+        
+            $("#questionContent").text(questionContent);
+            // currentQuestionID begin with 0 for array index, but should be 1 in the database
+            currentQuestionID++;
+            $("#questionNumber").text(currentQuestionID);
+            $("#showDapAnThiSinh").prop("disabled", false);
+            $("#dapAnThiSinh").hide();
+            
+            
+            // Update the current question to the server
+            makeAjaxCall(questionContent, currentQuestionID);
+            
+        }
+    });
+
+    $("#showAnswer").click(function(event){
+        if (currentQuestionID <= 0 || currentQuestionID > questions.length){
+            $("#questionAnswer").text("...");
+        } else {
+            var showAnswerAudio =  new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}");
+            showAnswerAudio.play();
+
+            let currentQuestion = questions[currentQuestionID - 1]   
+            let questionAnswer = currentQuestion["answer"];
+            $("#questionAnswer").text("Đáp án: " + questionAnswer);
+        }
+    });
+
+    // Show dap an thi sinh
+    $("#showDapAnThiSinh").click(function () {
+        this.setAttribute("disabled", "disabled");        
+        $("#dapAnThiSinh").show();
+    });
+
+    // append opening music
+    ost_path = "{% static 'ost/NhoNeo_MoDau.mp3' %}";
+
+</script>
+{% endblock %}

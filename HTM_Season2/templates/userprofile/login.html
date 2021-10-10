@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+     <head>
+          <meta charset="utf-8">
+		<link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+          <link rel="shortcut icon" href="{% static 'favicon.ico' %}"/>
+          <title>NBK Olympia - Log In</title>
+          <link href="{% static 'userprofile/style.css' %}" rel="stylesheet" type="text/css"/>
+          <style>
+               body {
+                    background-color: #314B77;
+                    min-width: 1280px;
+               }
+          </style>
+     </head>
+     <body>
+          <div class="container">
+               <div class="d-flex justify-content-center mt-5">
+                    <span class="border rounded border-secondary p-5 mr-7" style="background-color: white">
+                    <h3 class="d-flex justify-content-center p-2">Log In</h3>
+                    <form method="post">
+                         {{ form.as_p }}
+                         {% csrf_token %}
+                         <button type="submit" class="btn btn-primary btn-outline-primary float-right">Log in</button>
+                         <a href="{% url 'signup' %}">Sign up!</a>
+                    </form>
+                    </span>
+               </div>
+          </div>
+     </body>
+     <script src="{% static 'jquery.js' %}"></script>
+     <script src="{% static 'popper.min.js' %}"></script>
+     <script src="{% static 'bootstrap.min.js' %}"></script>
+</html>

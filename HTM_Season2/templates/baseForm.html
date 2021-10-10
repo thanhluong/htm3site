@@ -1,0 +1,311 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+    <title>Hành trình Magellan</title>
+    <style>
+        html {
+            min-height: 100%;
+            position: relative;
+        }
+        body {
+            background-color: #4da6ff;
+            min-width: 1280px;
+            margin-bottom: 30px;
+        }
+        footer {
+            width: 100%;
+            text-align: center;
+            position: relative;
+            bottom: 0;
+            font-style: italic;
+        }
+        button[type="submit"] {
+            display: inline-block;
+            margin-top: 20px;
+            margin-right: 10px;
+        }
+        button[id="ringBell"]{
+            margin-top: 20px;
+            margin-right: 10px;
+        }
+        button[id="gianhQuyen"]{
+            margin-top: 20px;
+            margin-right: 10px;
+        }
+        button[id="ngoiSaoHiVong"]{
+            margin-top: 20px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        {% if answerView %}
+        <div class="d-flex justify-content-center mt-5">
+            <span class="border rounded border-secondary p-5 mr-7" style="background-color: white">
+                <div id="questionContent" style="font-weight: bold; font-size: 20px"></div>
+            </span>
+        </div>
+        {% endif %}
+
+        <div class="d-flex justify-content-center mt-5">
+            <span class="border rounded border-secondary p-5 mr-7" style="background-color: white">
+                <h3 class="d-flex justify-content-center p-2">
+                    {% if answerView %}
+                    Trả lời
+                    {% else %}
+                    Create new data
+                    {% endif %}
+                </h3>
+                <form method="POST" enctype="multipart/form-data">
+                    {{ form.as_p }}
+                    {% csrf_token %}
+                    <center>
+                        <button type="submit" id="submitBtn" class="btn btn-lg btn-primary btn-outline-primary">Gửi</button>
+                    </center>
+                </form>
+                <br>
+
+                {% if answerView %}
+                    <center>
+                    
+                        {% if currentRound == "vuotsong" %}
+                            <button id="ringBell" class="btn btn-success" disabled="true">
+                                Bấm chuông
+                            </button>
+                        {% endif %}
+
+                        {% if currentRound == "chinhphuc" %}
+                            <button id="gianhQuyen" class="btn btn-success" disabled="true">
+                                Giành quyền trả lời
+                            </button>
+                            <button id="ngoiSaoHiVong" class="btn btn-warning float-none" disabled="true">
+                                Ngôi sao hi vọng
+                            </button>
+                        {% endif %}
+                        
+                    </center>
+                    
+                    <br><br>
+                    <h5>Câu trả lời vừa gửi: </h5>
+                    <b><h5 id="thiSinhSubmission"></h5></b>
+                {% endif %}
+         
+            </span>
+        </div>
+    </div>
+</body>
+<footer>
+    <div class="container">
+        <b><span>Developers: Duc Le (LE_MAI_THANH_DUC), Luong Doan (DOAN_NGUYEN_THANH_LUONG) - 2019. Report bugs: <a href="mailto:duc.mtle@gmail.com">duc.mtle@gmail.com</a> or <a href="mailto:doannguyenthanhluong@gmail.com">doannguyenthanhluong@gmail.com</a></span></b>
+    </div>
+</footer>
+
+<script src="{% static 'jquery.js' %}"></script>
+<script src="{% static 'popper.min.js' %}"></script>
+<script src="{% static 'bootstrap.min.js' %}"></script>
+<script>
+
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+
+    function makeRingingCall(){
+        $.ajax({
+            url: "{% url 'ringBell' %}",
+            method: "POST",
+            data: null,
+            traditional: true,
+            success: function(data){
+                // Do nothing
+            }
+        });
+    }
+
+    function makeNSHVCall(){
+        $.ajax({
+            url: "{% url 'ngoiSaoHiVong' %}",
+            method: "POST",
+            data: null,
+            traditional: true,
+            success: function(data){
+                // Do nothing
+            }
+        });
+    }
+
+    function makeGianhQuyenCall(){
+        $.ajax({
+            url: "{% url 'gianhQuyen' %}",
+            method: "POST",
+            data: null,
+            traditional: true,
+            success: function(data){
+                // Do nothing
+            }
+        });
+    }
+
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });    
+
+    var formGroups = $('p');
+    for(let i=0; i < formGroups.length; i++) {
+        var ele = formGroups[i];
+        $(ele).replaceWith("<div class='form-group'>" + $(ele).html() + "</div>");
+    }
+    $('input').addClass("form-control");
+
+    $("input[type='file']").parent().removeClass("form-group").addClass("custom-file");
+    $("input[type='file']").removeClass("form-control").addClass("custom-file-input");
+    $(".custom-file label").addClass("custom-file-label");
+
+    $('li').addClass("text-muted");
+    $('.helptext').addClass("text-muted");
+
+    $('.errorlist li').removeClass("text-muted");
+    $(".errorlist li").attr("style", "color:red");
+
+    // Handle displaying the filename
+    $("input[type='file']").on('change', function () {
+        //get the file name
+        var fileName = $(this).val();
+        console.log(fileName);
+        //replace the "Choose a file" label
+        $('.custom-file-label').html(fileName);
+    })
+
+    // Make AJAX calls tot update the current question
+    {% if answerView %}
+    setInterval(function() {
+        $.ajax({
+            url: "{% url 'currentQuestion' %}",
+            success: function(data) {
+                data = JSON.parse(data);
+                $("#questionContent").text(data.question);
+                if(data.hasOwnProperty('answer')){
+                    $("#thiSinhSubmission").text(data.answer);
+                }
+            }
+        })
+    }, 500);
+    {% endif %}
+
+    {% if currentRound == "vuotsong" %}
+
+    // Handle the ringBell event
+
+    let ringBtn = $("#ringBell");
+
+    ringBtn.click(function(){
+        console.log("Đã bấm chuông!");
+        // ringBtn.prop("disabled", true);
+        makeRingingCall();
+    });
+
+    // Make AJAX calls to check for ringing state
+    setInterval(function() {
+        $.ajax({
+            url: "{% url 'ringBell' %}",
+            method: "GET",
+            success: function(data) {
+                data = JSON.parse(data);
+                if(data.ringerName.length == 0){
+                    if(ringBtn.prop("disabled")){
+                        ringBtn.prop("disabled", false);
+                    }
+                }
+                else{
+                    if(ringBtn.prop("disabled")){
+                    }
+                    else{
+                        ringBtn.prop("disabled", true)
+                    }
+                }
+            }
+        })
+    }, 500);
+
+    {% endif %}
+
+    {% if currentRound == "chinhphuc" %}
+
+    let gianhQuyen = $("#gianhQuyen");
+
+    gianhQuyen.click(function(){
+        console.log("Đã giành quyền trả lời!");
+        // gianhQuyen.prop("disabled", true);
+        makeGianhQuyenCall();
+    });
+
+    // Make AJAX calls to check for ngoiSaoHiVong state
+    setInterval(function() {
+        $.ajax({
+            url: "{% url 'gianhQuyen' %}",
+            method: "GET",
+            success: function(data) {
+                data = JSON.parse(data);
+                if(data.gianhQuyenUser.length == 0){
+                    if(gianhQuyen.prop("disabled")){
+                        gianhQuyen.prop("disabled", false);
+                    }
+                }
+                else{
+                    if(gianhQuyen.prop("disabled")){
+                    }
+                    else{
+                        gianhQuyen.prop("disabled", true)
+                    }
+                }
+            }
+        })
+    }, 250);
+    
+    let ngoiSaoHiVong = $("#ngoiSaoHiVong");
+
+    ngoiSaoHiVong.click(function(){
+        console.log("Đã chọn ngôi sao hi vọng!");
+        // ngoiSaoHiVong.prop("disabled", true);
+        makeNSHVCall();
+    });
+
+    // Make AJAX calls to check for ngoiSaoHiVong state
+    setInterval(function() {
+        $.ajax({
+            url: "{% url 'ngoiSaoHiVong' %}",
+            method: "GET",
+            success: function(data) {
+                data = JSON.parse(data);
+                if(data.ringerName.length == 0){
+                    if(ngoiSaoHiVong.prop("disabled")){
+                        ngoiSaoHiVong.prop("disabled", false);
+                    }
+                }
+                else{
+                    if(ngoiSaoHiVong.prop("disabled")){
+                    }
+                    else{
+                        ngoiSaoHiVong.prop("disabled", true)
+                    }
+                }
+            }
+        })
+    }, 500);
+
+    {% endif %}
+
+</script>
+
+</html>

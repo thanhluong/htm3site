@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block style %}
+<style>
+    #message {
+        text-align: center;
+        color: white;
+        margin-top: 20%;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+    <div class="col-12" id="message">
+        {% if not message %}
+            <h1>Chào mừng đến với chương trình Hành Trình Magellan</h1>
+        {% else %}
+            <h1>{{message}}</h1>
+        {% endif %}
+    </div>
+{% endblock %}

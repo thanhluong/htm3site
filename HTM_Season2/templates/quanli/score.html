@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block style %}
+    <style>
+        .thisinh {
+            display: block;
+            font-size: 40px;
+            margin-top: 30px;
+            margin-bottom: 30px;
+        }
+        .name {
+            color: white;
+            margin: 0 auto;
+        }
+        .diem{
+            display: inline-block;
+            width: 2.5em;
+            text-align: center;
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% for thisinh in userlist %}
+        <div class="thisinh col-12">
+            <div class="row" width="100%">
+                <!-- <center> -->
+                    <div class="col-3">
+                        <img class="img-responsive float-right" width="75" height="75" src="/media/{{ thisinh.avatar }}">
+                    </div>
+
+                    <div class="col-4">
+                        <span class="name">{{ thisinh.user }}: </span>
+                    </div>
+
+                    <div class="col-5">
+                        <input class="diem" type="number" id="{{thisinh.user.username}}"value="{{thisinh.score}}">
+                    </div>
+                <!-- </center> -->
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $(".diem").keyup(function() {
+        // Get the id
+        var username = $(this).attr("id");
+        // Get the grade
+        var grade = $(this).val();
+        console.log("CHANGED");
+        $.ajax({
+            url: "{% url 'score' %}" + username + "/" + grade,
+            success: function() {
+
+            }
+        });
+    })
+
+    var soundtrack = new Audio("{% static 'score/CongBoDiemSo.mp3' %}");
+
+    soundtrack.play();
+
+    ost_path = "{% static 'ost/Britains_Brainiest_Theme_Song.mp3' %}";
+</script>
+{% endblock %}
