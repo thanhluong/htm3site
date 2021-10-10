@@ -16,6 +16,7 @@
   background-size: 100vw 100vh, cover;
   background-position: center center, 0 0;
   background-image: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0) 8%, rgba(255, 255, 255, 0.075) 10%, rgba(255, 255, 255, 0.075) 14%, rgba(255, 255, 255, 0.15) 14%, rgba(255, 255, 255, 0.15) 15%, rgba(255, 255, 255, 0.075) 17%, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0) 36%, rgba(255, 255, 255, 0.075) 40%, rgba(255, 255, 255, 0.15) 42%, rgba(255, 255, 255, 0) 43%, rgba(255, 255, 255, 0) 55%, rgba(255, 255, 255, 0.075) 60%, rgba(255, 255, 255, 0.075) 66%, rgba(255, 255, 255, 0.15) 66%, rgba(255, 255, 255, 0.075) 70%, rgba(255, 255, 255, 0) 75%, rgba(255, 255, 255, 0) 100%), radial-gradient(ellipse farthest-corner, transparent, rgba(0, 0, 0, 0.2) 110%);
+  border-radius: 10px;
 }
 .btn-glass:hover {
   background-position: -100vw 0, 0 0;
@@ -200,8 +201,15 @@ nav.btn-bar {
 
 nav.nav-dialog {
   width: 10em;
+  border-radius: 10px;
+}
+
+nav.nav-answer {
+  width: 20em;
+  border-radius: 10px;
 }
 
 nav.nav-bottom {
   width: 30em;
+  border-radius: 10px;
 }

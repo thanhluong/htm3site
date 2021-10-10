@@ -10,7 +10,7 @@
             margin-top: 0.5em;
         }
         #question {
-            background-color: bisque;
+            background-color: grey;
             margin-top: 2em;
         }
         #questionContent, .questionNumber {
@@ -44,37 +44,51 @@
 {% endblock %}
 
 {% block content %}
-    <div class="col-9" id="question">
+    <div class="col-md-9" id="question">
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-12">
                 <p class="questionNumber"><span id="questionNumber">0</span><span>/12</span></p>
                 <button class="btn btn-outline-info" id="showAnswer">Hiện đáp án</button>
                 <button class="btn btn-outline-primary" id="nextQuestion">Câu hỏi tiếp theo</button>
             </div>
         </div>
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-12">
                 <p id="questionContent"></p>
             </div>
-            <div class="col-12">
+            <div class="col-md-12">
                 <i><b><p id="questionAnswer"></p></b></i>
             </div>
-            <div class="col-12" id="questionFile">
+            <div class="col-md-12" id="questionFile">
                 
             </div>
         </div>
     </div>
-    <div class="col-3" id="manageAnswer">
+    <div class="col-md-3" id="manageAnswer">
         <div class="row">
-            <div class="col-12">
-                <button type="button" id="countDown" class="btn btn-danger" style="width:150px; height:150px; font-size: 70px">15</button>
+            <div class="col-sm-12">
+                <!-- <button type="button" id="countDown" class="btn btn-danger" style="width:150px; height:150px; font-size: 70px">15</button> -->
+                <a id="countDown" class="animated-button4">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                  15
+                </a>
             </div>
         <!-- </div> -->
         <!-- <div class="row"> -->
-            <div class="col-12">
-                <button type="button" id="showDapAnThiSinh" class="btn btn-primary">Đáp án thí sinh</button>
+            <div class="col-sm-12">
+                <!-- <button type="button" id="showDapAnThiSinh" class="btn btn-primary">Đáp án thí sinh</button> -->
+                <center>
+                    <nav class="btn-bar nav-dark nav-answer">
+                        <a href="#" class="btn btn-glass new-btn-info" id="showDapAnThiSinh">
+                          <i class="fa fa-check"></i> Đáp án thí sinh
+                        </a>
+                    </nav>
+                </center>
             </div>
-            <div class="col-12" id="dapAnThiSinh" style="display:none">
+            <div class="col-sm-12" id="dapAnThiSinh" style="display:none">
             </div>
         </div>
     </div>
@@ -156,7 +170,7 @@
         countDownInterval =  setInterval(function () {
             var newTime = parseInt(countDownBox.text()) - 1;
             if (newTime >= 0) {
-                countDownBox.text(newTime);
+                countDownBox.html("<span></span><span></span><span></span><span></span>" + newTime);
             } else {
                 // Send the request to server to stop received data
                 signalHandleAcceptingAnswer();
@@ -180,7 +194,7 @@
                 })
 
                 clearInterval(countDownInterval);
-                countDownBox.text("15");
+                countDownBox.html("<span></span><span></span><span></span><span></span>15");
                 // Enable the box again for next question
                 countDownBox.removeAttr("disabled");
             }
