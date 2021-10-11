@@ -102,8 +102,8 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">PHÂN LƯỢT<b class="caret"></b></a>
                             <div class="dropdown-menu">
                                 <ul>
-                                    <li><a class="scroll" href="#">BỨT PHÁ</a></li><br />
-                                    <li><a class="scroll" href="#">CHINH PHỤC</a></li>
+                                    <li><a class="scroll" href="{% url 'phanLuotButPha' %}">BỨT PHÁ</a></li><br />
+                                    <li><a class="scroll" href="{% url 'phanLuotChinhPhuc' %}">CHINH PHỤC</a></li>
                                 </ul>
                             </div>
                         </li>
@@ -120,34 +120,7 @@
                             </div>
                         </li>
                         <li><a class="scroll" href="/user/logout">LOG OUT</a></li>
-                        <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Login<b class="caret"></b></a>
-                            <div class="dropdown-menu">
-                                <form action="#" method="post">
-                                    <div id="login" class="animate w3loginagile form">
-                                        <h3>Login</h3>
-                                        <input type="text" Name="Userame" placeholder="Username" required="">
-                                        <input type="password" Name="Password" placeholder="Password" required="">
-                                        <div class="send-button wthree agileits">
-                                            <input type="submit" value="Login">
-                                        </div>
-                                        <div class="clearfix"></div>
-                                    </div>
-                                </form>
-                                <form action="#" method="post">
-                                    <div id="register" class="animate w3registeragile form">
-                                        <h3>Sign Up</h3>
-                                        <input type="text" Name="Name" placeholder="Name" required="">
-                                        <input type="text" Name="Email" placeholder="Email" required="">
-                                        <input type="password" Name="Password" placeholder="Password" required="">
-                                        <input type="text" Name="Phone Number" placeholder="Phone Number" required="">
-                                        <div class="send-button wthree agileits">
-                                            <input type="submit" value="Sign Up">
-                                        </div>
-                                    </div>
-                                </form>
-                            </div>
-                        </li>
+                        <li><a class="scroll">Hello, {{user}}</a></li>
                     </ul>
                 </div><!-- //Navbar-Collapse -->
 
