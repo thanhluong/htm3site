@@ -565,8 +565,9 @@
           transform: translate(0%, 0%);
   overflow: hidden;
   color: #e6f7d4;
-  width: 7em;
-  font-size: 20px;
+  /*width: 10em;*/
+  width:  180px;
+  font-size: 70px;
   letter-spacing: 2.5px;
   text-align: center;
   text-transform: uppercase;
