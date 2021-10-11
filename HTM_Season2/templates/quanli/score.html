@@ -12,28 +12,33 @@
             color: white;
             margin: 0 auto;
         }
-        .diem{
+        .diem {
             display: inline-block;
             width: 2.5em;
             text-align: center;
+        }
+        .profile-pic {
+            width: 1.75em !important;
+            height: 1.8em !important;
+            float: right;
         }
     </style>
 {% endblock %}
 
 {% block content %}
     {% for thisinh in userlist %}
-        <div class="thisinh col-12">
+        <div class="thisinh col-md-12">
             <div class="row" width="100%">
                 <!-- <center> -->
-                    <div class="col-3">
-                        <img class="img-responsive float-right" width="75" height="75" src="/media/{{ thisinh.avatar }}">
+                    <div class="col-md-3">
+                        <img class="profile-pic img-responsive" src="/media/{{ thisinh.avatar }}">
                     </div>
 
-                    <div class="col-4">
+                    <div class="col-md-4">
                         <span class="name">{{ thisinh.user }}: </span>
                     </div>
 
-                    <div class="col-5">
+                    <div class="col-md-5">
                         <input class="diem" type="number" id="{{thisinh.user.username}}"value="{{thisinh.score}}">
                     </div>
                 <!-- </center> -->
