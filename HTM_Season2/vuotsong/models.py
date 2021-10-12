@@ -17,6 +17,9 @@ class VuotSongQuestion(models.Model):
     Model for question in Vuot Song round
     """
 
+    # The question set ID
+    questionSetID = models.IntegerField(verbose_name="Bộ câu hỏi", default=1)
+
     # The question ID in in this round
     questionID = models.IntegerField(primary_key=True,
                                      verbose_name="Ô chữ số")

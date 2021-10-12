@@ -885,6 +885,7 @@ $("#showQuestion").click(function(event){
 
     currentQuestion = questions[currentQuestionID - 1];
     questionContent = currentQuestion["questionText"];
+    let actualQuestionID = currentQuestion["questionID"];
     let currentQuestionLen = currentQuestion["answer"].length;
     let questionFileType = currentQuestion["fileType"];
     let questionFile = currentQuestion["file"];
@@ -909,7 +910,7 @@ $("#showQuestion").click(function(event){
 
     $("#questionNumber").text("Hàng số "+currentQuestionID + " (" + currentQuestionLen + " kí tự)");
     $("#questionContent").text(questionContent);
-    makeAjaxCall(questionContent, currentQuestionID);
+    makeAjaxCall(questionContent, actualQuestionID);
     // 
     $(".letterOf" + currentQuestionID.toString()).css("background-color", "red");
   }
