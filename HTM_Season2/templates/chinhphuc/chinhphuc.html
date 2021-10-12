@@ -310,7 +310,7 @@
                     if(j != 0)
                         htmlContent += j.toString();
                     else if(i != 0)
-                        htmlContent += i.toString();
+                        htmlContent += 'ABCDEF'[i - 1];
                     htmlContent += '</div></td>';
                     continue;
                 }
@@ -406,7 +406,7 @@
     });
 
     function resetQuestionContent(newRow, newCol){
-        $("#questionNumber").text("Hàng số "+ newRow + ", cột số " + newCol);
+        $("#questionNumber").text("Hàng "+ 'ABCDEF'[newRow - 1] + ", cột số " + newCol);
         $("#questionContent").text("");
         $("#questionAnswer").text("");
         // update background color
