@@ -7,6 +7,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import ChinhPhucQuestionForm
 from .models import ChinhPhucQuestion
 
+from roundconfig import questionSet
+
 # Create your views here.
 
 class NewQuestion(generic.CreateView):
@@ -67,5 +69,5 @@ def getQuestions(request):
         return render(request, template_name="home.html",
               context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
-    questions = [toDict(question) for question in ChinhPhucQuestion.objects.all().order_by("questionID")]
+    questions = [toDict(question) for question in ChinhPhucQuestion.objects.filter(questionSetID=questionSet.SETID).order_by("questionID")]
     return render(request, template_name="chinhphuc/chinhphuc.html", context=dict(questions=questions))
