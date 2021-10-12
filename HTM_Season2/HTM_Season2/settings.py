@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'vuotsong',
     'tangtoc',
     'chinhphuc',
-    'phanluot'
+    'phanluot',
+    'roundconfig'
 ]
 
 MIDDLEWARE = [

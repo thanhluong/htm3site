@@ -17,9 +17,12 @@ class KhoiDongQuestion(models.Model):
     Model for question in Khoi Dong round
     """
 
+    # The question set ID
+    questionSetID = models.IntegerField(verbose_name="Bộ câu hỏi", default=1)
+
     # The question ID in in this round
     questionID = models.IntegerField(primary_key=True,
-                                     verbose_name="Câu hỏi số")
+                                    verbose_name="Câu hỏi số")
 
     # The text content of the question
     questionText = models.TextField(blank=True,

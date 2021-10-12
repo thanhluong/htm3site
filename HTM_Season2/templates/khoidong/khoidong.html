@@ -233,6 +233,7 @@
             let currentQuestion = questions[currentQuestionID];
             
             // Get all the information of this question
+            let actualQuestionID = currentQuestion["questionID"];
             let questionContent = currentQuestion["questionText"];
             let questionFileType = currentQuestion["fileType"];
             let questionFile = currentQuestion["file"];
@@ -253,6 +254,7 @@
                 }
             }
         
+            console.log("ID thuc te cho cau hoi " + actualQuestionID);
             $("#questionContent").text(questionContent);
             // currentQuestionID begin with 0 for array index, but should be 1 in the database
             currentQuestionID++;
@@ -262,7 +264,7 @@
             
             
             // Update the current question to the server
-            makeAjaxCall(questionContent, currentQuestionID);
+            makeAjaxCall(questionContent, actualQuestionID);
             
         }
     });

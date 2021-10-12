@@ -7,6 +7,8 @@ from django.urls import reverse_lazy
 from .forms import KhoiDongQuestionForm
 from .models import KhoiDongQuestion
 
+from roundconfig import questionSet
+
 # Create your views here.
 
 
@@ -50,11 +52,12 @@ def toDict(question: KhoiDongQuestion):
     """
     if question.file:
         return dict(questionText=question.questionText,
+                    questionID=question.questionID,
                     file=question.file.url,
                     answer=question.answer,
                     fileType=getFileType(question.file.url))
     else:
-        return dict(questionText=question.questionText, answer=question.answer)
+        return dict(questionText=question.questionText, questionID=question.questionID, answer=question.answer)
 
 @login_required
 def getQuestions(request):
@@ -65,6 +68,6 @@ def getQuestions(request):
         return render(request, template_name="home.html",
               context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
-    questions = [toDict(question) for question in KhoiDongQuestion.objects.all().order_by("questionID")]
+    questions = [toDict(question) for question in KhoiDongQuestion.objects.filter(questionSetID=questionSet.SETID).order_by("questionID")]
 
     return render(request, template_name="khoidong/khoidong.html", context=dict(questions=questions))
