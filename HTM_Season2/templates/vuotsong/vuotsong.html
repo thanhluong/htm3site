@@ -880,7 +880,8 @@ $("#showQuestion").click(function(event){
   else{
     // Refresh UI
     countDownProgressBar.css("width", "100%");
-    $("#showDapAnThiSinh").prop("disabled", false);
+    // $("#showDapAnThiSinh").prop("disabled", false);
+    $("#showDapAnThiSinh").removeAttr("disabled");
     $("#dapAnThiSinh").hide();
 
     currentQuestion = questions[currentQuestionID - 1];
