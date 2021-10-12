@@ -29,6 +29,9 @@ class TangTocQuestion(models.Model):
     """
     # No need to create a question ID in this case, Django will generate a primary key for each question
 
+    # The question set ID
+    questionSetID = models.IntegerField(verbose_name="Bộ câu hỏi", default=1)
+
     # The text content of the question
     questionText = models.TextField(
         blank=False, verbose_name="Nội dung câu hỏi")
