@@ -36,7 +36,7 @@
 <div class="align-middle">
     <div class="row">
     {% for field in fields %}
-        <div class="col-6">
+        <div class="col-md-6">
             <a class="btn btn-warning btn-block fieldname" href="{% url 'tangtocQuestions' field.code %}">{{field.name}}</a>
         </div>
     {% endfor %}
