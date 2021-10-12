@@ -252,7 +252,8 @@
             // currentQuestionID begin with 0 for array index, but should be 1 in the database
             currentQuestionID++;
             $("#questionNumber").text(currentQuestionID);
-            $("#showDapAnThiSinh").prop("disabled", false);
+            // $("#showDapAnThiSinh").prop("disabled", false);
+            $("#showDapAnThiSinh").removeAttr("disabled");
             $("#dapAnThiSinh").hide();
             
             
