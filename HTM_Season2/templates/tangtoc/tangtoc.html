@@ -122,7 +122,7 @@
             } else {
                 clearInterval(countDownInterval);
                 // 60s per question-set
-                countDownBox.text("60");
+                countDownBox.html("<span></span><span></span><span></span><span></span>60");
                 // Enable the box again for next question
                 countDownBox.removeAttr("disabled");
             }
