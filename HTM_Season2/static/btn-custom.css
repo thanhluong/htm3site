@@ -214,6 +214,11 @@ nav.nav-khoidong {
   border-radius: 10px;
 }
 
+nav.nav-tangtoc {
+  width: 15em;
+  border-radius: 10px;
+}
+
 nav.nav-bottom {
   width: 30em;
   border-radius: 10px;
