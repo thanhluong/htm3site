@@ -14,13 +14,30 @@
         }
         .diem {
             display: inline-block;
+            border-style: none;
             width: 2.5em;
             text-align: center;
+            border-radius:  50%;
+            box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+        }
+        textarea:focus, input:focus{
+            outline: none;
         }
         .profile-pic {
-            width: 1.75em !important;
-            height: 1.8em !important;
+            width: 2.7em !important;
+            height: 2.7em !important;
             float: right;
+        }
+        .headshot {
+            flex-shrink: 0;
+            height: calc(150px + 6vw);
+            width: calc(150px + 6vw);
+            border: calc(2px + 0.2vw) solid transparent;
+            background-origin: border-box;
+            background-clip: content-box, border-box;
+            background-size: cover;
+            box-sizing: border-box;
+            box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.5);
         }
     </style>
 {% endblock %}
@@ -30,15 +47,17 @@
         <div class="thisinh col-md-12">
             <div class="row" width="100%">
                 <!-- <center> -->
-                    <div class="col-md-3">
-                        <img class="profile-pic img-responsive" src="/media/{{ thisinh.avatar }}">
+                    <div class="col-md-4">
+                        <div class="headshot profile-pic img-responsive" style="border-radius: 30%; background-image: url('/media/{{ thisinh.avatar}}'), linear-gradient(#f9f047, #0fd850);">
+                        </div>
+                        <!-- <img class="profile-pic img-responsive" src="/media/{{ thisinh.avatar }}"> -->
                     </div>
 
                     <div class="col-md-4">
                         <span class="name">{{ thisinh.user }}: </span>
                     </div>
 
-                    <div class="col-md-5">
+                    <div class="col-md-4">
                         <input class="diem" type="number" id="{{thisinh.user.username}}"value="{{thisinh.score}}">
                     </div>
                 <!-- </center> -->
