@@ -265,7 +265,7 @@
 
     // Intialize media files
     var demgioBamChuong =  new Audio("{% static 'chinhphuc/VeDich5sConLai.mp3' %}");
-    demgioBamChuong.preload = "auto";
+    demgioBamChuong.load();
 
     // Store all questions in an array
     let questions = {{ questions|safe }};
@@ -395,7 +395,7 @@
     let traLoiCountDownProgressBar = $("#traLoiCountDownProgressBar");
 
     var demgio =  new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");
-    demgio.preload = "auto";
+    demgio.preload.load();
     traLoiCountDownProgressBar.click(function(){
         demgio.play();
 
@@ -417,7 +417,7 @@
 
     let bamChuongCountDownProgressBar = $("#bamChuongCountDownProgressBar");
     var demgioBamChuong =  new Audio("{% static 'chinhphuc/VeDich5sConLai.mp3' %}");
-    demgioBamChuong.preload = "auto";
+    demgioBamChuong.load();
 
     bamChuongCountDownProgressBar.click(function(){
         demgioBamChuong.play();
@@ -546,7 +546,7 @@
     });
 
     var congratAudio = new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}");
-    congratAudio.preload = "auto";
+    congratAudio.load();
     $("#showAnswer").click(function(event){
         currentRow = parseInt(document.getElementById("id_row").value);
         currentCol = parseInt(document.getElementById("id_col").value);
@@ -600,7 +600,7 @@
     });
 
     var bell_sound_cpbc = new Audio("{% static 'chinhphuc/ChinhPhuc_BamChuong.mp3' %}");
-    bell_sound_cpbc.preload = "auto";
+    bell_sound_cpbc.load();
     // Function to wait for the GianhQuyen
     setInterval(function() {
         $.ajax({
@@ -652,7 +652,7 @@
     });
 
     var bell_sound = new Audio("{% static 'chinhphuc/VeDichNSHV.mp3' %}");
-    bell_sound.preload = "auto";
+    bell_sound.load();
     // Function to wait for the NgoiSaoHiVong
     setInterval(function() {
         $.ajax({
