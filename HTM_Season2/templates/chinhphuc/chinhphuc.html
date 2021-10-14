@@ -395,7 +395,7 @@
     let traLoiCountDownProgressBar = $("#traLoiCountDownProgressBar");
 
     var demgio =  new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");
-    demgio.preload.load();
+    demgio.load();
     traLoiCountDownProgressBar.click(function(){
         demgio.play();
 
