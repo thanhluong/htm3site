@@ -449,7 +449,16 @@
     });
 
     function resetQuestionContent(newRow, newCol){
-        $("#questionNumber").text("Hàng "+ 'ABCDEF'[newRow - 1] + ", cột số " + newCol);
+        let questionLevel = questionAt[newRow - 1][newCol - 1];
+        let scores;
+        if (questionLevel === 'easy') {
+            scores = " (10 điểm)";
+        } else if (questionLevel === 'medium') {
+            scores = " (20 điểm)";
+        } else {
+            scores = " (30 điểm)";
+        }
+        $("#questionNumber").text("Hàng "+ 'ABCDEF'[newRow - 1] + ", cột số " + newCol + scores);
         $("#questionContent").text("");
         $("#questionAnswer").text("");
         // update background color
