@@ -84,7 +84,10 @@
 
     var soundtrack = new Audio("{% static 'score/CongBoDiemSo.mp3' %}");
 
-    soundtrack.play();
+    $(document).bind('keypress', function (e) {
+        if ((e.ctrlKey) && (e.keyCode == 10)) // press M
+            soundtrack.play(); 
+    });
 
     ost_path = "{% static 'ost/Britains_Brainiest_Theme_Song.mp3' %}";
 </script>

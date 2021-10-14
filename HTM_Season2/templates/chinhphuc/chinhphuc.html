@@ -388,8 +388,8 @@
 
     let traLoiCountDownProgressBar = $("#traLoiCountDownProgressBar");
 
+    var demgio =  new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");
     traLoiCountDownProgressBar.click(function(){
-        var demgio =  new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");
         demgio.play();
 
         // Countdown 15s
@@ -409,9 +409,9 @@
     });
 
     let bamChuongCountDownProgressBar = $("#bamChuongCountDownProgressBar");
+    var demgioBamChuong =  new Audio("{% static 'chinhphuc/VeDich5sConLai.mp3' %}");
 
     bamChuongCountDownProgressBar.click(function(){
-        demgioBamChuong =  new Audio("{% static 'chinhphuc/VeDich5sConLai.mp3' %}");
         demgioBamChuong.play();
         // Start accepting gianhQuyen
         sendSignalGQ(true);
@@ -537,6 +537,7 @@
         }
     });
 
+    var congratAudio = new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}");
     $("#showAnswer").click(function(event){
         currentRow = parseInt(document.getElementById("id_row").value);
         currentCol = parseInt(document.getElementById("id_col").value);
@@ -545,7 +546,7 @@
             $("#questionContent").text("Vui lòng chọn tọa độ hợp lệ!");
         }
         else{
-            var congratAudio = new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}");congratAudio.play();
+            congratAudio.play();
 
             $("#questionAnswer").text("Đáp án: " + questionAnswer);
         }
@@ -589,6 +590,7 @@
         gianhQuyenDialog.dialog('close');
     });
 
+    var bell_sound_cpbc = new Audio("{% static 'chinhphuc/ChinhPhuc_BamChuong.mp3' %}");
     // Function to wait for the GianhQuyen
     setInterval(function() {
         $.ajax({
@@ -613,8 +615,7 @@
                     // the dialog has not been opened yet
 
                     // make a sound
-                    var bell_sound = new Audio("{% static 'chinhphuc/ChinhPhuc_BamChuong.mp3' %}");
-                    bell_sound.play();
+                    bell_sound_cpbc.play();
                     $("#gianhQuyenContent").text(gianhQuyenUser + " đã nhấn chuông giành quyền trả lời!");
                     gianhQuyenDialog.dialog("open");
                 }
@@ -640,7 +641,7 @@
         });
     });
 
-
+    var bell_sound = new Audio("{% static 'chinhphuc/VeDichNSHV.mp3' %}");
     // Function to wait for the NgoiSaoHiVong
     setInterval(function() {
         $.ajax({
@@ -661,7 +662,6 @@
                     // the dialog has not been opened yet
 
                     // make a sound
-                    var bell_sound = new Audio("{% static 'chinhphuc/VeDichNSHV.mp3' %}");
                     bell_sound.play();
                     $("#ngoiSaoHiVongContent").text(ringerName + " đã chọn ngôi sao hi vọng!");
                   ngoiSaoHiVongDialog.dialog("open");

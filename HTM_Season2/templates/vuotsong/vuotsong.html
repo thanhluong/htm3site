@@ -828,8 +828,8 @@ function signalHandleAcceptingAnswer() {
 
 let countDownProgressBar = $("#countDownProgressBar");
 
+var demgio = new Audio("{% static 'vuotsong/VuotSong_15s.mp3' %}");
 countDownProgressBar.click(function(){    
-    var demgio = new Audio("{% static 'vuotsong/VuotSong_15s.mp3' %}");
     demgio.play();
 
     // Signal the server to accept answers
@@ -917,6 +917,7 @@ $("#showQuestion").click(function(event){
   }
 });
 
+var congratAudio = new Audio("{% static 'vuotsong/VCNV_cau_dung.mp3' %}");
 $("#showAnswer").click(function(event){
   currentQuestionID = parseInt(document.getElementById("id_ochu").value);
   if(isNaN(currentQuestionID) || (currentQuestionID < 0) || (currentQuestionID > questions.length)){
@@ -924,7 +925,6 @@ $("#showAnswer").click(function(event){
     $("#questionContent").text("Vui lòng chọn số thứ tự hợp lệ!");
   }
   else{
-    var congratAudio = new Audio("{% static 'vuotsong/VCNV_cau_dung.mp3' %}");
     congratAudio.play();
     $(".letterOf" + currentQuestionID.toString()).css("background-color", "rgb(255,255,255)");
     $(".letterOf" + currentQuestionID.toString() + " span").show();
@@ -933,16 +933,15 @@ $("#showAnswer").click(function(event){
 });
 
 $("#showAllAnswers").click(function(event){
-  var showAllSoundtrack = new Audio("{% static 'vuotsong/VCNV_cau_dung.mp3' %}");
-  showAllSoundtrack.play();
+  congratAudio.play();
 
   $(".letter").css("background-color", "rgb(255,255,255)");
   $(".letter span").show();
   $("#chuongNgaiVat").html("<i>Chướng ngại vật: <b>" + chuongNgaiVatContent + "</b></i>");
 });
 
+var wrongSoundtrack = new Audio("{% static 'vuotsong/VuotSong_CauSai.mp3' %}");
 $("#wrongAnswer").click(function(event){
-  var wrongSoundtrack = new Audio("{% static 'vuotsong/VuotSong_CauSai.mp3' %}");
   wrongSoundtrack.play();
   // Change bg color to gray for wrong answers
   currentQuestionID = parseInt(document.getElementById("id_ochu").value);
@@ -950,6 +949,7 @@ $("#wrongAnswer").click(function(event){
   $(".letter.redLetter").css("background-color", "green");
 });
 
+var bell_sound = new Audio("{% static 'vuotsong/bellsound.mp3' %}");
 // Function to wait for the ringing of the bell
 setInterval(function() {
     $.ajax({
@@ -970,7 +970,6 @@ setInterval(function() {
               // the dialog has not been opened yet
 
               // make a sound
-              var bell_sound = new Audio("{% static 'vuotsong/bellsound.mp3' %}");
               bell_sound.play();
               $("#ringingDialogContent").text(ringerName + " đã nhấn chuông xin trả lời CNV!");
               ringingDialog.dialog("open");

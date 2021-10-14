@@ -171,6 +171,7 @@
 
     let countDownBox = $("#countDown");
 
+    var demgio = new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");
     countDownBox.click(function() {
         // Disable the button to avoid second click
         countDownBox.attr("disabled", "disabled");
@@ -178,7 +179,6 @@
         // Signal the server to accept answers
         signalHandleAcceptingAnswer();
         
-        var demgio = new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");
         demgio.play();
 
         // Countdown 10s
@@ -267,11 +267,12 @@
         }
     });
 
+    var showAnswerAudio =  new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}");
+
     $("#showAnswer").click(function(event){
         if (currentQuestionID <= 0 || currentQuestionID > questions.length){
             $("#questionAnswer").text("...");
         } else {
-            var showAnswerAudio =  new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}");
             showAnswerAudio.play();
 
             let currentQuestion = questions[currentQuestionID - 1]   

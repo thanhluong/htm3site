@@ -106,11 +106,11 @@
 
     let countDownBox = $("#countDown");
 
+    var demgio = new Audio("{% static 'tangtoc/ButToc_60s.mp3' %}");
     countDownBox.click(function() {
         // Disable the button to avoid second click
         countDownBox.attr("disabled", "disabled");
         
-        var demgio = new Audio("{% static 'tangtoc/ButToc_60s.mp3' %}");
         demgio.play();
 
         // Countdown 10s
