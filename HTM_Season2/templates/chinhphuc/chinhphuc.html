@@ -283,17 +283,24 @@
     var currentQuestionID = 1;
     var questionAnswer = "";
 
-    $(document).bind('keypress', function(e) {
-        if ((e.ctrlKey) && (e.keyCode == 9)) { // press Ctrl + I
-            if (demgioBamChuong.readyState == 4 && demgio.readyState == 4 
-                && congratAudio.readyState == 4 && bell_sound_cpbc.readyState == 4 
-                && bell_sound.readyState == 4) {
-                console.log("Da load xong!");
-            }
-            else {
-                console.log("Chua load xong!");
-            }
-        }
+    demgioBamChuong.addEventListener("canplaythrough", event => {
+        console.log("demgioBamChuong loaded!");
+    });
+
+    congratAudio.addEventListener("canplaythrough", event => {
+        console.log("congratAudio loaded!");
+    });
+
+    bell_sound_cpbc.addEventListener("canplaythrough", event => {
+        console.log("bell_sound_cpbc loaded!");
+    });
+
+    demgio.addEventListener("canplaythrough", event => {
+        console.log("demgio loaded!");
+    });
+
+    bell_sound.addEventListener("canplaythrough", event => {
+        console.log("bell_sound loaded!");
     });
 
     function randInt(low, high){
