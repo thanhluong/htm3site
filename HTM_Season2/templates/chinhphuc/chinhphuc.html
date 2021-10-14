@@ -268,8 +268,6 @@
     demgioBamChuong.load();
     var demgio =  new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");
     demgio.load();
-    var demgioBamChuong =  new Audio("{% static 'chinhphuc/VeDich5sConLai.mp3' %}");
-    demgioBamChuong.load();
     var congratAudio = new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}");
     congratAudio.load();
     var bell_sound_cpbc = new Audio("{% static 'chinhphuc/ChinhPhuc_BamChuong.mp3' %}");
@@ -284,6 +282,18 @@
 
     var currentQuestionID = 1;
     var questionAnswer = "";
+
+    $(document).bind('keypress', function(e) {
+        if ((e.ctrlKey) && (e.keyCode == 9)) { // press Ctrl + I
+            if (demgioBamChuong.readyState && demgio.readyState && congratAudio.readyState
+                && bell_sound_cpbc.readyState && bell_sound.readyState) {
+                console.log("Da load xong!");
+            }
+            else {
+                console.log("Chua load xong!");
+            }
+        }
+    });
 
     function randInt(low, high){
         randLow = Math.floor(Math.random() * 1000000) % (high-low+1);
