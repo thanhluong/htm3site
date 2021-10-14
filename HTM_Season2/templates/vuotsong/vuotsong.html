@@ -21,8 +21,7 @@ body{
 
 .answer {
   text-align: left !important;
-  font-weight: bold !important;
-  color: black;
+  color: white;
   padding-left: 1em !important;
   padding-right: 1em !important;
   font-size: 25px;
@@ -859,7 +858,7 @@ countDownProgressBar.click(function(){
                       const answer = data[i];
                       var newAnswer = document.createElement("div");
                       newAnswer.setAttribute("class", "answer col");
-                      newAnswer.innerHTML = "<span style='font-weight: bold; font-style: italic; color: #191970'> " + answer.thisinh + "</span>" + ": " + answer.answer
+                      newAnswer.innerHTML = "<span style='font-weight: bold; font-style: italic; color: #191970'> " + answer.thisinh + ": " + "</span>" + answer.answer
                       $("#dapAnThiSinh").append(newAnswer);
                   }
 

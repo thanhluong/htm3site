@@ -36,8 +36,7 @@
 
         .answer {
             text-align: left;
-            font-weight: bold;
-            color: black;
+            color: white;
             padding-left: 1em;
             padding-right: 1em;
             font-size: 25px;
@@ -203,7 +202,7 @@
                             const answer = data[i];
                             var newAnswer = document.createElement("div");
                             newAnswer.setAttribute("class", "answer col");
-                            newAnswer.innerHTML = "<span style='font-weight: bold; font-style: italic; color: #191970'> " + answer.thisinh + "</span>" + ": " + answer.answer
+                            newAnswer.innerHTML = "<span style='font-weight: bold; font-style: italic; color: #191970'> " + answer.thisinh + ": " + "</span>" + answer.answer
                             $("#dapAnThiSinh").append(newAnswer);
                         }
 
