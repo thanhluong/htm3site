@@ -285,8 +285,9 @@
 
     $(document).bind('keypress', function(e) {
         if ((e.ctrlKey) && (e.keyCode == 9)) { // press Ctrl + I
-            if (demgioBamChuong.readyState && demgio.readyState && congratAudio.readyState
-                && bell_sound_cpbc.readyState && bell_sound.readyState) {
+            if (demgioBamChuong.readyState == 4 && demgio.readyState == 4 
+                && congratAudio.readyState == 4 && bell_sound_cpbc.readyState == 4 
+                && bell_sound.readyState == 4) {
                 console.log("Da load xong!");
             }
             else {
