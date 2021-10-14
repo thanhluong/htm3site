@@ -21,7 +21,8 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                }
 
                ::placeholder {
-                    color: #9370db !important;
+                    /*color: #9370db !important;*/
+                    color: white !important;
                }
           </style>
      </head>
@@ -37,7 +38,7 @@ License URL: http://creativecommons.org/licenses/by/3.0/
                               {% csrf_token %}
                               <input type="text" name="username" class="form-green-text" placeholder="Username" autofocus="" required="" id="id_username"/>
                               <input type="password" name="password" class="form-green-text padding" placeholder="Password" required="" id="id_password"/>
-                              <input type="submit" value="submit">
+                              <input type="submit" value="Login">
                          </form>
                     </div>
                  <div class="clear"> </div>
