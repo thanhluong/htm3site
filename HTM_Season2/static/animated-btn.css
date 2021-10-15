@@ -1075,8 +1075,9 @@
   -webkit-transform: translate(0%, 0%);
           transform: translate(0%, 0%);
   overflow: hidden;
+  width: 180px;
   color: #d4e6f7;
-  font-size: 20px;
+  font-size: 70px;
   letter-spacing: 2.5px;
   text-align: center;
   text-transform: uppercase;
@@ -1100,6 +1101,7 @@
 
 .animated-button8:hover::before {
   opacity: 0.2;
+  cursor: pointer;
 }
 
 .animated-button8 span {
