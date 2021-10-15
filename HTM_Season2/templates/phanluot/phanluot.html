@@ -12,8 +12,8 @@
         #question {
             border-radius: 20px;
             box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
-            background: rgb(255,213,0);
-            background: radial-gradient(circle, rgba(255,213,0,1) 0%, rgba(213,255,0,1) 77%, rgba(128,255,0,1) 100%);
+            background: rgb(204,240,241);
+            background: radial-gradient(circle, rgba(204,240,241,1) 0%, rgba(105,188,231,1) 51%, rgba(29,172,247,1) 77%);
             margin-top: 2em;
         }
         #questionContent, .questionNumber {
@@ -27,7 +27,8 @@
         }
         .questionNumber {
             margin-bottom: 0;
-            color: red;
+            color: #0b3555;
+            /*color: red;*/
         }
 
         .col, .row {
@@ -36,7 +37,7 @@
 
         .answer {
             text-align: left;
-            color: white;
+            color: black;
             padding-left: 1em;
             padding-right: 1em;
             font-size: 25px;
@@ -44,7 +45,7 @@
             min-height: 70px;
             border-radius: 20px;
             box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
-            background-color: #b58ecc;
+            background-color: #e6f3dc;
             /* min-width: 300px; */
         }
 
@@ -81,7 +82,7 @@
     <div class="col-md-4" id="manageAnswer">
         <div class="row">
             <div class="col-sm-12">
-                <a id="countDown" class="animated-button4">
+                <a id="countDown" class="animated-button8">
                   <span></span>
                   <span></span>
                   <span></span>
@@ -198,7 +199,7 @@
                             const answer = data[i];
                             var newAnswer = document.createElement("div");
                             newAnswer.setAttribute("class", "answer col");
-                            newAnswer.innerHTML = "<span style='font-weight: bold; font-style: italic; color: #191970'> " + answer.thisinh + ": " + "</span>" + answer.answer
+                            newAnswer.innerHTML = "<span style='font-weight: bold; font-style: italic; color: #191970'> " + answer.thisinh + ": " + "</span><br/>" + answer.answer
                             $("#dapAnThiSinh").append(newAnswer);
                         }
 
