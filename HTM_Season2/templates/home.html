@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block style %}
 <style>
     /*.container {
@@ -17,6 +18,12 @@
         transform: translate(-50%, -50%);
 }
 </style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    ost_path = "{% static 'ost/Britains_Brainiest_Theme_Song.mp3' %}";
+</script>
 {% endblock %}
 
 {% block content %}

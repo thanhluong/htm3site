@@ -833,7 +833,7 @@ function signalHandleAcceptingAnswer() {
 
 let countDownProgressBar = $("#countDownProgressBar");
 
-var demgio = new Audio("{% static 'vuotsong/VuotSong_15s.mp3' %}");
+var demgio = new Audio("{% static 'vuotsong/VuotSong_15s.mp3' %}"); // ok
 countDownProgressBar.click(function(){    
     demgio.play();
 
@@ -922,7 +922,7 @@ $("#showQuestion").click(function(event){
   }
 });
 
-var congratAudio = new Audio("{% static 'vuotsong/VCNV_cau_dung.mp3' %}");
+var congratAudio = new Audio("{% static 'vuotsong/VCNV_cau_dung.mp3' %}"); // ok
 $("#showAnswer").click(function(event){
   currentQuestionID = parseInt(document.getElementById("id_ochu").value);
   if(isNaN(currentQuestionID) || (currentQuestionID < 0) || (currentQuestionID > questions.length)){
@@ -945,7 +945,7 @@ $("#showAllAnswers").click(function(event){
   $("#chuongNgaiVat").html("<i>Chướng ngại vật: <b>" + chuongNgaiVatContent + "</b></i>");
 });
 
-var wrongSoundtrack = new Audio("{% static 'vuotsong/VuotSong_CauSai.mp3' %}");
+var wrongSoundtrack = new Audio("{% static 'vuotsong/VuotSong_CauSai.mp3' %}"); // ok
 $("#wrongAnswer").click(function(event){
   wrongSoundtrack.play();
   // Change bg color to gray for wrong answers
@@ -954,7 +954,7 @@ $("#wrongAnswer").click(function(event){
   $(".letter.redLetter").css("background-color", "green");
 });
 
-var bell_sound = new Audio("{% static 'vuotsong/bellsound.mp3' %}");
+var bell_sound = new Audio("{% static 'vuotsong/bellsound.mp3' %}"); // ok
 // Function to wait for the ringing of the bell
 setInterval(function() {
     $.ajax({

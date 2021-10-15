@@ -174,7 +174,7 @@
         // Signal the server to accept answers
         signalHandleAcceptingAnswer();
         
-        var demgio = new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");
+        var demgio = new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}"); // ok
         demgio.play();
 
         // Countdown 10s
@@ -247,7 +247,7 @@
         if (currentQuestionID <= 0 || currentQuestionID > 2){
             $("#questionAnswer").text("...");
         } else {
-            var showAnswerAudio =  new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}");
+            var showAnswerAudio =  new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}"); // ok
             showAnswerAudio.play();
 
             let currentQuestion = questions;

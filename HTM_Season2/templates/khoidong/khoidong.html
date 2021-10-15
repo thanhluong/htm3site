@@ -171,7 +171,7 @@
 
     let countDownBox = $("#countDown");
 
-    var demgio = new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");
+    var demgio = new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}"); // ok
     countDownBox.click(function() {
         // Disable the button to avoid second click
         countDownBox.attr("disabled", "disabled");
@@ -267,7 +267,7 @@
         }
     });
 
-    var showAnswerAudio =  new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}");
+    var showAnswerAudio =  new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}"); // ok
 
     $("#showAnswer").click(function(event){
         if (currentQuestionID <= 0 || currentQuestionID > questions.length){
