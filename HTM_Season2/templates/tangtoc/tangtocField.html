@@ -42,7 +42,7 @@
     <div class="row">
     {% for field in fields %}
         <div class="col-md-6">
-            <a class="btn btn-warning btn-block fieldname" href="{% url 'tangtocQuestions' field.code %}">{{field.name}}</a>
+            <a class="btn btn-primary btn-block fieldname" href="{% url 'tangtocQuestions' field.code %}">{{field.name}}</a>
         </div>
     {% endfor %}
     </div>
