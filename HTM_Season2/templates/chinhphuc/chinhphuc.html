@@ -30,7 +30,7 @@
     }
 
     td .cellContent:hover{
-        background: yellow !important;
+        background: #fde9b4 !important;
         color: white; 
     }
 
@@ -509,10 +509,10 @@
         // update background color
         var oldCell = $(".board" + selectedRow.toString() + selectedCol.toString());
         var newCell = $(".board" + newRow.toString() + newCol.toString());
-        if(oldCell.css("background-color") == "rgb(255, 255, 0)"){ // only reset yellow cells
+        if(oldCell.css("background-color") == "rgb(253, 233, 180)"){ // only reset yellow cells
             oldCell.css("background-color", "white");
         }
-        newCell.css("background-color", "yellow");
+        newCell.css("background-color", "#fde9b4");
         // update selectedRow and selectedCol
         selectedRow = newRow;
         selectedCol = newCol;
