@@ -204,6 +204,10 @@
     </center>
 </div>
 
+<audio id="audioDemGioBamChuong" preload="auto">
+    <source src="{% static 'chinhphuc/VeDich5sConLai.mp3' %}" type="audio/mpeg">
+</audio>
+
 {% csrf_token %}
 {% endblock %}
 {% block scripts %}
@@ -264,7 +268,8 @@
     var hard_questions = [];
 
     // Intialize media files
-    var demgioBamChuong =  new Audio("{% static 'chinhphuc/VeDich5sConLai.mp3' %}"); // ok
+    // var demgioBamChuong =  new Audio("{% static 'chinhphuc/VeDich5sConLai.mp3' %}"); // ok
+    var demgioBamChuong = document.getElementById("audioDemGioBamChuong");
     demgioBamChuong.load();
     var demgio =  new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");  // ok
     demgio.load();
