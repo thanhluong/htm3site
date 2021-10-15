@@ -1,20 +1,32 @@
 {% extends 'base.html' %}
 {% block style %}
 <style>
+    /*.container {
+        position: relative;
+    }*/
+
     #message {
-        text-align: center;
         color: white;
-        margin-top: 20%;
+        text-align: center;
+        margin: 0;
+        position: absolute;
+        width: 100%;
+        top: 50%;
+        left: 50%;
+        -ms-transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%);
 }
 </style>
 {% endblock %}
 
 {% block content %}
-    <div class="col-12" id="message">
-        {% if not message %}
-            <h1>Chào mừng đến với chương trình Hành Trình Magellan</h1>
-        {% else %}
-            <h1>{{message}}</h1>
-        {% endif %}
+    <div class="container">
+        <div id="message">
+            {% if not message %}
+                <h1>Chào mừng đến với chương trình Hành Trình Magellan</h1>
+            {% else %}
+                <h1>{{message}}</h1>
+            {% endif %}
+        </div>
     </div>
 {% endblock %}
