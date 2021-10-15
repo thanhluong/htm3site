@@ -208,6 +208,22 @@
     <source src="{% static 'chinhphuc/VeDich5sConLai.mp3' %}" type="audio/mpeg">
 </audio>
 
+<audio id="audioDemGio" preload="auto">
+    <source src="{% static 'khoidong/ChinhPhuc_15s.mp3' %}" type="audio/mpeg">
+</audio>
+
+<audio id="audioCongrat" preload="auto">
+    <source src="{% static 'chinhphuc/VeDichCauDung.mp3' %}" type="audio/mpeg">
+</audio>
+
+<audio id="audioBellSoundCPBC" preload="auto">
+    <source src="{% static 'chinhphuc/ChinhPhuc_BamChuong.mp3' %}" type="audio/mpeg">
+</audio>
+
+<audio id="audioBellSound" preload="auto">
+    <source src="{% static 'chinhphuc/VeDichNSHV.mp3' %}" type="audio/mpeg">
+</audio>
+
 {% csrf_token %}
 {% endblock %}
 {% block scripts %}
@@ -271,13 +287,17 @@
     // var demgioBamChuong =  new Audio("{% static 'chinhphuc/VeDich5sConLai.mp3' %}"); // ok
     var demgioBamChuong = document.getElementById("audioDemGioBamChuong");
     demgioBamChuong.load();
-    var demgio =  new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");  // ok
+    // var demgio =  new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}");  // ok
+    var demgio = document.getElementById("audioDemGio");
     demgio.load();
-    var congratAudio = new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}"); // ok
+    // var congratAudio = new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}"); // ok
+    var congratAudio = document.getElementById("audioCongrat");
     congratAudio.load();
-    var bell_sound_cpbc = new Audio("{% static 'chinhphuc/ChinhPhuc_BamChuong.mp3' %}"); // ok
+    // var bell_sound_cpbc = new Audio("{% static 'chinhphuc/ChinhPhuc_BamChuong.mp3' %}"); // ok
+    var bell_sound_cpbc = document.getElementById("audioBellSoundCPBC");
     bell_sound_cpbc.load();
-    var bell_sound = new Audio("{% static 'chinhphuc/VeDichNSHV.mp3' %}"); // ok
+    // var bell_sound = new Audio("{% static 'chinhphuc/VeDichNSHV.mp3' %}"); // ok
+    var bell_sound = document.getElementById("audioBellSound");
     bell_sound.load();
 
     // Store all questions in an array
