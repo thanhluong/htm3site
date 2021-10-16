@@ -56,7 +56,7 @@
     <div class="col-md-8" id="question">
         <div class="row">
             <div class="col-md-12">
-                <p class="questionNumber" style="font-size: 70px"><b><span id="questionNumber">0</span><span>/1</span></b></p>
+                <p class="questionNumber" style="font-size: 70px"><b><span id="questionNumber">0</span><span>/3</span></b></p>
                 <center>
                     <nav class="btn-bar nav-dark nav-khoidong">
                         <a href="#" class="btn btn-glass new-btn-danger" id="showAnswer">
@@ -218,14 +218,15 @@
     // Store all questions in an array
     let questions = {{ questions|safe }};
 
-    var currentQuestionID = {{ questID|safe }};
+    var currentQuestionID = 0;
 
     $("#nextQuestion").click(function(event) {
         $("#questionAnswer").text("");
-        if (currentQuestionID >= 2) {
+        if (currentQuestionID >= 4) {
             $("#questionContent").text("Kết thúc phần thi");
         } else {
-            let currentQuestion = questions;
+            let currentQuestion = questions[currentQuestionID];
+            let actualQuestionID = currentQuestion["questionID"];
             
             // Get all the information of this question
             let questionContent = currentQuestion["questionText"];
@@ -239,19 +240,19 @@
             
             
             // Update the current question to the server
-            makeAjaxCall(questionContent, currentQuestionID);
+            makeAjaxCall(questionContent, actualQuestionID);
             
         }
     });
 
     $("#showAnswer").click(function(event){
-        if (currentQuestionID <= 0 || currentQuestionID > 2){
+        if (currentQuestionID <= 0 || currentQuestionID > 3){
             $("#questionAnswer").text("...");
         } else {
             var showAnswerAudio =  new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}"); // ok
             showAnswerAudio.play();
 
-            let currentQuestion = questions;
+            let currentQuestion = questions[currentQuestionID - 1];
             let questionAnswer = currentQuestion["answer"];
             $("#questionAnswer").text("Đáp án: " + questionAnswer);
         }

@@ -36,7 +36,9 @@ def toDict(question: PhanLuotQuestion):
     """
     Helper method to convert a question to JSON format
     """
-    return dict(questionText=question.questionText, answer=question.answer)
+    return dict(questionText=question.questionText,
+                questionID=question.questionID,
+                answer=question.answer)
 
 @login_required
 def getFirstQuestion(request):
@@ -47,9 +49,9 @@ def getFirstQuestion(request):
         return render(request, template_name="home.html",
               context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
-    questions = [toDict(question) for question in PhanLuotQuestion.objects.filter(questionSetID=questionSet.SETID).order_by("questionID")][0]
+    questions = [toDict(question) for question in PhanLuotQuestion.objects.filter(questionSetID=questionSet.SETID).order_by("questionID")][:3]
 
-    return render(request, template_name="phanluot/phanluot.html", context=dict(questions=questions, questID=0))
+    return render(request, template_name="phanluot/phanluot.html", context=dict(questions=questions))
 
 @login_required
 def getSecondQuestion(request):
@@ -60,6 +62,6 @@ def getSecondQuestion(request):
         return render(request, template_name="home.html",
               context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
-    questions = [toDict(question) for question in PhanLuotQuestion.objects.filter(questionSetID=questionSet.SETID).order_by("questionID")][1]
+    questions = [toDict(question) for question in PhanLuotQuestion.objects.filter(questionSetID=questionSet.SETID).order_by("questionID")][3:6]
 
-    return render(request, template_name="phanluot/phanluot.html", context=dict(questions=questions, questID=1))
+    return render(request, template_name="phanluot/phanluot.html", context=dict(questions=questions))
