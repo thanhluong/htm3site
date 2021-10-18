@@ -18,11 +18,25 @@ To start the app in LAN, run:
 ```
 python manage.py runserver 0.0.0.0:8000
 ```
-## Screenshots
-### Login page
+
+## Usage
+
+### Create superuser account
+
+```
+python manange.py createsuperuser
+```
+
+### Login
+
+Enter your login credentials 
+
 ![](https://i.imgur.com/j0HrW1a.png)
 
-### Welcome page
+### Home page
+
+There is a Navigation bar which you can use to jump to contest's rounds.
+
 ![](https://i.imgur.com/R1C2lVG.png)
 
 ### Leaderboard
