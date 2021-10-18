@@ -18,3 +18,25 @@ To start the app in LAN, run:
 ```
 python manage.py runserver 0.0.0.0:8000
 ```
+## Screenshots
+### Login page
+![](https://i.imgur.com/j0HrW1a.png)
+
+### Welcome page
+![](https://i.imgur.com/R1C2lVG.png)
+
+### Leaderboard
+Leaderboard with information about competition rating, performance points, profile picture and full name of all competitors.
+![](https://i.imgur.com/sglidYa.png)
+
+### Round 1: "Nhổ Neo"
+![](https://i.imgur.com/Qo9rXLH.png)
+
+### Round 2: "Vượt Sóng"
+![](https://i.imgur.com/eMF5wZu.png)
+
+### Round 3: "Bứt Phá"
+![](https://i.imgur.com/9IHOmrp.png)
+
+### Round 4: "Chinh Phục"
+![](https://i.imgur.com/yG0RWqJ.png)
