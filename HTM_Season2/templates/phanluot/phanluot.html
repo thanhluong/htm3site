@@ -96,7 +96,7 @@
                 <center>
                     <nav class="btn-bar nav-dark nav-answer">
                         <a href="#" class="btn btn-glass new-btn-info" id="showDapAnThiSinh">
-                          <i class="fa fa-check"></i> Đáp án thí sinh
+                          <i class="fa fa-check"></i> Câu trả lời thí sinh
                         </a>
                     </nav>
                 </center>
@@ -199,7 +199,7 @@
                             const answer = data[i];
                             var newAnswer = document.createElement("div");
                             newAnswer.setAttribute("class", "answer col");
-                            newAnswer.innerHTML = "<span style='font-weight: bold; font-style: italic; color: #191970'> " + answer.thisinh + ": " + "</span><br/>" + answer.answer
+                            newAnswer.innerHTML = "<span style='font-weight: bold; font-style: italic; color: #191970'> " + answer.thisinh + ": " + "</span><br/>" + answer.answer.toUpperCase();
                             $("#dapAnThiSinh").append(newAnswer);
                         }
 
