@@ -145,6 +145,7 @@
                             <option value="3" data-color="#0000ff">Blue</option>
                             <option value="4" data-color="#008000">Green</option>
                             <option value="5" data-color="#ffffff">White</option>
+                            <option value="6" data-color="#800080">Purple</option>
                         </select>
                     </div>
                 </div>
@@ -273,7 +274,7 @@
     }
 
     // Board size
-    const BOARD_SIZE = 6;
+    const BOARD_SIZE = 5;
 
     // Initialize questions 2D-array
     var questionAt = [];
@@ -388,6 +389,8 @@
             }
         }
 
+        const easy_pos = ["21", "22", "23", "24", "31", "41", "42", "43", "44"];
+        const medi_pos = ["12", "14", "25", "32", "34", "45", "51", "55"];
         htmlContent = '';
 
         for(i = 0; i <= BOARD_SIZE; i++){
@@ -406,12 +409,30 @@
                 }
 
                 htmlContent += '<td><div class="cellContent board' + i.toString() + j.toString() + '">';
-                let randVal = randInt(1, nEasy+nMedium+nHard);
-                if(randVal <= nEasy){
+
+                // no more random                
+                // let randVal = randInt(1, nEasy+nMedium+nHard);
+                // if(randVal <= nEasy){
+                //     questionAt[i - 1].push("easy");
+                //     nEasy -= 1;
+                // }
+                // else if (randVal <= nEasy + nMedium){
+                //     questionAt[i - 1].push("medium");
+                //     nMedium -= 1;
+                //     htmlContent += '!';
+                // }
+                // else{
+                //     questionAt[i - 1].push("hard");
+                //     nHard -= 1;
+                //     htmlContent += '?';
+                // }
+
+                pos_str = String(i) + String(j);
+                if(easy_pos.includes(pos_str)) {
                     questionAt[i - 1].push("easy");
                     nEasy -= 1;
                 }
-                else if (randVal <= nEasy + nMedium){
+                else if (medi_pos.includes(pos_str)) {
                     questionAt[i - 1].push("medium");
                     nMedium -= 1;
                     htmlContent += '!';
@@ -435,7 +456,7 @@
     }
 
     function randomizeQuestions(){
-        if(questions.length >= 36) return 0;
+        if(questions.length >= 25) return 0;
         // questions = [];
         var i;
         for(i = 0; i < 12; i++)
