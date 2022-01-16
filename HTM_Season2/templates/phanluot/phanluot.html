@@ -231,7 +231,7 @@
             // Get all the information of this question
             let questionContent = currentQuestion["questionText"];
         
-            $("#questionContent").text(questionContent);
+            $("#questionContent").html(questionContent);
             // currentQuestionID begin with 0 for array index, but should be 1 in the database
             currentQuestionID++;
             $("#questionNumber").text(currentQuestionID);
