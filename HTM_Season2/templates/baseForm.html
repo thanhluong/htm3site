@@ -61,7 +61,7 @@
                     Create new data
                     {% endif %}
                 </h3>
-                <form method="POST" enctype="multipart/form-data">
+                <form method="POST" autocomplete="off" enctype="multipart/form-data">
                     {{ form.as_p }}
                     {% csrf_token %}
                     <center>
