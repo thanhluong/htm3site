@@ -72,6 +72,6 @@ def getQuestions(request):
                       context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
     questions = [toDict(question) for question in KhoiDongQuestion.objects.filter(
-        questionSetID=questionSet.SETID).order_by("questionID")]
+        questionSetID=questionSetID).order_by("questionID")]
 
     return render(request, template_name="khoidong/khoidong.html", context=dict(questions=questions))

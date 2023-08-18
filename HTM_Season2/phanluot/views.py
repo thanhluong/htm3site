@@ -54,7 +54,7 @@ def getFirstQuestion(request):
                       context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
     questions = [toDict(question) for question in PhanLuotQuestion.objects.filter(
-        questionSetID=questionSet.SETID).order_by("questionID")][:3]
+        questionSetID=questionSetID).order_by("questionID")][:3]
 
     return render(request, template_name="phanluot/phanluot.html", context=dict(questions=questions))
 
