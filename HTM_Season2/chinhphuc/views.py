@@ -7,9 +7,11 @@ from django.contrib.auth.decorators import login_required
 from .forms import ChinhPhucQuestionForm
 from .models import ChinhPhucQuestion
 
-from roundconfig import questionSet
+from roundconfig.models import QuestionSetConfig
 
 # Create your views here.
+questionSetID = QuestionSetConfig.objects.all().first().questionSetId
+
 
 class NewQuestion(generic.CreateView):
     """
@@ -30,6 +32,7 @@ class NewQuestion(generic.CreateView):
             return render(request, template_name="home.html",
                           context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
+
 def getFileType(fileName):
     """
     Helper fucntion to get the file type of the given file name
@@ -42,6 +45,7 @@ def getFileType(fileName):
         return "image"
     else:
         return "sound"
+
 
 def toDict(question: ChinhPhucQuestion):
     """
@@ -56,9 +60,10 @@ def toDict(question: ChinhPhucQuestion):
                     fileType=getFileType(question.file.url))
     else:
         return dict(questionID=question.questionID,
-                    questionText=question.questionText, 
+                    questionText=question.questionText,
                     answer=question.answer,
                     difficulty=question.difficulty)
+
 
 @login_required
 def getQuestions(request):
@@ -67,7 +72,8 @@ def getQuestions(request):
     """
     if not request.user.is_staff:
         return render(request, template_name="home.html",
-              context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
+                      context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
-    questions = [toDict(question) for question in ChinhPhucQuestion.objects.filter(questionSetID=questionSet.SETID).order_by("questionID")]
+    questions = [toDict(question) for question in ChinhPhucQuestion.objects.filter(
+        questionSetID=questionSet.SETID).order_by("questionID")]
     return render(request, template_name="chinhphuc/chinhphuc.html", context=dict(questions=questions))
