@@ -7,11 +7,9 @@ from django.http import HttpResponseBadRequest
 from .forms import TangTocQuestionForm
 from .models import TangTocQuestion, TangTocQuestionField
 
-from roundconfig.models import QuestionSetConfig
+from roundconfig.views import getQuestionSetId
 
 # Create your views here.
-
-questionSetID = QuestionSetConfig.objects.all().first().questionSetId
 
 
 class NewQuestion(CreateView):
@@ -85,7 +83,7 @@ def getNewQuestion(request, field):
 
     # Get all questions of this query set
     questionsSets = TangTocQuestion.objects.filter(
-        questionField=field).filter(questionSetID=questionSetID)
+        questionField=field).filter(questionSetID=getQuestionSetId())
 
     # Mark the field as unavailable
     field.used = True

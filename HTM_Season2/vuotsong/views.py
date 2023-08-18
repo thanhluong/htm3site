@@ -7,11 +7,9 @@ from django.contrib.auth.decorators import login_required
 from .forms import VuotSongQuestionForm
 from .models import VuotSongQuestion
 
-from roundconfig.models import QuestionSetConfig
+from roundconfig.views import getQuestionSetId
 
 # Create your views here.
-
-questionSetID = QuestionSetConfig.objects.all().first().questionSetId
 
 
 class NewQuestion(generic.CreateView):
@@ -72,6 +70,6 @@ def getQuestions(request):
                       context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
     questions = [toDict(question) for question in VuotSongQuestion.objects.filter(
-        questionSetID=questionSetID).order_by("questionID")]
+        questionSetID=getQuestionSetId()).order_by("questionID")]
     html = "Vuot Song: " + str(request)
     return render(request, template_name="vuotsong/vuotsong.html", context=dict(questions=questions))

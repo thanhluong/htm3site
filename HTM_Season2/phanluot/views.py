@@ -7,12 +7,9 @@ from django.urls import reverse_lazy
 from .forms import PhanLuotQuestionForm
 from .models import PhanLuotQuestion
 
-from roundconfig.models import QuestionSetConfig
+from roundconfig.views import getQuestionSetId
 
 # Create your views here.
-
-# questionSetID = QuestionSetConfig.objects.all().first().questionSetId
-questionSetID = 1
 
 
 class NewQuestion(generic.CreateView):
@@ -54,7 +51,7 @@ def getFirstQuestion(request):
                       context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
     questions = [toDict(question) for question in PhanLuotQuestion.objects.filter(
-        questionSetID=questionSetID).order_by("questionID")][:3]
+        questionSetID=getQuestionSetId()).order_by("questionID")][:3]
 
     return render(request, template_name="phanluot/phanluot.html", context=dict(questions=questions))
 
@@ -69,6 +66,6 @@ def getSecondQuestion(request):
                       context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
     questions = [toDict(question) for question in PhanLuotQuestion.objects.filter(
-        questionSetID=questionSetID).order_by("questionID")][3:6]
+        questionSetID=getQuestionSetId()).order_by("questionID")][3:6]
 
     return render(request, template_name="phanluot/phanluot.html", context=dict(questions=questions))
