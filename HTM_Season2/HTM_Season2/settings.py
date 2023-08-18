@@ -128,6 +128,8 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# Auto primary key
+DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 
 # ================= PROJECT CONFIGURATION ==================
@@ -149,5 +151,3 @@ STATICFILES_DIRS = [
 ]
 
 # STATIC_ROOT = os.path.join(BASE_DIR, "static")
-
-
