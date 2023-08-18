@@ -15,7 +15,7 @@ from roundconfig.views import getQuestionSetId
 class NewQuestion(generic.CreateView):
     """
     Class-based view to handle creating a new question
-    Usig a class-based view will provides us a defautl error-handling
+    Using a class-based view will provides us a defautl error-handling
     """
 
     form_class = VuotSongQuestionForm
