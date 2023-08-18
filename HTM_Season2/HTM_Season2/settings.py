@@ -78,6 +78,13 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'HTM_Season2.wsgi.application'
+ASGI_APPLICATION = 'HTM_Season2.routing.application'
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 
 # Database
