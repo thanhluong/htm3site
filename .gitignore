@@ -13,3 +13,6 @@ db.sqlite3
 
 # Ignore the media file
 media/*
+
+# Ignore DB migration files
+HTM_Season2/*/migrations/*
