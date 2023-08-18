@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'tangtoc',
     'chinhphuc',
     'phanluot',
-    'roundconfig'
+    'roundconfig',
+    'channels'
 ]
 
 MIDDLEWARE = [
