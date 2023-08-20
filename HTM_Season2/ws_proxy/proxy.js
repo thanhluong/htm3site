@@ -1,3 +1,6 @@
+import * as dotenv from "dotenv";
+dotenv.config();
+
 import { WebSocketServer } from "ws";
 
 const WS_PORT = process.env.WS_PORT || 4443;
