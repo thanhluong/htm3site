@@ -7,6 +7,8 @@ const WS_PORT = process.env.WS_PORT || 4443;
 
 const wss = new WebSocketServer({ port: WS_PORT });
 
+console.log(`WS Server is listening on port ${WS_PORT}`);
+
 wss.broadcast = function broadcast(msg) {
   wss.clients.forEach(function each(client) {
     client.send(msg);
