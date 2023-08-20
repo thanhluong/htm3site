@@ -4,6 +4,7 @@ dotenv.config();
 import { WebSocketServer } from "ws";
 
 const WS_PORT = process.env.WS_PORT || 4443;
+const SECRET_KEY = process.env.SECRET_KEY || "secret";
 
 const wss = new WebSocketServer({ port: WS_PORT });
 
