@@ -16,3 +16,6 @@ media/*
 
 # Ignore DB migration files
 HTM_Season2/*/migrations/*
+
+# Ignore local settings
+HTM_Season2/HTM_Season2/local_settings.py
