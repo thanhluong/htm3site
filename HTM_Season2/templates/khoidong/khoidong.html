@@ -175,6 +175,17 @@
       })
   }
 
+  function signalHandleStopAcceptingAnswer() {
+    $.ajax({
+        url: "{% url 'handleStopAcceptingAnswer' %}",
+        method: "GET",
+        traditional: true,
+        success: function (data) {
+            // Do nothing
+        }
+    })
+  }
+
   let countDownBox = $("#countDown");
 
   var demgio = new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}"); // ok
@@ -195,7 +206,7 @@
               countDownBox.html("<span></span><span></span><span></span><span></span>" + newTime);
           } else {
               // Send the request to server to stop received data
-              signalHandleAcceptingAnswer();
+              signalHandleStopAcceptingAnswer();
 
               // Make request to get the final answer
               $.ajax({
