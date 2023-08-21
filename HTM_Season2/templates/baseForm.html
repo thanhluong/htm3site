@@ -1,114 +1,159 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-<head>
-    <meta charset="utf-8">
-    <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}" />
     <title>Hành trình Magellan</title>
     <style>
-        html {
-            min-height: 100%;
-            position: relative;
-        }
-        body {
-            background-color: #4da6ff;
-            min-width: 1280px;
-            margin-bottom: 30px;
-        }
-        footer {
-            width: 100%;
-            text-align: center;
-            position: relative;
-            bottom: 0;
-            font-style: italic;
-        }
-        button[type="submit"] {
-            display: inline-block;
-            margin-top: 20px;
-            margin-right: 10px;
-        }
-        button[id="ringBell"]{
-            margin-top: 20px;
-            margin-right: 10px;
-        }
-        button[id="gianhQuyen"]{
-            margin-top: 20px;
-            margin-right: 10px;
-        }
-        button[id="ngoiSaoHiVong"]{
-            margin-top: 20px;
-            margin-right: 10px;
-        }
+      html {
+        min-height: 100%;
+        position: relative;
+      }
+      body {
+        background-color: #a7c9ea;
+        min-width: 1280px;
+        margin-bottom: 30px;
+      }
+      footer {
+        width: 100%;
+        text-align: center;
+        position: relative;
+        bottom: 0;
+        font-style: italic;
+      }
+      button[type="submit"] {
+        display: inline-block;
+        margin-top: 20px;
+        margin-right: 10px;
+      }
+      button[id="ringBell"] {
+        margin-top: 20px;
+        margin-right: 10px;
+      }
+      button[id="gianhQuyen"] {
+        margin-top: 20px;
+        margin-right: 10px;
+      }
+      button[id="ngoiSaoHiVong"] {
+        margin-top: 20px;
+        margin-right: 10px;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <div class="container">
-        {% if answerView %}
-        <div class="d-flex justify-content-center mt-5">
-            <span class="border rounded border-secondary p-5 mr-7" style="background-color: white">
-                <div id="questionContent" style="font-weight: bold; font-size: 20px"></div>
-            </span>
-        </div>
-        {% endif %}
+      {% if answerView %}
+      <div class="d-flex justify-content-center mt-5">
+        <span
+          class="border rounded border-secondary p-5 mr-7"
+          style="background-color: white"
+        >
+          <div
+            id="questionContent"
+            style="font-weight: bold; font-size: 20px"
+          ></div>
+        </span>
+      </div>
+      {% endif %}
 
-        <div class="d-flex justify-content-center mt-5">
-            <span class="border rounded border-secondary p-5 mr-7" style="background-color: white">
-                <h3 class="d-flex justify-content-center p-2">
-                    {% if answerView %}
-                    Trả lời
-                    {% else %}
-                    Create new data
-                    {% endif %}
-                </h3>
-                <form method="POST" autocomplete="off" enctype="multipart/form-data">
-                    {{ form.as_p }}
-                    {% csrf_token %}
-                    <center>
-                        <button type="submit" id="submitBtn" class="btn btn-lg btn-primary btn-outline-primary">Gửi</button>
-                    </center>
-                </form>
-                <br>
+      <div class="d-flex justify-content-center mt-5">
+        <span
+          class="border rounded border-secondary p-5 mr-7"
+          style="background-color: white"
+        >
+          <h3 class="d-flex justify-content-center p-2">
+            {% if answerView %} Trả lời {% else %} Create new data {% endif %}
+          </h3>
 
-                {% if answerView %}
-                    <center>
-                    
-                        {% if currentRound == "vuotsong" %}
-                            <button id="ringBell" class="btn btn-success" disabled="true">
-                                Bấm chuông
-                            </button>
-                        {% endif %}
+          {% if answerView %}
+          <!-- Form to upload answer -->
+          <style>
+            .htmbtn-submit-answer {
+              margin-top: 2em;
+            }
+            .htmbtn-input-group {
+              margin-top: 2em;
+            }
+          </style>
 
-                        {% if currentRound == "chinhphuc" %}
-                            <button id="gianhQuyen" class="btn btn-success" disabled="true">
-                                Giành quyền trả lời
-                            </button>
-                            <button id="ngoiSaoHiVong" class="btn btn-warning float-none" disabled="true">
-                                Ngôi sao hi vọng
-                            </button>
-                        {% endif %}
-                        
-                    </center>
-                    
-                    <br><br>
-                    <h5>Câu trả lời vừa gửi: </h5>
-                    <b><h5 id="thiSinhSubmission"></h5></b>
-                {% endif %}
-         
-            </span>
-        </div>
+          <div class="input-group htmbtn-input-group">
+            <span class="input-group-addon">$</span>
+            <input
+              type="text"
+              placeholder="Câu trả lời của bạn"
+              name="answer"
+              id="answer"
+              class=""
+            />
+          </div>
+          <center>
+            <button
+              type="button"
+              id="submitBtn"
+              class="btn btn-secondary htmbtn-submit-answer"
+            >
+              Gửi câu trả lời
+            </button>
+          </center>
+
+          {% else %}
+          <!-- Form to upload question -->
+          <form method="POST" autocomplete="off" enctype="multipart/form-data">
+            {{ form.as_p }} {% csrf_token %}
+            <center>
+              <button
+                type="submit"
+                id="submitBtn"
+                class="btn btn-lg btn-primary btn-outline-primary"
+              >
+                Gửi
+              </button>
+            </center>
+          </form>
+          {% endif %}
+
+          <br />
+
+          {% if answerView %}
+          <center>
+            {% if currentRound == "vuotsong" %}
+            <button id="ringBell" class="btn btn-success" disabled="true">
+              Bấm chuông
+            </button>
+            {% endif %} {% if currentRound == "chinhphuc" %}
+            <button id="gianhQuyen" class="btn btn-success" disabled="true">
+              Giành quyền trả lời
+            </button>
+            <button
+              id="ngoiSaoHiVong"
+              class="btn btn-warning float-none"
+              disabled="true"
+            >
+              Ngôi sao hi vọng
+            </button>
+            {% endif %}
+          </center>
+
+          <br /><br />
+          <h5>Câu trả lời vừa gửi:</h5>
+          <b><h5 id="thiSinhSubmission"></h5></b>
+          {% endif %}
+        </span>
+      </div>
     </div>
-</body>
-<footer>
+  </body>
+  <footer>
     <div class="container">
-        <b><span>Developers: Duc Le (LE_MAI_THANH_DUC), Luong Doan (DOAN_NGUYEN_THANH_LUONG) - 2019. Report bugs: <a href="mailto:duc.mtle@gmail.com">duc.mtle@gmail.com</a> or <a href="mailto:doannguyenthanhluong@gmail.com">doannguyenthanhluong@gmail.com</a></span></b>
+      <b>HTM5</b>
     </div>
-</footer>
+  </footer>
 
-<script src="{% static 'jquery.js' %}"></script>
-<script src="{% static 'popper.min.js' %}"></script>
-<script src="{% static 'bootstrap.min.js' %}"></script>
-<script>
+  <script src="{% static 'jquery.js' %}"></script>
+  <script src="{% static 'popper.min.js' %}"></script>
+  <script src="{% static 'bootstrap.min.js' %}"></script>
+  <script>
 
     var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
 
@@ -159,7 +204,7 @@
                 xhr.setRequestHeader("X-CSRFToken", csrftoken);
             }
         }
-    });    
+    });
 
     var formGroups = $('p');
     for(let i=0; i < formGroups.length; i++) {
@@ -272,7 +317,7 @@
             }
         })
     }, 250);
-    
+
     let ngoiSaoHiVong = $("#ngoiSaoHiVong");
 
     ngoiSaoHiVong.click(function(){
@@ -305,7 +350,5 @@
     }, 500);
 
     {% endif %}
-
-</script>
-
+  </script>
 </html>
