@@ -6,3 +6,7 @@ from .models import QuestionSetConfig
 
 def getQuestionSetId():
     return QuestionSetConfig.objects.all().first().questionSetId
+
+
+def getCurrentRound():
+    return QuestionSetConfig.objects.all().first().currentRound

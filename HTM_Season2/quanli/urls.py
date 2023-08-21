@@ -4,7 +4,7 @@ from .views import NewAnswer
 from .views import ringBell, resetRingingState
 from .views import gianhQuyen, beginAcceptingGQ, stopAcceptingGQ, resetGQState
 from .views import ngoiSaoHiVong, resetNSHVState
-from .views import beginOrStopAcceptingAnswer, getDapAnThiSinh
+from .views import beginAcceptingAnswer, stopAcceptingAnswer, getDapAnThiSinh
 
 urlpatterns = [
     # Handle grading requests
@@ -27,7 +27,10 @@ urlpatterns = [
     path("ngoiSaoHiVong/", ngoiSaoHiVong, name="ngoiSaoHiVong"),
     path("resetNSHVState/", resetNSHVState, name="resetNSHVState"),
     # Handle accepting new answer or stop accepting answer
-    path("handleAcceptingAnswer/", beginOrStopAcceptingAnswer, name="handleAcceptingAnswer"),
+    path("handleAcceptingAnswer/", beginAcceptingAnswer,
+         name="handleAcceptingAnswer"),
+    path("handleStopAcceptingAnswer/", stopAcceptingAnswer,
+         name="handleStopAcceptingAnswer"),
     # Handle display dapan
     path("getDapAnThiSinh/", getDapAnThiSinh, name="getDapAnThiSinh")
 ]
