@@ -232,20 +232,21 @@
         $('.custom-file-label').html(fileName);
     })
 
-    // Make AJAX calls tot update the current question
     {% if answerView %}
-    setInterval(function() {
-        $.ajax({
-            url: "{% url 'currentQuestion' %}",
-            success: function(data) {
-                data = JSON.parse(data);
-                $("#questionContent").text(data.question);
-                if(data.hasOwnProperty('answer')){
-                    $("#thiSinhSubmission").text(data.answer);
-                }
-            }
-        })
-    }, 500);
+    // Make AJAX calls tot update the current question
+    // But no need anymore since we are using websockets
+    // setInterval(function() {
+    //     $.ajax({
+    //         url: "{% url 'currentQuestion' %}",
+    //         success: function(data) {
+    //             data = JSON.parse(data);
+    //             $("#questionContent").text(data.question);
+    //             if(data.hasOwnProperty('answer')){
+    //                 $("#thiSinhSubmission").text(data.answer);
+    //             }
+    //         }
+    //     })
+    // }, 500);
     {% endif %}
 
     {% if currentRound == "vuotsong" %}

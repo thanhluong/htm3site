@@ -18,11 +18,12 @@ from vuotsong.forms import VuotSongAnswerForm
 from chinhphuc.forms import ChinhPhucAnswerForm
 from phanluot.forms import PhanLuotAnswerForm
 
+from roundconfig.views import getCurrentRound, setCurrentRound
+
 import json
 
 currentQuestionContent = ""
 currentQuestionID = 0
-currentRound = "khoidong"
 
 acceptingAnswer = False
 
@@ -31,11 +32,11 @@ gianhQuyenUser = ""
 
 # TODO: Add form classes for other rounds here
 FORM_CLASSES = {
-                "khoidong": KhoiDongAnswerForm,
-                "vuotsong": VuotSongAnswerForm,
-                "chinhphuc": ChinhPhucAnswerForm,
-                "phanluot": PhanLuotAnswerForm
-                }
+    "khoidong": KhoiDongAnswerForm,
+    "vuotsong": VuotSongAnswerForm,
+    "chinhphuc": ChinhPhucAnswerForm,
+    "phanluot": PhanLuotAnswerForm
+}
 
 currentRinger = ""
 allRingers = []
@@ -44,6 +45,8 @@ currentNSHVer = ""
 allNSHVers = []
 
 # Create your views here.
+
+
 @login_required
 def score(request, username=None, score=None):
     """
@@ -66,7 +69,8 @@ def score(request, username=None, score=None):
             userlist = []
             for score in scores:
                 print("***", score.user.profile_pic)
-                userlist.append({"score": score.score, "user": score.user, "avatar": score.user.profile_pic})
+                userlist.append(
+                    {"score": score.score, "user": score.user, "avatar": score.user.profile_pic})
             return render(request, template_name="quanli/score.html", context={"scores": scores, "userlist": userlist, "footerDisplay": True})
         else:
             # This request is for updating
@@ -82,14 +86,17 @@ class NewAnswer(generic.CreateView):
     """
     Class-based view to submit a new answer to the database
     """
-    global currentQuestionID, currentRound, FORM_CLASSES, acceptingAnswer
+    global currentQuestionID, FORM_CLASSES, acceptingAnswer
+    currentRound = getCurrentRound()
 
     form_class = FORM_CLASSES[currentRound]
     success_url = reverse_lazy("answer")
     template_name = "baseForm.html"
 
-    # Handle the post method to inlcude question number and
+    # Handle the post method to include question number and
     def post(self, request):
+        currentRound = getCurrentRound()
+
         if currentRound not in ["vuotsong", "khoidong", "chinhphuc", "phanluot"]:
             return HttpResponseRedirect(reverse_lazy("answer"))
 
@@ -109,14 +116,18 @@ class NewAnswer(generic.CreateView):
             # Find the correct round
             # Only these 2 rounds require submission to server
             if currentRound == "khoidong":
-                answer.question = KhoiDongQuestion.objects.get(questionID=currentQuestionID)
+                answer.question = KhoiDongQuestion.objects.get(
+                    questionID=currentQuestionID)
             elif currentRound == "vuotsong":
-                answer.question = VuotSongQuestion.objects.get(questionID=currentQuestionID)
+                answer.question = VuotSongQuestion.objects.get(
+                    questionID=currentQuestionID)
             elif currentRound == "chinhphuc":
-                answer.question = ChinhPhucQuestion.objects.get(questionID=currentQuestionID)
+                answer.question = ChinhPhucQuestion.objects.get(
+                    questionID=currentQuestionID)
             elif currentRound == "phanluot":
-                answer.question = PhanLuotQuestion.objects.get(questionID=currentQuestionID)
-        
+                answer.question = PhanLuotQuestion.objects.get(
+                    questionID=currentQuestionID)
+
             # Save the answer
             answer.save()
 
@@ -125,21 +136,62 @@ class NewAnswer(generic.CreateView):
         return render(request, template_name=self.template_name, context={"form": form, "answerView": True, "currentRound": currentRound})
 
     def get(self, request):
+        currentRound = getCurrentRound()
         form = self.form_class()
         return render(request, template_name=self.template_name, context={"form": form, "answerView": True, "currentRound": currentRound})
 
+
+@login_required
+def httpSubmitAnswer(request):
+    global currentQuestionID, FORM_CLASSES, acceptingAnswer
+    currentRound = getCurrentRound()
+
+    if request.method != "POST":
+        return HttpResponseForbidden()
+
+    if currentRound not in ["vuotsong", "khoidong", "chinhphuc", "phanluot"]:
+        return HttpResponseForbidden()
+
+    form_class = FORM_CLASSES[currentRound]
+
+    if currentQuestionID > 0 and acceptingAnswer:
+        user = request.user
+        answer = request.POST.get("answer")
+        question = None
+
+        # Find the correct round
+        if currentRound == "khoidong":
+            question = KhoiDongQuestion.objects.get(
+                questionID=currentQuestionID)
+        elif currentRound == "vuotsong":
+            question = VuotSongQuestion.objects.get(
+                questionID=currentQuestionID)
+        elif currentRound == "chinhphuc":
+            question = ChinhPhucQuestion.objects.get(
+                questionID=currentQuestionID)
+        elif currentRound == "phanluot":
+            question = PhanLuotQuestion.objects.get(
+                questionID=currentQuestionID)
+
+        formAnswer = form_class(thisinh=user,
+                                question=question,
+                                answer=answer)
+        formAnswer.save()
+
+
 @login_required
 def updateRound(request):
-    global currentRound
-
     if request.method == "POST":
         if not request.user.is_staff:
             return HttpResponseForbidden()
         dataPost = request.POST
         # Update currentRound
-        currentRound = dataPost.get("roundName")
+        roundName = dataPost.get("roundName")
+        setCurrentRound(roundName)
         return HttpResponse("currentRound updated!")
+
     return HttpResponseForbidden()
+
 
 def currentQuestion(request):
     """
@@ -148,29 +200,38 @@ def currentQuestion(request):
     Accepted methods:
         GET: Return the current question content in JSON format
         POST: Update the current question content
-    """ 
-    global currentQuestionContent, currentQuestionID, currentRound, acceptingAnswer
+    """
+    global currentQuestionContent, currentQuestionID, acceptingAnswer
+    currentRound = getCurrentRound()
 
     if request.method == "GET":
         # Get the current question
         if currentRound == "khoidong":
-            question = KhoiDongQuestion.objects.get(questionID=currentQuestionID)
+            question = KhoiDongQuestion.objects.get(
+                questionID=currentQuestionID)
         elif currentRound == "vuotsong":
-            question = VuotSongQuestion.objects.get(questionID=currentQuestionID)
+            question = VuotSongQuestion.objects.get(
+                questionID=currentQuestionID)
         elif currentRound == "chinhphuc":
-            question = ChinhPhucQuestion.objects.get(questionID=currentQuestionID) 
+            question = ChinhPhucQuestion.objects.get(
+                questionID=currentQuestionID)
         elif currentRound == "phanluot":
-            question = PhanLuotQuestion.objects.get(questionID=currentQuestionID)
+            question = PhanLuotQuestion.objects.get(
+                questionID=currentQuestionID)
 
         # Get all answers for this question
         if currentRound == "khoidong":
-            lastAnswer = KhoiDongAnswer.objects.filter(question=question).filter(thisinh=request.user).order_by("-id")
+            lastAnswer = KhoiDongAnswer.objects.filter(
+                question=question).filter(thisinh=request.user).order_by("-id")
         elif currentRound == "vuotsong":
-            lastAnswer = VuotSongAnswer.objects.filter(question=question).filter(thisinh=request.user).order_by("-id")
+            lastAnswer = VuotSongAnswer.objects.filter(
+                question=question).filter(thisinh=request.user).order_by("-id")
         elif currentRound == "chinhphuc":
-            lastAnswer = ChinhPhucAnswer.objects.filter(question=question).filter(thisinh=request.user).order_by("-id")
+            lastAnswer = ChinhPhucAnswer.objects.filter(
+                question=question).filter(thisinh=request.user).order_by("-id")
         elif currentRound == "phanluot":
-            lastAnswer = PhanLuotAnswer.objects.filter(question=question).filter(thisinh=request.user).order_by("-id")
+            lastAnswer = PhanLuotAnswer.objects.filter(
+                question=question).filter(thisinh=request.user).order_by("-id")
 
         # print("***", question.values("questionText"))
         # for myiter in lastAnswer.values("answer"):
@@ -181,11 +242,11 @@ def currentQuestion(request):
             lastAnswer = lastAnswer[0]["answer"]
             return JsonResponse(json.dumps(dict(question=currentQuestionContent, answer=lastAnswer)), safe=False)
         return JsonResponse(json.dumps(dict(question=currentQuestionContent)), safe=False)
-    
+
     elif request.method == "POST":
         if request.user.is_staff:
             dataPost = request.POST
-            
+
             # Update the data for server to know about current question info
             currentQuestionContent = dataPost.get("question")
             currentQuestionID = int(dataPost.get("questionID"))
@@ -195,6 +256,7 @@ def currentQuestion(request):
         else:
             return HttpResponseForbidden()
 
+
 @login_required
 def ringBell(request):
     """
@@ -203,7 +265,7 @@ def ringBell(request):
     Accepted methods:
         GET: Return the current ringer name in JSON format
         POST: Update the current ringer name
-    """ 
+    """
     global currentRinger
     global allRingers
 
@@ -228,11 +290,12 @@ def ringBell(request):
         print(currentRinger, "ringed a bell!")
         return HttpResponse("Ringed!")
 
+
 @login_required
 def resetRingingState(request):
     """
     Function to reset the state of the bell
-    """ 
+    """
     global currentRinger
 
     # Only POST method is allowed
@@ -245,6 +308,7 @@ def resetRingingState(request):
         return HttpResponse("Already reset!")
     else:
         return HttpResponseForbidden()
+
 
 @login_required
 def ngoiSaoHiVong(request):
@@ -272,11 +336,12 @@ def ngoiSaoHiVong(request):
         print(currentRinger, " da chon NSHV!")
         return HttpResponse("Ngoi sao hi vong!")
 
+
 @login_required
 def resetNSHVState(request):
     """
     Function to reset the state of the bell
-    """ 
+    """
     global currentNSHVer
 
     # Only POST method is allowed
@@ -290,17 +355,32 @@ def resetNSHVState(request):
     else:
         return HttpResponseForbidden()
 
+
 @login_required
-def beginOrStopAcceptingAnswer(request):
+def beginAcceptingAnswer(request):
     """
     The fucntion to handle request of begin accepting answer from thi sinh
     """
     global acceptingAnswer
 
     if request.user.is_staff:
-        acceptingAnswer = not acceptingAnswer
-    
+        acceptingAnswer = True
+
     return HttpResponse("Success")
+
+
+@login_required
+def stopAcceptingAnswer(request):
+    """
+    The fucntion to handle request of begin accepting answer from thi sinh
+    """
+    global acceptingAnswer
+
+    if request.user.is_staff:
+        acceptingAnswer = False
+
+    return HttpResponse("Success")
+
 
 @login_required
 def beginAcceptingGQ(request):
@@ -311,8 +391,9 @@ def beginAcceptingGQ(request):
 
     if request.user.is_staff:
         acceptingGQ = True
-    
+
     return HttpResponse("Success")
+
 
 @login_required
 def stopAcceptingGQ(request):
@@ -323,8 +404,9 @@ def stopAcceptingGQ(request):
 
     if request.user.is_staff:
         acceptingGQ = False
-    
+
     return HttpResponse("Success")
+
 
 @login_required
 def resetGQState(request):
@@ -335,13 +417,14 @@ def resetGQState(request):
 
     return HttpResponse("Success")
 
+
 @login_required
 def gianhQuyen(request):
     global acceptingGQ, gianhQuyenUser
-    
+
     if request.method == "GET":
         result = {"gianhQuyenUser": gianhQuyenUser,
-                    "acceptingGQ": acceptingGQ}
+                  "acceptingGQ": acceptingGQ}
         print(result)
         return JsonResponse(json.dumps(result), safe=False)
     elif request.method == "POST":
@@ -350,9 +433,10 @@ def gianhQuyen(request):
         if gianhQuyenUser == "":
             gianhQuyenUser = str(request.user)
             print(gianhQuyenUser, "gianh quyen tra loi!")
-        return HttpResponse("Success") 
+        return HttpResponse("Success")
 
-    return HttpResponseForbidden()    
+    return HttpResponseForbidden()
+
 
 @login_required
 def getDapAnThiSinh(request):
@@ -360,7 +444,8 @@ def getDapAnThiSinh(request):
     The function to handle getting all the latest answers from thi sinh
     """
 
-    global currentQuestionID, currentRound
+    global currentQuestionID
+    currentRound = getCurrentRound()
 
     # Get the current question
     if currentRound == "khoidong":
@@ -372,23 +457,26 @@ def getDapAnThiSinh(request):
 
     # Get all answers for this question
     if currentRound == "khoidong":
-        answers = KhoiDongAnswer.objects.filter(question=question).order_by("id")
+        answers = KhoiDongAnswer.objects.filter(
+            question=question).order_by("id")
     elif currentRound == "vuotsong":
-        answers = VuotSongAnswer.objects.filter(question=question).order_by("id")
+        answers = VuotSongAnswer.objects.filter(
+            question=question).order_by("id")
     else:
-        answers = PhanLuotAnswer.objects.filter(question=question).order_by("id")
+        answers = PhanLuotAnswer.objects.filter(
+            question=question).order_by("id")
 
     # Get all the id of thisinh that submit the answer
     # thisinh_id = set([thisinh["thisinh"] for thisinh in answers.values("thisinh")])
-    
+
     cnt = 1
     last_time = {}
     for thisinh in answers.values("thisinh"):
-        last_time[ thisinh["thisinh"] ] = cnt
+        last_time[thisinh["thisinh"]] = cnt
         cnt += 1
     print("***", last_time)
     thisinh_id = sorted(last_time, key=last_time.get)
-    
+
     # Go through the answers and only retrieve the final answer of each
     final_answers = []
     for id in thisinh_id:
