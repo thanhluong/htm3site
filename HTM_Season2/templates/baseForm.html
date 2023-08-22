@@ -276,7 +276,14 @@
     // WebSocket
     const wsHost = "{{ wsHost }}";
     const wsPort = {{ wsPort }};
-    const ws = new WebSocket(`ws://${wsHost}:${wsPort}`);
+
+    {% if useWss %}
+    const connectionString = `wss://htmnbk.com/wsevents`;
+    {% else %}
+    const connectionString = `ws://${wsHost}:${wsPort}`;
+    {% endif %}
+
+    const ws = new WebSocket(connectionString);
 
     ws.addEventListener("open", (e) => {
       console.log("Hello WebSocket Server!");

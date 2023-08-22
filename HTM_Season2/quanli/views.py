@@ -149,7 +149,8 @@ class NewAnswer(generic.CreateView):
                 "answerView": True,
                 "currentRound": currentRound,
                 "wsHost": settings.WS_HOSTNAME_FOR_CLIENT,
-                "wsPort": settings.WS_PORT_FOR_CLIENT
+                "wsPort": settings.WS_PORT_FOR_CLIENT,
+                "useWss": settings.WS_USE_WSS
             }
         )
 
