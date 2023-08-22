@@ -295,6 +295,33 @@ def currentQuestion(request):
             return HttpResponseForbidden()
 
 
+def broadcastSignal(request):
+    """
+    Function to handle the request for broadcast signal to all clients
+
+    Accepted methods:
+        POST: Broadcast the signal to all clients
+    """
+    if request.method != "POST":
+        return HttpResponseForbidden()
+
+    dataPost = request.POST
+    cmd = dataPost.get("cmd")
+
+    ws = create_connection("ws://%s:%d/" %
+                           (settings.WS_HOSTNAME, settings.WS_PORT))
+    wsMessage = {
+        "secret_key": settings.WS_SECRET_KEY,
+        "cmd": cmd,
+        "params": {
+            "status": "ok"
+        }
+    }
+    ws.send(json.dumps(wsMessage))
+    ws.close()
+    return HttpResponse("Success!")
+
+
 @login_required
 def ringBell(request):
     """
