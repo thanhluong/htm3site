@@ -146,12 +146,15 @@ def httpSubmitAnswer(request):
     global currentQuestionID, FORM_CLASSES, acceptingAnswer
     currentRound = getCurrentRound()
 
+    print("[DBG] before checking request method ...")
     if request.method != "POST":
         return HttpResponseForbidden()
 
+    print("[DBG] before checking currentRound ...")
     if currentRound not in ["vuotsong", "khoidong", "chinhphuc", "phanluot"]:
         return HttpResponseForbidden()
 
+    print("[DBG] passing all tests ...")
     form_class = FORM_CLASSES[currentRound]
 
     if currentQuestionID > 0 and acceptingAnswer:
@@ -173,10 +176,16 @@ def httpSubmitAnswer(request):
             question = PhanLuotQuestion.objects.get(
                 questionID=currentQuestionID)
 
-        formAnswer = form_class(thisinh=user,
-                                question=question,
-                                answer=answer)
-        formAnswer.save()
+        formAnswer = form_class()
+
+        userAnswer = formAnswer.save(commit=False)
+        userAnswer.thisinh = user
+        userAnswer.question = question
+        userAnswer.answer = answer
+
+        userAnswer.save()
+
+    return HttpResponse("Success!")
 
 
 @login_required
