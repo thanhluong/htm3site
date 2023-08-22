@@ -78,6 +78,7 @@
             }
           </style>
 
+          {% csrf_token %}
           <div class="input-group htmbtn-input-group">
             <span class="input-group-addon">$</span>
             <input
@@ -91,12 +92,14 @@
           <center>
             <button
               type="button"
-              id="submitBtn"
+              id="submitAnswerBtn"
               class="btn btn-secondary htmbtn-submit-answer"
             >
               Gửi câu trả lời
             </button>
           </center>
+
+          <script></script>
 
           {% else %}
           <!-- Form to upload question -->
@@ -247,6 +250,28 @@
     //         }
     //     })
     // }, 500);
+    function handleSubmitAnswerBtn() {
+      var answer = $("#answer").val();
+      $("#answer").val(""); // clear input
+      $.ajax({
+        url: "{% url 'httpSubmitAnswer' %}",
+        method: "POST",
+        data: {
+          answer: answer,
+        },
+        traditional: true,
+        success: function (data) {
+          // show the latest answer of the user
+          $("#thiSinhSubmission").text(answer);
+        },
+      });
+    }
+    $("#submitAnswerBtn").click(handleSubmitAnswerBtn);
+    $("#answer").keypress(function (e) {
+      if (e.which == 13) {
+        handleSubmitAnswerBtn();
+      }
+    });
     {% endif %}
 
     {% if currentRound == "vuotsong" %}
