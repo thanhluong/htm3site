@@ -273,6 +273,23 @@
         });
     }
 
+    function updateQuestionInfo(questionContent, questionInfo) {
+        $.ajax({
+            url: "{% url 'currentQuestion' %}",
+            method: "POST",
+            data: {
+              "question": questionContent,
+              "questionID": questionInfo.questionID,
+              "questionFileType": questionInfo.questionFileType,
+              "questionFile": questionInfo.questionFile,
+            },
+            traditional: true,
+            success: function (data) {
+                // Do nothing
+            }
+        })
+    }
+
     // Board size
     const BOARD_SIZE = 5;
 
@@ -601,21 +618,27 @@
             let questionFileType = currentQuestion["fileType"];
             let questionFile = currentQuestion["file"];
 
-            makeAjaxCall(questionContent, currentQuestionID);
-
             let fileDisplay = $("#questionFile");
             fileDisplay.empty();
 
             console.log(`====> Question file ${questionFile}`);
+            
+            let questionInfo = {
+                "questionID": actualQuestionID,
+                "questionFileType": "None",
+                "questionFile": "",
+            };
 
             if (questionFile) {
 
                 console.log(`=====> ${questionFileType}`);
+                questionInfo.questionFileType = questionFileType;
+                questionInfo.questionFile = questionFile;  
 
                 if (questionFileType == "image") {
                     fileDisplay.append("<img width='576' height='432' src=" + questionFile + ">");
                 } else if (questionFileType == "video") {
-                    fileDisplay.append("<video width='576' height='432' controls><source src=" + questionFile + " type='video/mp4'></video>");
+                    fileDisplay.append("<video onplay='handleQuestionVideoPlay()' onpause='handleQuestionVideoPause()' width='576' height='432' controls><source src=" + questionFile + " type='video/mp4'></video>");
                 } else if (questionFileType == "sound") {
                     let htmlString = "<audio controls style='width: 175px'><source src="+ questionFile + " type='audio/mpeg'>Your browser does not support the audio element.</audio>"
                     fileDisplay.append(htmlString);
@@ -623,8 +646,37 @@
             }
 
             $("#questionContent").text(questionContent);
+
+            // makeAjaxCall(questionContent, currentQuestionID);
+            updateQuestionInfo(questionContent, questionInfo);
         }
     });
+
+    function handleQuestionVideoPlay() {
+        $.ajax({
+          url: "{% url 'broadcastSignal' %}",
+          method: "POST",
+          data: { "cmd": "playVideo"},
+          traditional: true,
+          success: function (data) {
+            console.log("Send signal to play video!")
+              // Do nothing
+          }
+        });
+      }
+    
+      function handleQuestionVideoPause() {
+        $.ajax({
+          url: "{% url 'broadcastSignal' %}",
+          method: "POST",
+          data: { "cmd": "pauseVideo"},
+          traditional: true,
+          success: function (data) {
+            console.log("Send signal to pause video!")
+              // Do nothing
+          }
+        });
+      }
 
     $("#showAnswer").click(function(event){
         currentRow = parseInt(document.getElementById("id_row").value);
