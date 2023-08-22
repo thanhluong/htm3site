@@ -265,6 +265,7 @@
 
     function handleSubmitAnswerBtn() {
       var answer = $("#answer").val();
+      if (answer.trim().length == 0) return; // ignore empty answer
       $("#answer").val(""); // clear input
       $.ajax({
         url: "{% url 'httpSubmitAnswer' %}",
