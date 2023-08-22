@@ -296,12 +296,15 @@
     const connectionString = `ws://${wsHost}:${wsPort}`;
     {% endif %}
 
-    const ws = new WebSocket(connectionString);
+    var ws = new WebSocket(connectionString);
 
     ws.addEventListener("open", (e) => {
       console.log("Hello WebSocket Server!");
       setInterval(() => {
         ws.send("ping");
+        if (ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
+          console.log("WebSocket connection closed! Reloading ...");
+          location.reload();
       }, 1000);
     });
 
