@@ -290,6 +290,9 @@
 
     ws.addEventListener("open", (e) => {
       console.log("Hello WebSocket Server!");
+      setInterval(() => {
+        ws.send("ping");
+      }, 1000);
     });
 
     ws.addEventListener("message", (e) => {

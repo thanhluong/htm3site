@@ -31,6 +31,7 @@ Incoming message format:
 
 wss.on("connection", function connection(ws) {
   ws.on("message", function incoming(message) {
+    if (message == "ping") return;
     try {
       const msg = JSON.parse(message);
       if (msg.secret_key != SECRET_KEY) throw new Error("Invalid secret key");
