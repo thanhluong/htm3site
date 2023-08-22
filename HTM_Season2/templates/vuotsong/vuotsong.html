@@ -363,694 +363,719 @@ body{
 {% csrf_token %} {% endblock %} {% block scripts %}
 <script>
 
-  // Do not open the ringingDialog if nothing happenned
-  ringingDialog = $("#ringingDialog");
+    // Do not open the ringingDialog if nothing happenned
+    ringingDialog = $("#ringingDialog");
 
-  ringingDialog.dialog({
-    modal: true,
-    autoOpen: false
-  });
+    ringingDialog.dialog({
+      modal: true,
+      autoOpen: false
+    });
 
-  var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-  function csrfSafeMethod(method) {
-      // these HTTP methods do not require CSRF protection
-      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-  }
-  $.ajaxSetup({
-      beforeSend: function (xhr, settings) {
-          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-              xhr.setRequestHeader("X-CSRFToken", csrftoken);
-          }
-      }
-  });
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
 
-  function updateRound(roundName){
+    function updateRound(roundName){
+        $.ajax({
+            url: "{% url 'updateRound' %}",
+            method: "POST",
+            data: {"roundName": roundName},
+            traditional: true,
+            success: function(data){
+                // do nothing
+            }
+        });
+    }
+
+    updateRound("vuotsong");
+
+
+    function makeAjaxCall(questionContent, currentQuestionID) {
+        // Make the AJAX call to notify the current question to the server and other screen of contestant
+        $.ajax({
+            url: "{% url 'currentQuestion'%}",
+            method: "POST",
+            data: {"question":questionContent, "questionID":currentQuestionID, "round": "vuotsong"},
+            dataType: "json",
+            traditional: true,
+            success: function (data) {
+                // Do nothing
+            }
+        });
+    }
+
+    function updateQuestionInfo(questionContent, questionInfo) {
       $.ajax({
-          url: "{% url 'updateRound' %}",
+          url: "{% url 'currentQuestion' %}",
           method: "POST",
-          data: {"roundName": roundName},
-          traditional: true,
-          success: function(data){
-              // do nothing
-          }
-      });
-  }
-
-  updateRound("vuotsong");
-
-
-  function makeAjaxCall(questionContent, currentQuestionID) {
-      // Make the AJAX call to notify the current question to the server and other screen of contestant
-      $.ajax({
-          url: "{% url 'currentQuestion'%}",
-          method: "POST",
-          data: {"question":questionContent, "questionID":currentQuestionID, "round": "vuotsong"},
-          dataType: "json",
+          data: {
+            "question": questionContent,
+            "questionID": questionInfo.questionID,
+            "questionFileType": questionInfo.questionFileType,
+            "questionFile": questionInfo.questionFile,
+          },
           traditional: true,
           success: function (data) {
               // Do nothing
           }
-      });
+      })
   }
 
-  // Store all questions in an array
-  let questions = {{ questions|safe }};
+    // Store all questions in an array
+    let questions = {{ questions|safe }};
 
-  console.log(questions)
+    console.log(questions)
 
-  var currentQuestionID = 10;
-  var questionContent = ""
-  var challengeAnswer;
-  var chuongNgaiVatContent;
+    var currentQuestionID = 10;
+    var questionContent = ""
+    var challengeAnswer;
+    var chuongNgaiVatContent;
 
-  //---------------------------------//
-  //   GLOBAL VARIABLES              //
-  //---------------------------------//
+    //---------------------------------//
+    //   GLOBAL VARIABLES              //
+    //---------------------------------//
 
-  var board, wordArr, wordBank, wordsActive, mode;
+    var board, wordArr, wordBank, wordsActive, mode;
 
-  var Bounds = {
-    top:0, right:0, bottom:0, left:0,
+    var Bounds = {
+      top:0, right:0, bottom:0, left:0,
 
-    Update:function(x,y){
-      this.top = Math.min(y,this.top);
-      this.right = Math.max(x,this.right);
-      this.bottom = Math.max(y,this.bottom);
-      this.left = Math.min(x,this.left);
-    },
+      Update:function(x,y){
+        this.top = Math.min(y,this.top);
+        this.right = Math.max(x,this.right);
+        this.bottom = Math.max(y,this.bottom);
+        this.left = Math.min(x,this.left);
+      },
 
-    Clean:function(){
-      this.top = 999;
-      this.right = 0;
-      this.bottom = 0;
-      this.left = 999;
-    }
-  };
-
-
-  //---------------------------------//
-  //   MAIN                          //
-  //---------------------------------//
-
-  function Play(){
-    $(".letter span").hide();
-    $(".letter.redLetter").css("background-color", "green");
-    $("#btnCreate").hide();
-    $("#btnPlay").hide();
-  }
-
-
-  function Create(){
-    if (mode === 0){
-      ToggleInputBoxes(true);
-      document.getElementById("crossword").innerHTML = BoardToHtml(" ")
-      mode = 1;
-    }
-    else{
-      GetWordsFromInput();
-
-      for(var i = 0, isSuccess=false; i < 10 && !isSuccess; i++){
-        CleanVars();
-        isSuccess = PopulateBoard();
+      Clean:function(){
+        this.top = 999;
+        this.right = 0;
+        this.bottom = 0;
+        this.left = 999;
       }
+    };
 
-      document.getElementById("crossword").innerHTML =
-        (isSuccess) ? BoardToHtml(" ") : "Failed to find crossword." ;
+
+    //---------------------------------//
+    //   MAIN                          //
+    //---------------------------------//
+
+    function Play(){
+      $(".letter span").hide();
+      $(".letter.redLetter").css("background-color", "green");
+      $("#btnCreate").hide();
+      $("#btnPlay").hide();
     }
-  }
 
 
-  function ToggleInputBoxes(active){
-    var w=document.getElementsByClassName('word'),
-        d=document.getElementsByClassName('clue');
-
-    for(var i=0;i<w.length; i++){
-      if(active===true){
-        RemoveClass(w[i], 'hide');
-        RemoveClass(d[i], 'clueReadOnly');
-        d[i].disabled = '';
+    function Create(){
+      if (mode === 0){
+        ToggleInputBoxes(true);
+        document.getElementById("crossword").innerHTML = BoardToHtml(" ")
+        mode = 1;
       }
       else{
-        AddClass(w[i], 'hide');
-        AddClass(d[i], 'clueReadOnly');
-        d[i].disabled = 'readonly';
+        GetWordsFromInput();
+
+        for(var i = 0, isSuccess=false; i < 10 && !isSuccess; i++){
+          CleanVars();
+          isSuccess = PopulateBoard();
+        }
+
+        document.getElementById("crossword").innerHTML =
+          (isSuccess) ? BoardToHtml(" ") : "Failed to find crossword." ;
       }
     }
-  }
 
 
-  function GetWordsFromInput(){
-    wordArr = []
-    for(var idx=0; idx<questions.length; idx++){
-      let currentQuestion = questions[idx];
-      let currentAnswer = currentQuestion["answer"];
-      wordArr.push(currentAnswer);
-    }
-    challengeAnswer = wordArr[wordArr.length - 1];
-    chuongNgaiVatContent = challengeAnswer;
-    wordArr.pop();
-    // wordArr = ["DANANG", "TAMKY", "GIALAI", "LONGAN"];
-    // for(var i=0,val,w=document.getElementsByClassName("word");i<w.length;i++){
-    //   val = w[i].value.toUpperCase();
-    //   if (val !== null && val.length > 1){wordArr.push(val);}
-    // }
+    function ToggleInputBoxes(active){
+      var w=document.getElementsByClassName('word'),
+          d=document.getElementsByClassName('clue');
 
-  }
-
-
-  function CleanVars(){
-    Bounds.Clean();
-    wordBank = [];
-    wordsActive = [];
-    board = [];
-    isPos = [];
-    classesOfBoard = []
-
-    for(var i = 0; i < 100; i++){
-      board.push([]);
-      isPos.push([]);
-      classesOfBoard.push([]);
-      for(var j = 0; j < 100; j++){
-        board[i].push(null);
-        isPos[i].push(false);
-        classesOfBoard[i].push([]);
+      for(var i=0;i<w.length; i++){
+        if(active===true){
+          RemoveClass(w[i], 'hide');
+          RemoveClass(d[i], 'clueReadOnly');
+          d[i].disabled = '';
+        }
+        else{
+          AddClass(w[i], 'hide');
+          AddClass(d[i], 'clueReadOnly');
+          d[i].disabled = 'readonly';
+        }
       }
     }
-  }
 
 
-  function PopulateBoard(){
-    PrepareBoard();
+    function GetWordsFromInput(){
+      wordArr = []
+      for(var idx=0; idx<questions.length; idx++){
+        let currentQuestion = questions[idx];
+        let currentAnswer = currentQuestion["answer"];
+        wordArr.push(currentAnswer);
+      }
+      challengeAnswer = wordArr[wordArr.length - 1];
+      chuongNgaiVatContent = challengeAnswer;
+      wordArr.pop();
+      // wordArr = ["DANANG", "TAMKY", "GIALAI", "LONGAN"];
+      // for(var i=0,val,w=document.getElementsByClassName("word");i<w.length;i++){
+      //   val = w[i].value.toUpperCase();
+      //   if (val !== null && val.length > 1){wordArr.push(val);}
+      // }
 
-    for(var i=0,isOk=true,len=wordBank.length; i<len && isOk; i++){
-      isOk = AddWordToBoard();
     }
-    return isOk;
-  }
 
 
-  function PrepareBoard(){
-    wordBank=[];
+    function CleanVars(){
+      Bounds.Clean();
+      wordBank = [];
+      wordsActive = [];
+      board = [];
+      isPos = [];
+      classesOfBoard = []
 
-    for(var i = 0, len = wordArr.length; i < len; i++){
-      let actualPos = i+1;
-      wordBank.push(new WordObj(' '+actualPos.toString()+wordArr[i]+' '));
+      for(var i = 0; i < 100; i++){
+        board.push([]);
+        isPos.push([]);
+        classesOfBoard.push([]);
+        for(var j = 0; j < 100; j++){
+          board[i].push(null);
+          isPos[i].push(false);
+          classesOfBoard[i].push([]);
+        }
+      }
     }
 
-    for(i = 0; i < wordBank.length; i++){
-      for(var j = 0, wA=wordBank[i]; j<wA.char.length; j++){
-        for(var k = 0, cA=wA.char[j]; k<wordBank.length; k++){
-          for(var l = 0,wB=wordBank[k]; k!==i && l<wB.char.length; l++){
-            wA.totalMatches += (cA === wB.char[l])?1:0;
+
+    function PopulateBoard(){
+      PrepareBoard();
+
+      for(var i=0,isOk=true,len=wordBank.length; i<len && isOk; i++){
+        isOk = AddWordToBoard();
+      }
+      return isOk;
+    }
+
+
+    function PrepareBoard(){
+      wordBank=[];
+
+      for(var i = 0, len = wordArr.length; i < len; i++){
+        let actualPos = i+1;
+        wordBank.push(new WordObj(' '+actualPos.toString()+wordArr[i]+' '));
+      }
+
+      for(i = 0; i < wordBank.length; i++){
+        for(var j = 0, wA=wordBank[i]; j<wA.char.length; j++){
+          for(var k = 0, cA=wA.char[j]; k<wordBank.length; k++){
+            for(var l = 0,wB=wordBank[k]; k!==i && l<wB.char.length; l++){
+              wA.totalMatches += (cA === wB.char[l])?1:0;
+            }
           }
         }
       }
     }
-  }
 
-  function findWordIdx(givenWord){
-    givenWord = givenWord.substring(2, givenWord.length-1);
-    for(var i = 0, len = wordArr.length; i < len; i++){
-      if(givenWord == wordArr[i]) return i+1;
-    }
-  }
-
-  // TODO: Clean this guy up
-  function AddWordToBoard(){
-    var i, len, curIndex, curWord, curChar, curMatch, testWord, testChar,
-        minMatchDiff = 9999, curMatchDiff;
-
-    if(wordsActive.length < 1){
-      curIndex = 0;
-      for(i = 0, len = wordBank.length; i < len; i++){
-        if (wordBank[i].totalMatches < wordBank[curIndex].totalMatches){
-          curIndex = i;
-        }
+    function findWordIdx(givenWord){
+      givenWord = givenWord.substring(2, givenWord.length-1);
+      for(var i = 0, len = wordArr.length; i < len; i++){
+        if(givenWord == wordArr[i]) return i+1;
       }
-      wordBank[curIndex].successfulMatches = [{x:12,y:12,dir:0}];
     }
-    else{
-      curIndex = -1;
 
-      for(i = 0, len = wordBank.length; i < len; i++){
-        curWord = wordBank[i];
-        curWord.effectiveMatches = 0;
-        curWord.successfulMatches = [];
-        for(var j = 0, lenJ = curWord.char.length; j < lenJ; j++){
-          if(j == 1) continue; // skip pos
-          curChar = curWord.char[j];
-          for (var k = 0, lenK = wordsActive.length; k < lenK; k++){
-            testWord = wordsActive[k];
-            for (var l = 0, lenL = testWord.char.length; l < lenL; l++){
-              if(l == 1) continue; // skip pos
-              testChar = testWord.char[l];
-              if (curChar === testChar){
-                curWord.effectiveMatches++;
+    // TODO: Clean this guy up
+    function AddWordToBoard(){
+      var i, len, curIndex, curWord, curChar, curMatch, testWord, testChar,
+          minMatchDiff = 9999, curMatchDiff;
 
-                var curCross = {x:testWord.x,y:testWord.y,dir:0};
-                if(testWord.dir === 0){
-                  curCross.dir = 1;
-                  curCross.x += l;
-                  curCross.y -= j;
-                }
-                else{
-                  curCross.dir = 0;
-                  curCross.y += l;
-                  curCross.x -= j;
-                }
+      if(wordsActive.length < 1){
+        curIndex = 0;
+        for(i = 0, len = wordBank.length; i < len; i++){
+          if (wordBank[i].totalMatches < wordBank[curIndex].totalMatches){
+            curIndex = i;
+          }
+        }
+        wordBank[curIndex].successfulMatches = [{x:12,y:12,dir:0}];
+      }
+      else{
+        curIndex = -1;
 
-                var isMatch = true;
+        for(i = 0, len = wordBank.length; i < len; i++){
+          curWord = wordBank[i];
+          curWord.effectiveMatches = 0;
+          curWord.successfulMatches = [];
+          for(var j = 0, lenJ = curWord.char.length; j < lenJ; j++){
+            if(j == 1) continue; // skip pos
+            curChar = curWord.char[j];
+            for (var k = 0, lenK = wordsActive.length; k < lenK; k++){
+              testWord = wordsActive[k];
+              for (var l = 0, lenL = testWord.char.length; l < lenL; l++){
+                if(l == 1) continue; // skip pos
+                testChar = testWord.char[l];
+                if (curChar === testChar){
+                  curWord.effectiveMatches++;
 
-                for(var m = -1, lenM = curWord.char.length + 1; m < lenM; m++){
-                  var crossVal = [];
-                  if (m !== j){
-                    if (curCross.dir === 0){
-                      var xIndex = curCross.x + m;
+                  var curCross = {x:testWord.x,y:testWord.y,dir:0};
+                  if(testWord.dir === 0){
+                    curCross.dir = 1;
+                    curCross.x += l;
+                    curCross.y -= j;
+                  }
+                  else{
+                    curCross.dir = 0;
+                    curCross.y += l;
+                    curCross.x -= j;
+                  }
 
-                      if (xIndex < 0 || xIndex > board.length){
+                  var isMatch = true;
+
+                  for(var m = -1, lenM = curWord.char.length + 1; m < lenM; m++){
+                    var crossVal = [];
+                    if (m !== j){
+                      if (curCross.dir === 0){
+                        var xIndex = curCross.x + m;
+
+                        if (xIndex < 0 || xIndex > board.length){
+                          isMatch = false;
+                          break;
+                        }
+
+                        crossVal.push(board[xIndex][curCross.y]);
+                        crossVal.push(board[xIndex][curCross.y + 1]);
+                        crossVal.push(board[xIndex][curCross.y - 1]);
+                      }
+                      else{
+                        var yIndex = curCross.y + m;
+
+                        if (yIndex < 0 || yIndex > board[curCross.x].length){
+                          isMatch = false;
+                          break;
+                        }
+
+                        crossVal.push(board[curCross.x][yIndex]);
+                        crossVal.push(board[curCross.x + 1][yIndex]);
+                        crossVal.push(board[curCross.x - 1][yIndex]);
+                      }
+
+                      if(m > -1 && m < lenM-1){
+                        if (crossVal[0] !== curWord.char[m]){
+                          if (crossVal[0] !== null){
+                            isMatch = false;
+                            break;
+                          }
+                          else if (crossVal[1] !== null){
+                            isMatch = false;
+                            break;
+                          }
+                          else if (crossVal[2] !== null){
+                            isMatch = false;
+                            break;
+                          }
+                        }
+                      }
+                      else if (crossVal[0] !== null){
                         isMatch = false;
                         break;
                       }
-
-                      crossVal.push(board[xIndex][curCross.y]);
-                      crossVal.push(board[xIndex][curCross.y + 1]);
-                      crossVal.push(board[xIndex][curCross.y - 1]);
-                    }
-                    else{
-                      var yIndex = curCross.y + m;
-
-                      if (yIndex < 0 || yIndex > board[curCross.x].length){
-                        isMatch = false;
-                        break;
-                      }
-
-                      crossVal.push(board[curCross.x][yIndex]);
-                      crossVal.push(board[curCross.x + 1][yIndex]);
-                      crossVal.push(board[curCross.x - 1][yIndex]);
-                    }
-
-                    if(m > -1 && m < lenM-1){
-                      if (crossVal[0] !== curWord.char[m]){
-                        if (crossVal[0] !== null){
-                          isMatch = false;
-                          break;
-                        }
-                        else if (crossVal[1] !== null){
-                          isMatch = false;
-                          break;
-                        }
-                        else if (crossVal[2] !== null){
-                          isMatch = false;
-                          break;
-                        }
-                      }
-                    }
-                    else if (crossVal[0] !== null){
-                      isMatch = false;
-                      break;
                     }
                   }
-                }
 
-                if (isMatch === true){
-                  curWord.successfulMatches.push(curCross);
+                  if (isMatch === true){
+                    curWord.successfulMatches.push(curCross);
+                  }
                 }
               }
             }
           }
-        }
 
-        curMatchDiff = curWord.totalMatches - curWord.effectiveMatches;
+          curMatchDiff = curWord.totalMatches - curWord.effectiveMatches;
 
-        if (curMatchDiff<minMatchDiff && curWord.successfulMatches.length>0){
-          curMatchDiff = minMatchDiff;
-          curIndex = i;
-        }
-        else if (curMatchDiff <= 0){
-          return false;
+          if (curMatchDiff<minMatchDiff && curWord.successfulMatches.length>0){
+            curMatchDiff = minMatchDiff;
+            curIndex = i;
+          }
+          else if (curMatchDiff <= 0){
+            return false;
+          }
         }
       }
+
+      if (curIndex === -1){
+        return false;
+      }
+
+      var spliced = wordBank.splice(curIndex, 1);
+      wordsActive.push(spliced[0]);
+
+      var pushIndex = wordsActive.length - 1,
+          rand = Math.random(),
+          matchArr = wordsActive[pushIndex].successfulMatches,
+          matchIndex = Math.floor(rand * matchArr.length),
+          matchData = matchArr[matchIndex];
+
+      wordsActive[pushIndex].x = matchData.x;
+      wordsActive[pushIndex].y = matchData.y;
+      wordsActive[pushIndex].dir = matchData.dir;
+
+      let actualIndex = findWordIdx(wordsActive[pushIndex].string);
+      console.log(wordsActive[pushIndex].string, " ~~~ ", actualIndex);
+      for(i = 0, len = wordsActive[pushIndex].char.length; i < len; i++){
+        var xIndex = matchData.x,
+            yIndex = matchData.y;
+
+        if (matchData.dir === 0){
+          xIndex += i;
+        }
+        else{
+          yIndex += i;
+        }
+        board[xIndex][yIndex] = wordsActive[pushIndex].char[i];
+        isPos[xIndex][yIndex] = (i == 1);
+        classesOfBoard[xIndex][yIndex].push(actualIndex);
+        console.log(xIndex, yIndex, classesOfBoard[xIndex][yIndex]);
+
+        Bounds.Update(xIndex,yIndex);
+      }
+
+      return true;
     }
 
-    if (curIndex === -1){
-      return false;
+
+    function BoardToHtml(blank){
+      for(var i=Bounds.top-1, str=""; i<Bounds.bottom+2; i++){
+        str+="<div class='row'>";
+        for(var j=Bounds.left-1; j<Bounds.right+2; j++){
+          str += BoardCharToElement(board[j][i], isPos[j][i], classesOfBoard[j][i]);
+        }
+        str += "</div>";
+      }
+      return str;
     }
 
-    var spliced = wordBank.splice(curIndex, 1);
-    wordsActive.push(spliced[0]);
 
-    var pushIndex = wordsActive.length - 1,
-        rand = Math.random(),
-        matchArr = wordsActive[pushIndex].successfulMatches,
-        matchIndex = Math.floor(rand * matchArr.length),
-        matchData = matchArr[matchIndex];
-
-    wordsActive[pushIndex].x = matchData.x;
-    wordsActive[pushIndex].y = matchData.y;
-    wordsActive[pushIndex].dir = matchData.dir;
-
-    let actualIndex = findWordIdx(wordsActive[pushIndex].string);
-    console.log(wordsActive[pushIndex].string, " ~~~ ", actualIndex);
-    for(i = 0, len = wordsActive[pushIndex].char.length; i < len; i++){
-      var xIndex = matchData.x,
-          yIndex = matchData.y;
-
-      if (matchData.dir === 0){
-        xIndex += i;
+    function BoardCharToElement(c, isPos, classesOfBoard){
+      var arr=['square'];
+      if(isPos){
+        arr=['posCell'];
       }
       else{
-        yIndex += i;
-      }
-      board[xIndex][yIndex] = wordsActive[pushIndex].char[i];
-      isPos[xIndex][yIndex] = (i == 1);
-      classesOfBoard[xIndex][yIndex].push(actualIndex);
-      console.log(xIndex, yIndex, classesOfBoard[xIndex][yIndex]);
-
-      Bounds.Update(xIndex,yIndex);
-    }
-
-    return true;
-  }
-
-
-  function BoardToHtml(blank){
-    for(var i=Bounds.top-1, str=""; i<Bounds.bottom+2; i++){
-      str+="<div class='row'>";
-      for(var j=Bounds.left-1; j<Bounds.right+2; j++){
-        str += BoardCharToElement(board[j][i], isPos[j][i], classesOfBoard[j][i]);
-      }
-      str += "</div>";
-    }
-    return str;
-  }
-
-
-  function BoardCharToElement(c, isPos, classesOfBoard){
-    var arr=['square'];
-    if(isPos){
-      arr=['posCell'];
-    }
-    else{
-      if(c && c != ' '){ // is a character in crossword
-        arr.push('letter');
-        for(var i = 0; i < classesOfBoard.length; i++){
-          arr.push('letterOf' + classesOfBoard[i].toString());
-        }
-        if(challengeAnswer.includes(c)){
-          arr.push('redLetter');
-          challengeAnswer = challengeAnswer.replace(c, '~');
+        if(c && c != ' '){ // is a character in crossword
+          arr.push('letter');
+          for(var i = 0; i < classesOfBoard.length; i++){
+            arr.push('letterOf' + classesOfBoard[i].toString());
+          }
+          if(challengeAnswer.includes(c)){
+            arr.push('redLetter');
+            challengeAnswer = challengeAnswer.replace(c, '~');
+          }
         }
       }
+      return EleStr('div',[{a:'class',v:arr}],c);
     }
-    return EleStr('div',[{a:'class',v:arr}],c);
-  }
 
 
 
-  //---------------------------------//
-  //   OBJECT DEFINITIONS            //
-  //---------------------------------//
+    //---------------------------------//
+    //   OBJECT DEFINITIONS            //
+    //---------------------------------//
 
-  function WordObj(stringValue){
-    this.string = stringValue;
-    this.char = stringValue.split("");
-    this.totalMatches = 0;
-    this.effectiveMatches = 0;
-    this.successfulMatches = [];
-  }
-
-
-  //---------------------------------//
-  //   EVENTS                        //
-  //---------------------------------//
-
-  function RegisterEvents(){
-    document.getElementById("crossword").onfocus = function (){
-      return false; }
-    document.getElementById("btnCreate").addEventListener('click',Create,false);
-    document.getElementById("btnPlay").addEventListener('click',Play,false);
-  }
-  RegisterEvents();
-
-
-  //---------------------------------//
-  //   HELPER FUNCTIONS              //
-  //---------------------------------//
-
-  function EleStr(e,c,h){
-    h = (h)?h:"";
-    for(var i=0,s="<"+e+" "; i<c.length; i++){
-      s+=c[i].a+ "='"+ArrayToString(c[i].v," ")+"' ";
+    function WordObj(stringValue){
+      this.string = stringValue;
+      this.char = stringValue.split("");
+      this.totalMatches = 0;
+      this.effectiveMatches = 0;
+      this.successfulMatches = [];
     }
-    return (s+">"+"<span>"+h+"</span>"+"</"+e+">");
-  }
-
-  function ArrayToString(a,s){
-    if(a===null||a.length<1)return "";
-    if(s===null)s=",";
-    for(var r=a[0],i=1;i<a.length;i++){r+=s+a[i];}
-    return r;
-  }
-
-  function AddClass(ele,classStr){
-    ele.className = ele.className.replaceAll(' '+classStr,'')+' '+classStr;
-  }
-
-  function RemoveClass(ele,classStr){
-    ele.className = ele.className.replaceAll(' '+classStr,'');
-  }
-
-  function ToggleClass(ele,classStr){
-    var str = ele.className.replaceAll(' '+classStr,'');
-    ele.className = (str.length===ele.className.length)?str+' '+classStr:str;
-  }
-
-  String.prototype.replaceAll = function (replaceThis, withThis) {
-     var re = new RegExp(replaceThis,"g");
-     return this.replace(re, withThis);
-  };
 
 
-  //---------------------------------//
-  //   INITIAL LOAD                  //
-  //---------------------------------//
+    //---------------------------------//
+    //   EVENTS                        //
+    //---------------------------------//
 
-  Create();
-  // Play();
-
-  function redisplayCrosswords(){
-    // Re-create the crossword
-    document.getElementById("crossword").innerHTML = BoardToHtml(" ");
-    var letterArr = document.getElementsByClassName('letter');
-    for(var i = 0; i < letterArr.length; i++){
-      // skip visible cells
-      if(letterArr[i].classList.contains('visibleCell')) continue;
-      // hide invisible cells
-      letterArr[i].innerHTML = "";
+    function RegisterEvents(){
+      document.getElementById("crossword").onfocus = function (){
+        return false; }
+      document.getElementById("btnCreate").addEventListener('click',Create,false);
+      document.getElementById("btnPlay").addEventListener('click',Play,false);
     }
-  }
+    RegisterEvents();
 
-  // Send signal to handleAcceptingAnswer
-  function signalHandleAcceptingAnswer() {
+
+    //---------------------------------//
+    //   HELPER FUNCTIONS              //
+    //---------------------------------//
+
+    function EleStr(e,c,h){
+      h = (h)?h:"";
+      for(var i=0,s="<"+e+" "; i<c.length; i++){
+        s+=c[i].a+ "='"+ArrayToString(c[i].v," ")+"' ";
+      }
+      return (s+">"+"<span>"+h+"</span>"+"</"+e+">");
+    }
+
+    function ArrayToString(a,s){
+      if(a===null||a.length<1)return "";
+      if(s===null)s=",";
+      for(var r=a[0],i=1;i<a.length;i++){r+=s+a[i];}
+      return r;
+    }
+
+    function AddClass(ele,classStr){
+      ele.className = ele.className.replaceAll(' '+classStr,'')+' '+classStr;
+    }
+
+    function RemoveClass(ele,classStr){
+      ele.className = ele.className.replaceAll(' '+classStr,'');
+    }
+
+    function ToggleClass(ele,classStr){
+      var str = ele.className.replaceAll(' '+classStr,'');
+      ele.className = (str.length===ele.className.length)?str+' '+classStr:str;
+    }
+
+    String.prototype.replaceAll = function (replaceThis, withThis) {
+       var re = new RegExp(replaceThis,"g");
+       return this.replace(re, withThis);
+    };
+
+
+    //---------------------------------//
+    //   INITIAL LOAD                  //
+    //---------------------------------//
+
+    Create();
+    // Play();
+
+    function redisplayCrosswords(){
+      // Re-create the crossword
+      document.getElementById("crossword").innerHTML = BoardToHtml(" ");
+      var letterArr = document.getElementsByClassName('letter');
+      for(var i = 0; i < letterArr.length; i++){
+        // skip visible cells
+        if(letterArr[i].classList.contains('visibleCell')) continue;
+        // hide invisible cells
+        letterArr[i].innerHTML = "";
+      }
+    }
+
+    // Send signal to handleAcceptingAnswer
+    function signalHandleAcceptingAnswer() {
+        $.ajax({
+            url: "{% url 'handleAcceptingAnswer' %}",
+            method: "GET",
+            traditional: true,
+            success: function (data) {
+                // Do nothing
+            }
+        })
+    }
+
+    function signalHandleStopAcceptingAnswer() {
       $.ajax({
-          url: "{% url 'handleAcceptingAnswer' %}",
+          url: "{% url 'handleStopAcceptingAnswer' %}",
           method: "GET",
           traditional: true,
           success: function (data) {
               // Do nothing
           }
       })
-  }
-
-  function signalHandleStopAcceptingAnswer() {
-    $.ajax({
-        url: "{% url 'handleStopAcceptingAnswer' %}",
-        method: "GET",
-        traditional: true,
-        success: function (data) {
-            // Do nothing
-        }
-    })
-  }
-
-  let countDownProgressBar = $("#countDownProgressBar");
-
-  var demgio = new Audio("{% static 'vuotsong/VuotSong_15s.mp3' %}"); // ok
-  countDownProgressBar.click(function(){
-      demgio.play();
-
-      // Signal the server to accept answers
-      signalHandleAcceptingAnswer();
-
-      // Countdown 15s
-      var countDownInterval = null;
-      var totalTime = 15000;
-      var remainingTime = totalTime;
-
-      countDownInterval =  setInterval(function () {
-          remainingTime -= 50;
-          if (remainingTime >= 0) {
-              countDownProgressBar.css("width", (remainingTime*100 / totalTime) + "%");
-          } else {
-            // Send the request to server to stop received data
-            signalHandleStopAcceptingAnswer();
-
-            // Make request to get the final answer
-            $.ajax({
-                url: "{% url 'getDapAnThiSinh' %}",
-                success: function (data) {
-                    data = JSON.parse(data)
-                    $("#dapAnThiSinh").html("");
-                    // Loop over data and update to the view
-                    for (let i = 0; i < data.length; i++) {
-                        const answer = data[i];
-                        var newAnswer = document.createElement("div");
-                        newAnswer.setAttribute("class", "answer col");
-                        newAnswer.innerHTML = "<span style='font-weight: bold; font-style: italic; color: #191970'> " + answer.thisinh + ": " + "</span><br/>" + answer.answer.toUpperCase();
-                        $("#dapAnThiSinh").append(newAnswer);
-                    }
-
-                }
-            });
-            clearInterval(countDownInterval);
-          }
-      }, 50);
-  });
-
-  // Function to display question on screen
-  $("#showQuestion").click(function(event){
-    currentQuestionID = parseInt(document.getElementById("id_ochu").value);
-    if(isNaN(currentQuestionID) || (currentQuestionID < 0) || (currentQuestionID > questions.length)){
-      $("#questionNumber").text("Oops!");
-      $("#questionContent").text("Vui lòng chọn số thứ tự hợp lệ!");
     }
-    else{
-      // Refresh UI
-      countDownProgressBar.css("width", "100%");
-      // $("#showDapAnThiSinh").prop("disabled", false);
-      $("#showDapAnThiSinh").removeAttr("disabled");
-      $("#dapAnThiSinh").hide();
 
-      currentQuestion = questions[currentQuestionID - 1];
-      questionContent = currentQuestion["questionText"];
-      let actualQuestionID = currentQuestion["questionID"];
-      let currentQuestionLen = currentQuestion["answer"].length;
-      let questionFileType = currentQuestion["fileType"];
-      let questionFile = currentQuestion["file"];
-      let fileDisplay = $("#questionFile");
-      fileDisplay.empty();
+    let countDownProgressBar = $("#countDownProgressBar");
 
-      console.log(`====> Question file ${questionFile}`);
+    var demgio = new Audio("{% static 'vuotsong/VuotSong_15s.mp3' %}"); // ok
+    countDownProgressBar.click(function(){
+        demgio.play();
 
-      if (questionFile) {
+        // Signal the server to accept answers
+        signalHandleAcceptingAnswer();
 
-          console.log(`=====> ${questionFileType}`);
+        // Countdown 15s
+        var countDownInterval = null;
+        var totalTime = 15000;
+        var remainingTime = totalTime;
 
-          if (questionFileType == "image") {
-              fileDisplay.append("<img width='576' height='432' src=" + questionFile + ">");
-          } else if (questionFileType == "video") {
-              fileDisplay.append("<video width='576' height='432' controls><source src=" + questionFile + " type='video/mp4'></video>");
-          } else if (questionFileType == "sound") {
-              let htmlString = "<audio controls style='width: 175px'><source src="+ questionFile + " type='audio/mpeg'>Your browser does not support the audio element.</audio>"
-              fileDisplay.append(htmlString);
-          }
+        countDownInterval =  setInterval(function () {
+            remainingTime -= 50;
+            if (remainingTime >= 0) {
+                countDownProgressBar.css("width", (remainingTime*100 / totalTime) + "%");
+            } else {
+              // Send the request to server to stop received data
+              signalHandleStopAcceptingAnswer();
+
+              // Make request to get the final answer
+              $.ajax({
+                  url: "{% url 'getDapAnThiSinh' %}",
+                  success: function (data) {
+                      data = JSON.parse(data)
+                      $("#dapAnThiSinh").html("");
+                      // Loop over data and update to the view
+                      for (let i = 0; i < data.length; i++) {
+                          const answer = data[i];
+                          var newAnswer = document.createElement("div");
+                          newAnswer.setAttribute("class", "answer col");
+                          newAnswer.innerHTML = "<span style='font-weight: bold; font-style: italic; color: #191970'> " + answer.thisinh + ": " + "</span><br/>" + answer.answer.toUpperCase();
+                          $("#dapAnThiSinh").append(newAnswer);
+                      }
+
+                  }
+              });
+              clearInterval(countDownInterval);
+            }
+        }, 50);
+    });
+
+    // Function to display question on screen
+    $("#showQuestion").click(function(event){
+      currentQuestionID = parseInt(document.getElementById("id_ochu").value);
+      if(isNaN(currentQuestionID) || (currentQuestionID < 0) || (currentQuestionID > questions.length)){
+        $("#questionNumber").text("Oops!");
+        $("#questionContent").text("Vui lòng chọn số thứ tự hợp lệ!");
       }
+      else{
+        // Refresh UI
+        countDownProgressBar.css("width", "100%");
+        // $("#showDapAnThiSinh").prop("disabled", false);
+        $("#showDapAnThiSinh").removeAttr("disabled");
+        $("#dapAnThiSinh").hide();
 
-      $("#questionNumber").text("Hàng số "+currentQuestionID + " (" + currentQuestionLen + " kí tự)");
-      $("#questionContent").text(questionContent);
-      makeAjaxCall(questionContent, actualQuestionID);
-      //
-      $(".letterOf" + currentQuestionID.toString()).css("background-color", "#fde9b4");
-    }
-  });
+        currentQuestion = questions[currentQuestionID - 1];
+        questionContent = currentQuestion["questionText"];
+        let actualQuestionID = currentQuestion["questionID"];
+        let currentQuestionLen = currentQuestion["answer"].length;
+        let questionFileType = currentQuestion["fileType"];
+        let questionFile = currentQuestion["file"];
+        let fileDisplay = $("#questionFile");
+        fileDisplay.empty();
 
-  var congratAudio = new Audio("{% static 'vuotsong/VCNV_cau_dung.mp3' %}"); // ok
-  $("#showAnswer").click(function(event){
-    currentQuestionID = parseInt(document.getElementById("id_ochu").value);
-    if(isNaN(currentQuestionID) || (currentQuestionID < 0) || (currentQuestionID > questions.length)){
-      $("#questionNumber").text("Oops!");
-      $("#questionContent").text("Vui lòng chọn số thứ tự hợp lệ!");
-    }
-    else{
-      congratAudio.play();
-      $(".letterOf" + currentQuestionID.toString()).css("background-color", "rgb(255,255,255)");
-      $(".letterOf" + currentQuestionID.toString() + " span").show();
-    }
-    $(".letter.redLetter").css("background-color", "green");
-  });
+        console.log(`====> Question file ${questionFile}`);
 
-  $("#showAllAnswers").click(function(event){
-    congratAudio.play();
+        let questionInfo = {
+          "questionID": actualQuestionID,
+          "questionFileType": "None",
+          "questionFile": "",
+        }
 
-    $(".letter").css("background-color", "rgb(255,255,255)");
-    $(".letter span").show();
-    $("#chuongNgaiVat").html("<i>Chướng ngại vật: <b>" + chuongNgaiVatContent + "</b></i>");
-  });
+        if (questionFile) {
 
-  var wrongSoundtrack = new Audio("{% static 'vuotsong/VuotSong_CauSai.mp3' %}"); // ok
-  $("#wrongAnswer").click(function(event){
-    wrongSoundtrack.play();
-    // Change bg color to gray for wrong answers
-    currentQuestionID = parseInt(document.getElementById("id_ochu").value);
-    $(".letterOf" + currentQuestionID.toString()).css("background-color", "#808080");
-    $(".letter.redLetter").css("background-color", "green");
-  });
+            console.log(`=====> ${questionFileType}`);
+            questionInfo.questionFileType = questionFileType;
+            questionInfo.questionFile = questionFile;
 
-  var bell_sound = new Audio("{% static 'vuotsong/bellsound.mp3' %}"); // ok
-  // Function to wait for the ringing of the bell
-  setInterval(function() {
-      $.ajax({
-          url: "{% url 'ringBell' %}",
-          method: "GET",
-          success: function(data) {
-              data = JSON.parse(data);
-              var ringerName = data.ringerName;
-              // no one ringed the bell
-              if(ringerName.length == 0){
-                return null;
-              }
-              // check the ringingDialog
-              if(ringingDialog.dialog("isOpen")){
-                // already open
-              }
-              else{
-                // the dialog has not been opened yet
+            if (questionFileType == "image") {
+                fileDisplay.append("<img width='576' height='432' src=" + questionFile + ">");
+            } else if (questionFileType == "video") {
+                fileDisplay.append("<video width='576' height='432' controls><source src=" + questionFile + " type='video/mp4'></video>");
+            } else if (questionFileType == "sound") {
+                let htmlString = "<audio controls style='width: 175px'><source src="+ questionFile + " type='audio/mpeg'>Your browser does not support the audio element.</audio>"
+                fileDisplay.append(htmlString);
+            }
+        }
 
-                // make a sound
-                bell_sound.play();
-                $("#ringingDialogContent").text(ringerName + " đã nhấn chuông xin trả lời CNV!");
-                ringingDialog.dialog("open");
-              }
-          }
-      })
-  }, 250);
-
-  $("#resetStateBtn").click(function(){
-    $.ajax({
-      url: "{% url 'resetRingingState' %}",
-      method: "POST",
-      traditional: true,
-      success: function(data){
-        ringingDialog.dialog('close');
+        $("#questionNumber").text("Hàng số "+currentQuestionID + " (" + currentQuestionLen + " kí tự)");
+        $("#questionContent").text(questionContent);
+        // makeAjaxCall(questionContent, actualQuestionID);
+        updateQuestionInfo(questionContent, questionInfo);
+        $(".letterOf" + currentQuestionID.toString()).css("background-color", "#fde9b4");
       }
     });
-  });
 
-  // Show dap an thi sinh
-  $("#showDapAnThiSinh").click(function () {
-    this.setAttribute("disabled", "disabled");
-    $("#dapAnThiSinh").show();
-  });
+    var congratAudio = new Audio("{% static 'vuotsong/VCNV_cau_dung.mp3' %}"); // ok
+    $("#showAnswer").click(function(event){
+      currentQuestionID = parseInt(document.getElementById("id_ochu").value);
+      if(isNaN(currentQuestionID) || (currentQuestionID < 0) || (currentQuestionID > questions.length)){
+        $("#questionNumber").text("Oops!");
+        $("#questionContent").text("Vui lòng chọn số thứ tự hợp lệ!");
+      }
+      else{
+        congratAudio.play();
+        $(".letterOf" + currentQuestionID.toString()).css("background-color", "rgb(255,255,255)");
+        $(".letterOf" + currentQuestionID.toString() + " span").show();
+      }
+      $(".letter.redLetter").css("background-color", "green");
+    });
 
-  $(".posCell").click(function(){
-    var idx_ochu = $(this).find("span").text();
-    $("#id_ochu").val(idx_ochu);
-    $("#questionNumber").text("Hàng số " + idx_ochu.toString());
-    // Remove previous questionsContent
-    $("#questionContent").text("");
-  });
+    $("#showAllAnswers").click(function(event){
+      congratAudio.play();
 
-  // append opening music
-  ost_path = "{% static 'ost/VuotSong_MoDau.mp3' %}";
+      $(".letter").css("background-color", "rgb(255,255,255)");
+      $(".letter span").show();
+      $("#chuongNgaiVat").html("<i>Chướng ngại vật: <b>" + chuongNgaiVatContent + "</b></i>");
+    });
+
+    var wrongSoundtrack = new Audio("{% static 'vuotsong/VuotSong_CauSai.mp3' %}"); // ok
+    $("#wrongAnswer").click(function(event){
+      wrongSoundtrack.play();
+      // Change bg color to gray for wrong answers
+      currentQuestionID = parseInt(document.getElementById("id_ochu").value);
+      $(".letterOf" + currentQuestionID.toString()).css("background-color", "#808080");
+      $(".letter.redLetter").css("background-color", "green");
+    });
+
+    var bell_sound = new Audio("{% static 'vuotsong/bellsound.mp3' %}"); // ok
+    // Function to wait for the ringing of the bell
+    setInterval(function() {
+        $.ajax({
+            url: "{% url 'ringBell' %}",
+            method: "GET",
+            success: function(data) {
+                data = JSON.parse(data);
+                var ringerName = data.ringerName;
+                // no one ringed the bell
+                if(ringerName.length == 0){
+                  return null;
+                }
+                // check the ringingDialog
+                if(ringingDialog.dialog("isOpen")){
+                  // already open
+                }
+                else{
+                  // the dialog has not been opened yet
+
+                  // make a sound
+                  bell_sound.play();
+                  $("#ringingDialogContent").text(ringerName + " đã nhấn chuông xin trả lời CNV!");
+                  ringingDialog.dialog("open");
+                }
+            }
+        })
+    }, 250);
+
+    $("#resetStateBtn").click(function(){
+      $.ajax({
+        url: "{% url 'resetRingingState' %}",
+        method: "POST",
+        traditional: true,
+        success: function(data){
+          ringingDialog.dialog('close');
+        }
+      });
+    });
+
+    // Show dap an thi sinh
+    $("#showDapAnThiSinh").click(function () {
+      this.setAttribute("disabled", "disabled");
+      $("#dapAnThiSinh").show();
+    });
+
+    $(".posCell").click(function(){
+      var idx_ochu = $(this).find("span").text();
+      $("#id_ochu").val(idx_ochu);
+      $("#questionNumber").text("Hàng số " + idx_ochu.toString());
+      // Remove previous questionsContent
+      $("#questionContent").text("");
+    });
+
+    // append opening music
+    ost_path = "{% static 'ost/VuotSong_MoDau.mp3' %}";
 </script>
 {% endblock %}
