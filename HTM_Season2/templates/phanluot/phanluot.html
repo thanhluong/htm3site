@@ -118,54 +118,58 @@
 </div>
 {% csrf_token %} {% endblock %} {% block scripts %}
 <script>
-  var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-  function csrfSafeMethod(method) {
-      // these HTTP methods do not require CSRF protection
-      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-  }
-  $.ajaxSetup({
-      beforeSend: function (xhr, settings) {
-          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-              xhr.setRequestHeader("X-CSRFToken", csrftoken);
-          }
-      }
-  });
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
 
-  function updateRound(roundName){
+    function updateRound(roundName){
+        $.ajax({
+            url: "{% url 'updateRound' %}",
+            method: "POST",
+            data: {"roundName": roundName},
+            traditional: true,
+            success: function(data){
+                // do nothing
+            }
+        });
+    }
+
+    updateRound("phanluot");
+
+
+    function makeAjaxCall(questionContent, currentQuestionID) {
+        // Make the AJAX call to notify the current question to the server and other screen of contestant
+        $.ajax({
+            url: "{% url 'currentQuestion'%}",
+            method: "POST",
+            data: {"question":questionContent, "questionID":currentQuestionID, "round": "phanluot"},
+            dataType: "json",
+            traditional: true,
+            success: function (data) {
+                // Do nothing
+            }
+        });
+    }
+
+    function updateQuestionInfo(questionContent, questionInfo) {
       $.ajax({
-          url: "{% url 'updateRound' %}",
+          url: "{% url 'currentQuestion' %}",
           method: "POST",
-          data: {"roundName": roundName},
-          traditional: true,
-          success: function(data){
-              // do nothing
-          }
-      });
-  }
-
-  updateRound("phanluot");
-
-
-  function makeAjaxCall(questionContent, currentQuestionID) {
-      // Make the AJAX call to notify the current question to the server and other screen of contestant
-      $.ajax({
-          url: "{% url 'currentQuestion'%}",
-          method: "POST",
-          data: {"question":questionContent, "questionID":currentQuestionID, "round": "phanluot"},
-          dataType: "json",
-          traditional: true,
-          success: function (data) {
-              // Do nothing
-          }
-      });
-  }
-
-
-  // Send signal to handleAcceptingAnswer
-  function signalHandleAcceptingAnswer() {
-      $.ajax({
-          url: "{% url 'handleAcceptingAnswer' %}",
-          method: "GET",
+          data: {
+            "question": questionContent,
+            "questionID": questionInfo.questionID,
+            "questionFileType": questionInfo.questionFileType,
+            "questionFile": questionInfo.questionFile,
+          },
           traditional: true,
           success: function (data) {
               // Do nothing
@@ -173,113 +177,132 @@
       })
   }
 
-  function signalHandleStopAcceptingAnswer() {
-      $.ajax({
-          url: "{% url 'handleStopAcceptingAnswer' %}",
-          method: "GET",
-          traditional: true,
-          success: function (data) {
-              // Do nothing
-          }
-      })
-  }
+    // Send signal to handleAcceptingAnswer
+    function signalHandleAcceptingAnswer() {
+        $.ajax({
+            url: "{% url 'handleAcceptingAnswer' %}",
+            method: "GET",
+            traditional: true,
+            success: function (data) {
+                // Do nothing
+            }
+        })
+    }
 
-  let countDownBox = $("#countDown");
+    function signalHandleStopAcceptingAnswer() {
+        $.ajax({
+            url: "{% url 'handleStopAcceptingAnswer' %}",
+            method: "GET",
+            traditional: true,
+            success: function (data) {
+                // Do nothing
+            }
+        })
+    }
 
-  countDownBox.click(function() {
-      // Disable the button to avoid second click
-      countDownBox.attr("disabled", "disabled");
+    let countDownBox = $("#countDown");
 
-      // Signal the server to accept answers
-      signalHandleAcceptingAnswer();
+    countDownBox.click(function() {
+        // Disable the button to avoid second click
+        countDownBox.attr("disabled", "disabled");
 
-      var demgio = new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}"); // ok
-      demgio.play();
+        // Signal the server to accept answers
+        signalHandleAcceptingAnswer();
 
-      // Countdown 10s
-      var countDownInterval = null;
-      countDownInterval =  setInterval(function () {
-          var newTime = parseInt(countDownBox.text()) - 1;
-          if (newTime >= 0) {
-              countDownBox.html("<span></span><span></span><span></span><span></span>" + newTime);
-          } else {
-              // Send the request to server to stop received data
-              signalHandleStopAcceptingAnswer();
+        var demgio = new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}"); // ok
+        demgio.play();
 
-              // Make request to get the final answer
-              $.ajax({
-                  url: "{% url 'getDapAnThiSinh' %}",
-                  success: function (data) {
-                      data = JSON.parse(data);
-                      $("#dapAnThiSinh").html("");
-                      // Loop over data and update to the view
-                      for (let i = 0; i < data.length; i++) {
-                          const answer = data[i];
-                          var newAnswer = document.createElement("div");
-                          newAnswer.setAttribute("class", "answer col");
-                          newAnswer.innerHTML = "<span style='font-weight: bold; font-style: italic; color: #191970'> " + answer.thisinh + ": " + "</span><br/>" + answer.answer.toUpperCase();
-                          $("#dapAnThiSinh").append(newAnswer);
-                      }
+        // Countdown 10s
+        var countDownInterval = null;
+        countDownInterval =  setInterval(function () {
+            var newTime = parseInt(countDownBox.text()) - 1;
+            if (newTime >= 0) {
+                countDownBox.html("<span></span><span></span><span></span><span></span>" + newTime);
+            } else {
+                // Send the request to server to stop received data
+                signalHandleStopAcceptingAnswer();
 
-                  }
-              })
+                // Make request to get the final answer
+                $.ajax({
+                    url: "{% url 'getDapAnThiSinh' %}",
+                    success: function (data) {
+                        data = JSON.parse(data);
+                        $("#dapAnThiSinh").html("");
+                        // Loop over data and update to the view
+                        for (let i = 0; i < data.length; i++) {
+                            const answer = data[i];
+                            var newAnswer = document.createElement("div");
+                            newAnswer.setAttribute("class", "answer col");
+                            newAnswer.innerHTML = "<span style='font-weight: bold; font-style: italic; color: #191970'> " + answer.thisinh + ": " + "</span><br/>" + answer.answer.toUpperCase();
+                            $("#dapAnThiSinh").append(newAnswer);
+                        }
 
-              clearInterval(countDownInterval);
-              countDownBox.html("<span></span><span></span><span></span><span></span>15");
-              // Enable the box again for next question
-              countDownBox.removeAttr("disabled");
-          }
-      }, 1000);
-  });
+                    }
+                })
 
-
-  // Store all questions in an array
-  let questions = {{ questions|safe }};
-
-  var currentQuestionID = 0;
-
-  $("#nextQuestion").click(function(event) {
-      $("#questionAnswer").text("");
-      if (currentQuestionID >= 4) {
-          $("#questionContent").text("Kết thúc phần thi");
-      } else {
-          let currentQuestion = questions[currentQuestionID];
-          let actualQuestionID = currentQuestion["questionID"];
-
-          // Get all the information of this question
-          let questionContent = currentQuestion["questionText"];
-
-          $("#questionContent").html(questionContent);
-          // currentQuestionID begin with 0 for array index, but should be 1 in the database
-          currentQuestionID++;
-          $("#questionNumber").text(currentQuestionID);
-          $("#showDapAnThiSinh").removeAttr("disabled");
-          $("#dapAnThiSinh").hide();
+                clearInterval(countDownInterval);
+                countDownBox.html("<span></span><span></span><span></span><span></span>15");
+                // Enable the box again for next question
+                countDownBox.removeAttr("disabled");
+            }
+        }, 1000);
+    });
 
 
-          // Update the current question to the server
-          makeAjaxCall(questionContent, actualQuestionID);
+    // Store all questions in an array
+    let questions = {{ questions|safe }};
 
-      }
-  });
+    var currentQuestionID = 0;
 
-  $("#showAnswer").click(function(event){
-      if (currentQuestionID <= 0 || currentQuestionID > 3){
-          $("#questionAnswer").text("...");
-      } else {
-          var showAnswerAudio =  new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}"); // ok
-          showAnswerAudio.play();
+    $("#nextQuestion").click(function(event) {
+        $("#questionAnswer").text("");
+        if (currentQuestionID >= 4) {
+            $("#questionContent").text("Kết thúc phần thi");
+        } else {
+            let currentQuestion = questions[currentQuestionID];
+            let actualQuestionID = currentQuestion["questionID"];
 
-          let currentQuestion = questions[currentQuestionID - 1];
-          let questionAnswer = currentQuestion["answer"];
-          $("#questionAnswer").text("Đáp án: " + questionAnswer);
-      }
-  });
+            // Get all the information of this question
+            let questionContent = currentQuestion["questionText"];
 
-  // Show dap an thi sinh
-  $("#showDapAnThiSinh").click(function () {
-      this.setAttribute("disabled", "disabled");
-      $("#dapAnThiSinh").show();
-  });
+            let questionInfo = {
+              "questionID": actualQuestionID,
+              "questionFileType": "None",
+              "questionFile": "",
+            }
+
+            $("#questionContent").html(questionContent);
+            // currentQuestionID begin with 0 for array index, but should be 1 in the database
+            currentQuestionID++;
+            $("#questionNumber").text(currentQuestionID);
+            $("#showDapAnThiSinh").removeAttr("disabled");
+            $("#dapAnThiSinh").hide();
+
+
+            // Update the current question to the server
+            // makeAjaxCall(questionContent, actualQuestionID);
+            updateQuestionInfo(questionContent, questionInfo);
+
+        }
+    });
+
+    $("#showAnswer").click(function(event){
+        if (currentQuestionID <= 0 || currentQuestionID > 3){
+            $("#questionAnswer").text("...");
+        } else {
+            var showAnswerAudio =  new Audio("{% static 'chinhphuc/VeDichCauDung.mp3' %}"); // ok
+            showAnswerAudio.play();
+
+            let currentQuestion = questions[currentQuestionID - 1];
+            let questionAnswer = currentQuestion["answer"];
+            $("#questionAnswer").text("Đáp án: " + questionAnswer);
+        }
+    });
+
+    // Show dap an thi sinh
+    $("#showDapAnThiSinh").click(function () {
+        this.setAttribute("disabled", "disabled");
+        $("#dapAnThiSinh").show();
+    });
 </script>
 {% endblock %}
