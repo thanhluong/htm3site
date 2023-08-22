@@ -15,3 +15,29 @@ wss.broadcast = function broadcast(msg) {
     client.send(msg);
   });
 };
+
+/*
+Incoming message format:
+{
+  "secret_key": <SECRET_KEY>,
+  "cmd": <COMMAND>,
+  "params": [
+    "key1": "value1",
+    "key2": "value2",
+    ...
+  ]
+}
+*/
+
+wss.on("connection", function connection(ws) {
+  ws.on("message", function incoming(message) {
+    try {
+      const msg = JSON.parse(message);
+      if (msg.secret_key != SECRET_KEY) throw new Error("Invalid secret key");
+      delete msg.secret_key;
+      wss.broadcast(JSON.stringify(msg));
+    } catch (e) {
+      console.log(`Error: ${e}`);
+    }
+  });
+});
