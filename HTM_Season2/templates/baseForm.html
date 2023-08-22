@@ -54,6 +54,9 @@
             id="questionContent"
             style="font-weight: bold; font-size: 20px"
           ></div>
+          <center>
+            <div id="questionFile"></div>
+          </center>
         </span>
       </div>
       {% endif %}
@@ -293,8 +296,31 @@
       console.log("Message from server:", e.data);
       var incomingMessage = JSON.parse(e.data);
       switch (incomingMessage.cmd) {
-        case "updateQuestion":
-          $("#questionContent").text(incomingMessage.params.currentQuestionContent);
+        case "updateQuestion": // Handle new question
+          let questionContentDisplay = $("#questionContent");
+          let questionFileDisplay = $("#questionFile");
+
+          // Clear current question
+          questionContentDisplay.text("");
+          questionFileDisplay.html("");
+
+          // Display new question
+          let questionInfo = incomingMessage.params;
+
+          questionContentDisplay.text(questionInfo.currentQuestionContent);
+
+          if (questionInfo.currentQuestionFileType == "None") break; // No file to display
+
+          let questionFileSrc = questionInfo.currentQuestionFile;
+          if (questionInfo.currentQuestionFileType == "image")
+            questionFileDisplay.append("<img width='460' height='345' src=" + questionFileSrc + ">");
+          else if (questionInfo.currentQuestionFileType == "video")
+            questionFileDisplay.append("<video width='460' height='345' controls><source src=" + questionFileSrc + " type='video/mp4'></video>");
+          else if (questionInfo.currentQuestionFileType == "audio") {
+            let htmlString = "<audio controls><source src="+ questionFileSrc + " type='audio/mpeg'>Your browser does not support the audio element.</audio>"
+            questionFileDisplay.append(htmlString);
+          }
+
           break;
         default:
           console.log("Unknown command!");

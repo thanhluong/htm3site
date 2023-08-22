@@ -270,6 +270,8 @@ def currentQuestion(request):
             # Update the data for server to know about current question info
             currentQuestionContent = dataPost.get("question")
             currentQuestionID = int(dataPost.get("questionID"))
+            currentQuestionFileType = dataPost.get("questionFileType")
+            currentQuestionFile = dataPost.get("questionFile")
             # currentRound = dataPost.get("round")
 
             # TODO: Send to WS proxy
@@ -280,7 +282,9 @@ def currentQuestion(request):
                 "cmd": "updateQuestion",
                 "params": {
                     "currentQuestionID": currentQuestionID,
-                    "currentQuestionContent": currentQuestionContent
+                    "currentQuestionContent": currentQuestionContent,
+                    "currentQuestionFileType": currentQuestionFileType,
+                    "currentQuestionFile": currentQuestionFile,
                 }
             }
             ws.send(json.dumps(wsMessage))

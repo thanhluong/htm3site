@@ -162,6 +162,23 @@
       });
   }
 
+  function updateQuestionInfo(questionContent, questionInfo) {
+      $.ajax({
+          url: "{% url 'currentQuestion' %}",
+          method: "POST",
+          data: {
+            "question": questionContent,
+            "questionID": questionInfo.questionID,
+            "questionFileType": questionInfo.questionFileType,
+            "questionFile": questionInfo.questionFile,
+          },
+          traditional: true,
+          success: function (data) {
+              // Do nothing
+          }
+      })
+  }
+
 
   // Send signal to handleAcceptingAnswer
   function signalHandleAcceptingAnswer() {
@@ -256,8 +273,16 @@
           fileDisplay.empty();
           console.log(`====> Question file ${questionFile}`);
 
+          questionInfo = {
+            "questionID": actualQuestionID,
+            "questionFileType": "None",
+            "questionFile": "",
+          }
+
           if (questionFile) {
               console.log(`=====> ${questionFileType}`);
+              questionInfo.questionFileType = questionFileType;
+              questionInfo.questionFile = questionFile;
 
               if (questionFileType == "image") {
                   fileDisplay.append("<img width='576' height='432' src=" + questionFile + ">");
@@ -279,8 +304,8 @@
 
 
           // Update the current question to the server
-          makeAjaxCall(questionContent, actualQuestionID);
-
+          // makeAjaxCall(questionContent, actualQuestionID);
+          updateQuestionInfo(questionContent, questionInfo);
       }
   });
 
