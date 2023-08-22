@@ -488,7 +488,8 @@
     let traLoiCountDownProgressBar = $("#traLoiCountDownProgressBar");
 
     traLoiCountDownProgressBar.click(function(){
-        demgio.play();
+        // demgio.play();
+        setTimeout(() => {demgio.play();}, 0);
 
         // Countdown 15s
         var countDownInterval = null;
@@ -509,7 +510,8 @@
     let bamChuongCountDownProgressBar = $("#bamChuongCountDownProgressBar");
 
     bamChuongCountDownProgressBar.click(function(){
-        demgioBamChuong.play();
+        // demgioBamChuong.play();
+        setTimeout(() => {demgioBamChuong.play();}, 0);
         // Start accepting gianhQuyen
         sendSignalGQ(true);
 
@@ -686,7 +688,9 @@
             $("#questionContent").text("Vui lòng chọn tọa độ hợp lệ!");
         }
         else{
-            congratAudio.play();
+            // congratAudio.play();
+            setTimeout(() => {congratAudio.play();}, 0);
+            
 
             $("#questionAnswer").text("Đáp án: " + questionAnswer);
         }
@@ -754,7 +758,8 @@
                     // the dialog has not been opened yet
 
                     // make a sound
-                    bell_sound_cpbc.play();
+                    // bell_sound_cpbc.play();
+                    setTimeout(() => {bell_sound_cpbc.play();}, 0);
                     $("#gianhQuyenContent").text(gianhQuyenUser + " đã nhấn chuông giành quyền trả lời!");
                     gianhQuyenDialog.dialog("open");
                 }
@@ -800,7 +805,8 @@
                     // the dialog has not been opened yet
 
                     // make a sound
-                    bell_sound.play();
+                    // bell_sound.play();
+                    setTimeout(() => {bell_sound.play();}, 0);
                     $("#ngoiSaoHiVongContent").text(ringerName + " đã chọn ngôi sao hi vọng!");
                   ngoiSaoHiVongDialog.dialog("open");
                 }
