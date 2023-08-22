@@ -253,6 +253,16 @@
     //         }
     //     })
     // }, 500);
+
+    // one-time fetching
+    $.ajax({
+        url: "{% url 'currentQuestion' %}",
+        success: function(data) {
+            data = JSON.parse(data);
+            $("#questionContent").text(data.question);
+        }
+    })
+
     function handleSubmitAnswerBtn() {
       var answer = $("#answer").val();
       $("#answer").val(""); // clear input
