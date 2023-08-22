@@ -1,6 +1,6 @@
 from django.urls import path
 from .views import score, currentQuestion, updateRound
-from .views import NewAnswer
+from .views import NewAnswer, httpSubmitAnswer
 from .views import ringBell, resetRingingState
 from .views import gianhQuyen, beginAcceptingGQ, stopAcceptingGQ, resetGQState
 from .views import ngoiSaoHiVong, resetNSHVState
@@ -15,6 +15,7 @@ urlpatterns = [
     path("updateRound/", updateRound, name="updateRound"),
     # Handle submiting answer
     path("answer/", NewAnswer.as_view(), name="answer"),
+    path("httpSubmitAnswer/", httpSubmitAnswer, name="httpSubmitAnswer"),
     # Handle ringing request
     path("ringBell/", ringBell, name="ringBell"),
     path("resetRingingState/", resetRingingState, name="resetRingingState"),
