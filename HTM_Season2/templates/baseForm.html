@@ -305,6 +305,7 @@
         if (ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
           console.log("WebSocket connection closed! Reloading ...");
           location.reload();
+        }
       }, 1000);
     });
 
