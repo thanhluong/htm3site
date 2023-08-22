@@ -272,6 +272,28 @@
         handleSubmitAnswerBtn();
       }
     });
+
+    // WebSocket
+    const wsHost = "{{ wsHost }}";
+    const wsPort = {{ wsPort }};
+    const ws = new WebSocket(`ws://${wsHost}:${wsPort}`);
+
+    ws.addEventListener("open", (e) => {
+      console.log("Hello WebSocket Server!");
+    });
+
+    ws.addEventListener("message", (e) => {
+      console.log("Message from server:", e.data);
+      var incomingMessage = JSON.parse(e.data);
+      switch (incomingMessage.cmd) {
+        case "updateQuestion":
+          $("#questionContent").text(incomingMessage.params.currentQuestionContent);
+          break;
+        default:
+          console.log("Unknown command!");
+      }
+    });
+
     {% endif %}
 
     {% if currentRound == "vuotsong" %}

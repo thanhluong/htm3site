@@ -148,7 +148,8 @@ class NewAnswer(generic.CreateView):
                 "form": form,
                 "answerView": True,
                 "currentRound": currentRound,
-                "wsPort": settings.WS_PORT
+                "wsHost": settings.WS_HOSTNAME_FOR_CLIENT,
+                "wsPort": settings.WS_PORT_FOR_CLIENT
             }
         )
 
@@ -158,15 +159,12 @@ def httpSubmitAnswer(request):
     global currentQuestionID, FORM_CLASSES, acceptingAnswer
     currentRound = getCurrentRound()
 
-    print("[DBG] before checking request method ...")
     if request.method != "POST":
         return HttpResponseForbidden()
 
-    print("[DBG] before checking currentRound ...")
     if currentRound not in ["vuotsong", "khoidong", "chinhphuc", "phanluot"]:
         return HttpResponseForbidden()
 
-    print("[DBG] passing all tests ...")
     form_class = FORM_CLASSES[currentRound]
 
     if currentQuestionID > 0 and acceptingAnswer:
