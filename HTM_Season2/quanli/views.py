@@ -20,6 +20,9 @@ from phanluot.forms import PhanLuotAnswerForm
 
 from roundconfig.views import getCurrentRound, setCurrentRound
 
+from websocket import create_connection
+from django.conf import settings
+
 import json
 
 currentQuestionContent = ""
@@ -138,7 +141,16 @@ class NewAnswer(generic.CreateView):
     def get(self, request):
         currentRound = getCurrentRound()
         form = self.form_class()
-        return render(request, template_name=self.template_name, context={"form": form, "answerView": True, "currentRound": currentRound})
+        return render(
+            request,
+            template_name=self.template_name,
+            context={
+                "form": form,
+                "answerView": True,
+                "currentRound": currentRound,
+                "wsPort": settings.WS_PORT
+            }
+        )
 
 
 @login_required
@@ -259,7 +271,21 @@ def currentQuestion(request):
             # Update the data for server to know about current question info
             currentQuestionContent = dataPost.get("question")
             currentQuestionID = int(dataPost.get("questionID"))
-            currentRound = dataPost.get("round")
+            # currentRound = dataPost.get("round")
+
+            # TODO: Send to WS proxy
+            ws = create_connection("ws://%s:%d/" %
+                                   (settings.WS_HOSTNAME, settings.WS_PORT))
+            wsMessage = {
+                "secret_key": settings.WS_SECRET_KEY,
+                "cmd": "updateQuestion",
+                "params": {
+                    "currentQuestionID": currentQuestionID,
+                    "currentQuestionContent": currentQuestionContent
+                }
+            }
+            ws.send(json.dumps(wsMessage))
+            ws.close()
 
             return HttpResponse("Updated!")
         else:
