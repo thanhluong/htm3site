@@ -21,3 +21,14 @@ class QuestionSetConfig(models.Model):
         default="khoidong",
         verbose_name="Vòng thi hiện tại"
     )
+
+
+class QuestionConfig(models.Model):
+    currentQuestionID = models.IntegerField(
+        default=0,
+        verbose_name="ID câu hỏi hiện tại"
+    )
+    currentQuestionContent = models.TextField(
+        default="",
+        verbose_name="Nội dung câu hỏi hiện tại"
+    )
