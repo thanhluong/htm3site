@@ -1,4 +1,6 @@
 from django.urls import path
+from django.views.generic import TemplateView
+
 from .views import score, currentQuestion, updateRound
 from .views import NewAnswer, httpSubmitAnswer
 from .views import broadcastSignal
@@ -39,5 +41,6 @@ urlpatterns = [
     # Handle display dapan
     path("getDapAnThiSinh/", getDapAnThiSinh, name="getDapAnThiSinh"),
     # Handle game state
-    path("gameState/", gameState, name="gameState")
+    path("gameState/", gameState, name="gameState"),
+    path("viewGameState/", TemplateView.as_view(template_name="gameState.html"))
 ]
