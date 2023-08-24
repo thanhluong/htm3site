@@ -26,8 +26,6 @@ from django.conf import settings
 
 import json
 
-currentQuestionContent = ""
-currentQuestionID = 0
 
 acceptingAnswer = False
 
