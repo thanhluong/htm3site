@@ -410,7 +410,7 @@
             method: "GET",
             success: function(data) {
                 data = JSON.parse(data);
-                if(data.gianhQuyenUser.length == 0){
+                if(data.gianhQuyenUser.length == 0 && data.acceptingGQ) {
                     if(gianhQuyen.prop("disabled")){
                         gianhQuyen.prop("disabled", false);
                     }
@@ -424,7 +424,7 @@
                 }
             }
         })
-    }, 250);
+    }, 1000);
 
     let ngoiSaoHiVong = $("#ngoiSaoHiVong");
 
@@ -455,7 +455,7 @@
                 }
             }
         })
-    }, 500);
+    }, 1000);
 
     {% endif %}
   </script>
