@@ -2,6 +2,7 @@ from django.shortcuts import render
 from .models import QuestionSetConfig
 from .models import QuestionConfig
 from .models import RoundState
+from .models import GameState
 
 # Create your views here.
 
@@ -78,3 +79,16 @@ def setCurrentRinger(currentRinger):
     roundStateObject = RoundState.objects.all().first()
     roundStateObject.currentRinger = currentRinger
     roundStateObject.save()
+
+
+def getGameState():
+    gameStateObject = GameState.objects.all().first()
+    return {
+        "base64img": gameStateObject.base64img
+    }
+
+
+def setGameState(base64img):
+    gameStateObject = GameState.objects.all().first()
+    gameStateObject.base64img = base64img
+    gameStateObject.save()

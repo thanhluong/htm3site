@@ -25,6 +25,7 @@ from roundconfig.views import setAcceptingAnswer
 from roundconfig.views import setAcceptingGQ, setGianhQuyenUser
 from roundconfig.views import setCurrentNSHVer
 from roundconfig.views import setCurrentRinger
+from roundconfig.views import getGameState, setGameState
 
 from websocket import create_connection
 from django.conf import settings
@@ -56,6 +57,16 @@ def sendWebSocketMessage(cmd, params):
     }
     ws.send(json.dumps(wsMessage))
     ws.close()
+
+
+@login_required
+def gameState(request):
+    if request.method == "POST":
+        # Update the game state (screenshot as base64)
+        setGameState(request.POST.get("base64img"))
+    elif request.method == "GET":
+        # Get the game state
+        return JsonResponse(json.dumps(getGameState()), safe=False)
 
 
 @login_required
