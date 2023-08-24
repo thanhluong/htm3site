@@ -23,6 +23,8 @@ from roundconfig.views import getCurrentQuestion, setCurrentQuestion
 from roundconfig.views import getRoundState
 from roundconfig.views import setAcceptingAnswer
 from roundconfig.views import setAcceptingGQ, setGianhQuyenUser
+from roundconfig.views import setCurrentNSHVer
+from roundconfig.views import setCurrentRinger
 
 from websocket import create_connection
 from django.conf import settings
@@ -38,13 +40,22 @@ FORM_CLASSES = {
     "phanluot": PhanLuotAnswerForm
 }
 
-currentRinger = ""
 allRingers = []
-
-currentNSHVer = ""
 allNSHVers = []
 
 # Create your views here.
+
+
+def sendWebSocketMessage(cmd, params):
+    ws = create_connection("ws://%s:%d/" %
+                           (settings.WS_HOSTNAME, settings.WS_PORT))
+    wsMessage = {
+        "secret_key": settings.WS_SECRET_KEY,
+        "cmd": cmd,
+        "params": params
+    }
+    ws.send(json.dumps(wsMessage))
+    ws.close()
 
 
 @login_required
@@ -294,21 +305,15 @@ def currentQuestion(request):
             # currentRound = dataPost.get("round")
 
             # TODO: Send to WS proxy
-            ws = create_connection("ws://%s:%d/" %
-                                   (settings.WS_HOSTNAME, settings.WS_PORT))
-            wsMessage = {
-                "secret_key": settings.WS_SECRET_KEY,
-                "cmd": "updateQuestion",
-                "params": {
+            sendWebSocketMessage(
+                cmd="updateQuestion",
+                params={
                     "currentQuestionID": currentQuestionID,
                     "currentQuestionContent": currentQuestionContent,
                     "currentQuestionFileType": currentQuestionFileType,
                     "currentQuestionFile": currentQuestionFile,
                 }
-            }
-            ws.send(json.dumps(wsMessage))
-            ws.close()
-
+            )
             return HttpResponse("Updated!")
         else:
             return HttpResponseForbidden()
@@ -350,8 +355,9 @@ def ringBell(request):
         GET: Return the current ringer name in JSON format
         POST: Update the current ringer name
     """
-    global currentRinger
     global allRingers
+
+    currentRinger = getRoundState()["currentRinger"]
 
     if request.method == "GET":
         # The person is already ringed
@@ -370,6 +376,7 @@ def ringBell(request):
             return HttpResponseForbidden()
         # Update currentRinger
         currentRinger = str(request.user)
+        setCurrentRinger(currentRinger)
         allRingers.append(currentRinger)
         print(currentRinger, "ringed a bell!")
         return HttpResponse("Ringed!")
@@ -380,15 +387,13 @@ def resetRingingState(request):
     """
     Function to reset the state of the bell
     """
-    global currentRinger
-
     # Only POST method is allowed
     if request.method != "POST":
         return HttpResponseForbidden()
 
     if request.user.is_staff:
         # Reset by assigning currentRinger to be an empty string
-        currentRinger = ""
+        setCurrentRinger("")
         return HttpResponse("Already reset!")
     else:
         return HttpResponseForbidden()
@@ -396,8 +401,9 @@ def resetRingingState(request):
 
 @login_required
 def ngoiSaoHiVong(request):
-    global currentNSHVer
     global allNSHVers
+
+    currentNSHVer = getRoundState()["currentNSHVer"]
 
     if request.method == "GET":
         # The person is already ringed
@@ -416,8 +422,9 @@ def ngoiSaoHiVong(request):
             return HttpResponseForbidden()
         # Update currentNSHVer
         currentNSHVer = str(request.user)
+        setCurrentNSHVer(currentNSHVer)
         allNSHVers.append(currentNSHVer)
-        print(currentRinger, " da chon NSHV!")
+        print(currentNSHVer, " da chon NSHV!")
         return HttpResponse("Ngoi sao hi vong!")
 
 
@@ -426,15 +433,13 @@ def resetNSHVState(request):
     """
     Function to reset the state of the bell
     """
-    global currentNSHVer
-
     # Only POST method is allowed
     if request.method != "POST":
         return HttpResponseForbidden()
 
     if request.user.is_staff:
         # Reset by assigning currentRinger to be an empty string
-        currentNSHVer = ""
+        setCurrentNSHVer("")
         return HttpResponse("Already reset!")
     else:
         return HttpResponseForbidden()
@@ -519,9 +524,8 @@ def getDapAnThiSinh(request):
     """
     The function to handle getting all the latest answers from thi sinh
     """
-
-    global currentQuestionID
     currentRound = getCurrentRound()
+    currentQuestionID = getCurrentQuestion()["currentQuestionID"]
 
     # Get the current question
     if currentRound == "khoidong":

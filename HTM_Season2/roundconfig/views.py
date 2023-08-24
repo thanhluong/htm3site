@@ -66,3 +66,15 @@ def setGianhQuyenUser(gianhQuyenUser):
     roundStateObject = RoundState.objects.all().first()
     roundStateObject.gianhQuyenUser = gianhQuyenUser
     roundStateObject.save()
+
+
+def setCurrentNSHVer(currentNSHVer):
+    roundStateObject = RoundState.objects.all().first()
+    roundStateObject.currentNSHVer = currentNSHVer
+    roundStateObject.save()
+
+
+def setCurrentRinger(currentRinger):
+    roundStateObject = RoundState.objects.all().first()
+    roundStateObject.currentRinger = currentRinger
+    roundStateObject.save()
