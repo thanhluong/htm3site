@@ -20,17 +20,15 @@ from phanluot.forms import PhanLuotAnswerForm
 
 from roundconfig.views import getCurrentRound, setCurrentRound
 from roundconfig.views import getCurrentQuestion, setCurrentQuestion
+from roundconfig.views import getRoundState
+from roundconfig.views import setAcceptingAnswer
+from roundconfig.views import setAcceptingGQ, setGianhQuyenUser
 
 from websocket import create_connection
 from django.conf import settings
 
 import json
 
-
-acceptingAnswer = False
-
-acceptingGQ = False
-gianhQuyenUser = ""
 
 # TODO: Add form classes for other rounds here
 FORM_CLASSES = {
@@ -88,7 +86,7 @@ class NewAnswer(generic.CreateView):
     """
     Class-based view to submit a new answer to the database
     """
-    global FORM_CLASSES, acceptingAnswer
+    global FORM_CLASSES
 
     success_url = reverse_lazy("answer")
     template_name = "baseForm.html"
@@ -101,6 +99,7 @@ class NewAnswer(generic.CreateView):
             return HttpResponseRedirect(reverse_lazy("answer"))
 
         currentQuestionID = getCurrentQuestion()["currentQuestionID"]
+        acceptingAnswer = getRoundState()["acceptingAnswer"]
 
         # If currently no question is being presented, prevent thi sinh to submit answer
         # Also prevent thi sinh to submit answer if time out
@@ -147,7 +146,7 @@ class NewAnswer(generic.CreateView):
 
     def get(self, request):
         currentRound = getCurrentRound()
-        form = self.form_class()
+        form = FORM_CLASSES[currentRound]()
         return render(
             request,
             template_name=self.template_name,
@@ -164,7 +163,7 @@ class NewAnswer(generic.CreateView):
 
 @login_required
 def httpSubmitAnswer(request):
-    global FORM_CLASSES, acceptingAnswer
+    global FORM_CLASSES
     currentRound = getCurrentRound()
 
     if request.method != "POST":
@@ -175,6 +174,7 @@ def httpSubmitAnswer(request):
 
     form_class = FORM_CLASSES[currentRound]
     currentQuestionID = getCurrentQuestion()["currentQuestionID"]
+    acceptingAnswer = getRoundState()["acceptingAnswer"]
 
     if currentQuestionID > 0 and acceptingAnswer:
         user = request.user
@@ -229,7 +229,6 @@ def currentQuestion(request):
         GET: Return the current question content in JSON format
         POST: Update the current question content
     """
-    global acceptingAnswer
     currentRound = getCurrentRound()
 
     if request.method == "GET":
@@ -446,10 +445,8 @@ def beginAcceptingAnswer(request):
     """
     The fucntion to handle request of begin accepting answer from thi sinh
     """
-    global acceptingAnswer
-
     if request.user.is_staff:
-        acceptingAnswer = True
+        setAcceptingAnswer(True)
 
     return HttpResponse("Success")
 
@@ -459,10 +456,8 @@ def stopAcceptingAnswer(request):
     """
     The fucntion to handle request of begin accepting answer from thi sinh
     """
-    global acceptingAnswer
-
     if request.user.is_staff:
-        acceptingAnswer = False
+        setAcceptingAnswer(False)
 
     return HttpResponse("Success")
 
@@ -472,10 +467,8 @@ def beginAcceptingGQ(request):
     """
     The fucntion to handle request of begin accepting answer from thi sinh
     """
-    global acceptingGQ
-
     if request.user.is_staff:
-        acceptingGQ = True
+        setAcceptingGQ(True)
 
     return HttpResponse("Success")
 
@@ -485,27 +478,25 @@ def stopAcceptingGQ(request):
     """
     The fucntion to handle request of begin accepting answer from thi sinh
     """
-    global acceptingGQ
-
     if request.user.is_staff:
-        acceptingGQ = False
+        setAcceptingGQ(False)
 
     return HttpResponse("Success")
 
 
 @login_required
 def resetGQState(request):
-    global gianhQuyenUser
-
     if request.user.is_staff:
-        gianhQuyenUser = ""
+        setGianhQuyenUser("")
 
     return HttpResponse("Success")
 
 
 @login_required
 def gianhQuyen(request):
-    global acceptingGQ, gianhQuyenUser
+    roundState = getRoundState()
+    acceptingGQ = roundState["acceptingGQ"]
+    gianhQuyenUser = roundState["gianhQuyenUser"]
 
     if request.method == "GET":
         result = {"gianhQuyenUser": gianhQuyenUser,
@@ -516,7 +507,7 @@ def gianhQuyen(request):
         if not acceptingGQ:
             return HttpResponseForbidden()
         if gianhQuyenUser == "":
-            gianhQuyenUser = str(request.user)
+            setGianhQuyenUser(str(request.user))
             print(gianhQuyenUser, "gianh quyen tra loi!")
         return HttpResponse("Success")
 

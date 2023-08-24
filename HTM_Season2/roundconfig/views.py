@@ -48,3 +48,21 @@ def getRoundState():
         "currentRinger": roundStateObject.currentRinger,
         "currentNSHVer": roundStateObject.currentNSHVer,
     }
+
+
+def setAcceptingAnswer(acceptingAnswer):
+    roundStateObject = RoundState.objects.all().first()
+    roundStateObject.acceptingAnswer = acceptingAnswer
+    roundStateObject.save()
+
+
+def setAcceptingGQ(accpetingGQ):
+    roundStateObject = RoundState.objects.all().first()
+    roundStateObject.acceptingGQ = accpetingGQ
+    roundStateObject.save()
+
+
+def setGianhQuyenUser(gianhQuyenUser):
+    roundStateObject = RoundState.objects.all().first()
+    roundStateObject.gianhQuyenUser = gianhQuyenUser
+    roundStateObject.save()
