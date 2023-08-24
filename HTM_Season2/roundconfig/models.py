@@ -63,3 +63,8 @@ class RoundState(models.Model):
         max_length=64, default="", blank=True, verbose_name="Người vừa nhấn chuông")
     currentNSHVer = models.CharField(
         max_length=64, default="", blank=True, verbose_name="Người vừa chọn Ngôi sao hy vọng")
+
+
+class GameState(models.Model):
+    base64img = models.TextField(
+        default="", blank=True, verbose_name="Ảnh hiện tại (base64)")
