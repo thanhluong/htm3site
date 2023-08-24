@@ -1,6 +1,152 @@
-{% extends 'base.html' %} {% load static %} {% block content %}
-<div>
-  <h1>Home</h1>
-  <h2>Welcome to the Game State page!</h2>
-</div>
-{% endblock %}
+<!DOCTYPE html>
+{% load static %}
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="{% static 'bootstrap.min.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'style.css' %}"
+      type="text/css"
+      media="all"
+    />
+    <link rel="stylesheet" href="{% static 'jquery-ui.min.css' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'bootstrap-colorselector.min.css' %}"
+    />
+    <link rel="shortcut icon" href="{% static 'favicon.ico' %}" />
+    <link
+      rel="stylesheet"
+      href="{% static 'owl.carousel.css' %}"
+      type="text/css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'chocolat.css' %}"
+      type="text/css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'animate-custom.css' %}"
+      type="text/css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'btn-custom.css' %}"
+      type="text/css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'animated-btn.css' %}"
+      type="text/css"
+      media="all"
+    />
+
+    <!-- Fonts -->
+    <link
+      rel="stylesheet"
+      href="{% static 'fonts/Montserrat_400_700.css' %}"
+      type="text/css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'fonts/Roboto_400_100_300_500.css' %}"
+      type="text/css"
+      media="all"
+    />
+    <link
+      rel="stylesheet"
+      href="{% static 'fonts/Press_Start_2P.css' %}"
+      type="text/css"
+      media="all"
+    />
+    <!-- //Fonts -->
+
+    <!-- Font-Awesome-File-Links -->
+    <!-- CSS -->
+    <link
+      rel="stylesheet"
+      href="{% static 'fonts/font-awesome.min.css' %}"
+      type="text/css"
+      media="all"
+    />
+    <!-- TTF -->
+    <link
+      rel="stylesheet"
+      href="{% static 'fonts/fontawesome-webfont.ttf' %}"
+      type="text/css"
+      media="all"
+    />
+    <!-- //Font-Awesome-File-Links -->
+
+    <title>Hành trình Magellan - Xem trạng thái trận đấu</title>
+
+    <script src="{% static 'jquery.js' %}"></script>
+    <script src="{% static 'jquery-ui.min.js' %}"></script>
+    <script src="{% static 'popper.min.js' %}"></script>
+    <script src="{% static 'bootstrap.min.js' %}"></script>
+    <script src="{% static 'bootstrap-colorselector.min.js' %}"></script>
+
+    <style>
+      #game-state-controller {
+        text-align: center;
+        margin-top: 3em;
+        margin-bottom: 4em;
+      }
+
+      #loadGameStateBtn {
+        margin: 0 auto;
+        display: block;
+        width: 10em;
+      }
+
+      #game-state-container {
+        border: 2px solid #fff;
+        box-shadow: 0 0 0 2px #000;
+        margin: 0 auto;
+        display: block;
+        width: 500px;
+        height: 500px;
+      }
+    </style>
+  </head>
+  <body>
+    {% block content %}
+    <div id="game-state-controller">
+      <button id="loadGameStateBtn" class="btn btn-primary">Tải lại</button>
+    </div>
+    <div id="game-state-container">
+      <img
+        class="game-state-screenshot"
+        id="gameStateScreenshot"
+        src="https://pbs.twimg.com/profile_images/1674815862879178752/nTGMV1Eo_400x400.jpg"
+      />
+    </div>
+    {% endblock %}
+
+    <script>
+      function reloadGameState() {
+        $.get("{% url 'gameState' %}", function (data, status) {
+          data = JSON.parse(data);
+          $("#gameStateScreenshot").attr("src", data.base64img);
+          console.log("Received data:", data);
+        });
+      }
+
+      $(document).ready(function () {
+        reloadGameState();
+      });
+
+      $("#loadGameStateBtn").click(function () {
+        reloadGameState();
+      });
+    </script>
+  </body>
+</html>

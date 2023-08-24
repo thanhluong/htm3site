@@ -64,9 +64,10 @@ def gameState(request):
     if request.method == "POST":
         # Update the game state (screenshot as base64)
         setGameState(request.POST.get("base64img"))
+        return HttpResponse("Success!")
     elif request.method == "GET":
         # Get the game state
-        return JsonResponse(json.dumps(getGameState()), safe=False)
+        return JsonResponse(json.dumps(dict(base64img=getGameState())), safe=False)
 
 
 @login_required

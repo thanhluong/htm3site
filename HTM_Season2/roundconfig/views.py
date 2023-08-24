@@ -83,9 +83,7 @@ def setCurrentRinger(currentRinger):
 
 def getGameState():
     gameStateObject = GameState.objects.all().first()
-    return {
-        "base64img": gameStateObject.base64img
-    }
+    return gameStateObject.base64img
 
 
 def setGameState(base64img):

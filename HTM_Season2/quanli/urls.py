@@ -42,5 +42,6 @@ urlpatterns = [
     path("getDapAnThiSinh/", getDapAnThiSinh, name="getDapAnThiSinh"),
     # Handle game state
     path("gameState/", gameState, name="gameState"),
-    path("viewGameState/", TemplateView.as_view(template_name="gameState.html"))
+    path("viewGameState/",
+         TemplateView.as_view(template_name="quanli/gameState.html"), name="viewGameState")
 ]
