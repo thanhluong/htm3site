@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from .models import QuestionSetConfig
 from .models import QuestionConfig
+from .models import RoundState
 
 # Create your views here.
 
@@ -36,3 +37,14 @@ def setCurrentQuestion(questionID, questionContent, questionFileType, questionFi
     currentQuestionObject.currentQuestionFileType = questionFileType
     currentQuestionObject.currentQuestionFile = questionFile
     currentQuestionObject.save()
+
+
+def getRoundState():
+    roundStateObject = RoundState.objects.all().first()
+    return {
+        "acceptingAnswer": roundStateObject.acceptingAnswer,
+        "acceptingGQ": roundStateObject.acceptingGQ,
+        "gianhQuyenUser": roundStateObject.gianhQuyenUser,
+        "currentRinger": roundStateObject.currentRinger,
+        "currentNSHVer": roundStateObject.currentNSHVer,
+    }
