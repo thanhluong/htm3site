@@ -223,6 +223,8 @@ body{
   }
 </style>
 {% endblock %} {% block content %}
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-8">
@@ -1103,5 +1105,23 @@ body{
 
     // append opening music
     ost_path = "{% static 'ost/VuotSong_MoDau.mp3' %}";
+
+    // Update game screenshot
+    $(document).bind('keypress', function(e) {
+      if (!((e.shiftKey) && (e.keyCode == 38))) return; // shift + 7
+
+      html2canvas(document.querySelector("#crossword")).then(canvas => {
+          var img = canvas.toDataURL("image/png");
+          $.ajax({
+              url: "{% url 'gameState' %}",
+              method: "POST",
+              data: {"base64img": img},
+              traditional: true,
+              success: function(data) {
+                  console.log("Game state updated!");
+              }
+          });
+      });
+  });
 </script>
 {% endblock %}
