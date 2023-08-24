@@ -254,14 +254,25 @@
     //     })
     // }, 500);
 
-    // one-time fetching
-    $.ajax({
-        url: "{% url 'currentQuestion' %}",
-        success: function(data) {
-            data = JSON.parse(data);
-            $("#questionContent").text(data.question);
-        }
-    })
+    // one-time initialization
+    $(document).ready( function() {
+        $.ajax({
+            url: "{% url 'currentQuestion' %}",
+            success: function(data) {
+                data = JSON.parse(data);
+                $("#questionContent").text(data.question);
+            }
+        }); // fetch question content
+
+        $.ajax({
+          url: "{% url 'roundState' %}",
+          success: function(data) {
+              data = JSON.parse(data);
+              $("#answer").prop("readonly", !data.acceptingAnswer);
+          }
+      });
+      }
+    )
 
     function handleSubmitAnswerBtn() {
       var answer = $("#answer").val();
@@ -314,6 +325,10 @@
       console.log("Message from server:", e.data);
       var incomingMessage = JSON.parse(e.data);
       switch (incomingMessage.cmd) {
+        case "acceptAnswer":
+          $("#answer").prop("readonly", !incomingMessage.params.status);
+          break;
+
         case "playVideo":
           $("#questionVideo").get(0).play();
           break;

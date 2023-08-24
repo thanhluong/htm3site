@@ -71,6 +71,13 @@ def gameState(request):
 
 
 @login_required
+def roundState(request):
+    if request.method != "GET":
+        return HttpResponseForbidden()
+    return JsonResponse(json.dumps(getRoundState()), safe=False)
+
+
+@login_required
 def score(request, username=None, score=None):
     """
     Function to handle the request to grading page
@@ -464,6 +471,7 @@ def beginAcceptingAnswer(request):
     """
     if request.user.is_staff:
         setAcceptingAnswer(True)
+        sendWebSocketMessage(cmd="acceptAnswer", params={"status": True})
 
     return HttpResponse("Success")
 
@@ -475,6 +483,7 @@ def stopAcceptingAnswer(request):
     """
     if request.user.is_staff:
         setAcceptingAnswer(False)
+        sendWebSocketMessage(cmd="acceptAnswer", params={"status": False})
 
     return HttpResponse("Success")
 

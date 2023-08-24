@@ -9,6 +9,7 @@ from .views import gianhQuyen, beginAcceptingGQ, stopAcceptingGQ, resetGQState
 from .views import ngoiSaoHiVong, resetNSHVState
 from .views import beginAcceptingAnswer, stopAcceptingAnswer, getDapAnThiSinh
 from .views import gameState
+from .views import roundState
 
 urlpatterns = [
     # Handle grading requests
@@ -43,5 +44,7 @@ urlpatterns = [
     # Handle game state
     path("gameState/", gameState, name="gameState"),
     path("viewGameState/",
-         TemplateView.as_view(template_name="quanli/gameState.html"), name="viewGameState")
+         TemplateView.as_view(template_name="quanli/gameState.html"), name="viewGameState"),
+    # Handle round state
+    path("roundState/", roundState, name="roundState")
 ]
