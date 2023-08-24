@@ -19,6 +19,7 @@ from chinhphuc.forms import ChinhPhucAnswerForm
 from phanluot.forms import PhanLuotAnswerForm
 
 from roundconfig.views import getCurrentRound, setCurrentRound
+from roundconfig.views import getCurrentQuestion, setCurrentQuestion
 
 from websocket import create_connection
 from django.conf import settings
@@ -89,10 +90,8 @@ class NewAnswer(generic.CreateView):
     """
     Class-based view to submit a new answer to the database
     """
-    global currentQuestionID, FORM_CLASSES, acceptingAnswer
-    currentRound = getCurrentRound()
+    global FORM_CLASSES, acceptingAnswer
 
-    form_class = FORM_CLASSES[currentRound]
     success_url = reverse_lazy("answer")
     template_name = "baseForm.html"
 
@@ -102,6 +101,8 @@ class NewAnswer(generic.CreateView):
 
         if currentRound not in ["vuotsong", "khoidong", "chinhphuc", "phanluot"]:
             return HttpResponseRedirect(reverse_lazy("answer"))
+
+        currentQuestionID = getCurrentQuestion()["currentQuestionID"]
 
         # If currently no question is being presented, prevent thi sinh to submit answer
         # Also prevent thi sinh to submit answer if time out
@@ -136,7 +137,15 @@ class NewAnswer(generic.CreateView):
 
         # Return a new page for the next question
         form = self.form_class()
-        return render(request, template_name=self.template_name, context={"form": form, "answerView": True, "currentRound": currentRound})
+
+        return render(
+            request,
+            template_name=self.template_name,
+            context={
+                "form": form,
+                "answerView": True,
+                "currentRound": currentRound
+            })
 
     def get(self, request):
         currentRound = getCurrentRound()
@@ -157,7 +166,7 @@ class NewAnswer(generic.CreateView):
 
 @login_required
 def httpSubmitAnswer(request):
-    global currentQuestionID, FORM_CLASSES, acceptingAnswer
+    global FORM_CLASSES, acceptingAnswer
     currentRound = getCurrentRound()
 
     if request.method != "POST":
@@ -167,6 +176,7 @@ def httpSubmitAnswer(request):
         return HttpResponseForbidden()
 
     form_class = FORM_CLASSES[currentRound]
+    currentQuestionID = getCurrentQuestion()["currentQuestionID"]
 
     if currentQuestionID > 0 and acceptingAnswer:
         user = request.user
@@ -221,11 +231,15 @@ def currentQuestion(request):
         GET: Return the current question content in JSON format
         POST: Update the current question content
     """
-    global currentQuestionContent, currentQuestionID, acceptingAnswer
+    global acceptingAnswer
     currentRound = getCurrentRound()
 
     if request.method == "GET":
         # Get the current question
+        currentQuestion = getCurrentQuestion()
+        currentQuestionID = currentQuestion["currentQuestionID"]
+        currentQuestionContent = currentQuestion["currentQuestionContent"]
+
         if currentRound == "khoidong":
             question = KhoiDongQuestion.objects.get(
                 questionID=currentQuestionID)
@@ -267,11 +281,19 @@ def currentQuestion(request):
         if request.user.is_staff:
             dataPost = request.POST
 
-            # Update the data for server to know about current question info
+            # Parse POST request
             currentQuestionContent = dataPost.get("question")
             currentQuestionID = int(dataPost.get("questionID"))
             currentQuestionFileType = dataPost.get("questionFileType")
             currentQuestionFile = dataPost.get("questionFile")
+
+            # Update the data for server to know about current question info
+            setCurrentQuestion(
+                questionID=currentQuestionID,
+                questionContent=currentQuestionContent,
+                questionFileType=currentQuestionFileType,
+                questionFile=currentQuestionFile
+            )
             # currentRound = dataPost.get("round")
 
             # TODO: Send to WS proxy
