@@ -6,6 +6,7 @@ from .views import ringBell, resetRingingState
 from .views import gianhQuyen, beginAcceptingGQ, stopAcceptingGQ, resetGQState
 from .views import ngoiSaoHiVong, resetNSHVState
 from .views import beginAcceptingAnswer, stopAcceptingAnswer, getDapAnThiSinh
+from .views import gameState
 
 urlpatterns = [
     # Handle grading requests
@@ -36,5 +37,7 @@ urlpatterns = [
     path("handleStopAcceptingAnswer/", stopAcceptingAnswer,
          name="handleStopAcceptingAnswer"),
     # Handle display dapan
-    path("getDapAnThiSinh/", getDapAnThiSinh, name="getDapAnThiSinh")
+    path("getDapAnThiSinh/", getDapAnThiSinh, name="getDapAnThiSinh"),
+    # Handle game state
+    path("gameState/", gameState, name="gameState")
 ]

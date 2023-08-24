@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block style %}
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <style>
 
     table{
@@ -733,6 +734,24 @@
         sendSignalResetGQ();
         gianhQuyenDialog.dialog('close');
     });
+
+    // Update game screenshot 
+    $(document).bind('keypress', function(e) {
+        if (!((e.shiftKey) && (e.keyCode == 38))) return; // shift + 7
+
+        html2canvas(document.querySelector("#gomoku")).then(canvas => {
+            var img = canvas.toDataURL("image/png");
+            $.ajax({
+                url: "{% url 'gameState' %}",
+                method: "POST",
+                data: {"base64img": img},
+                traditional: true,
+                success: function(data){
+                    // do nothing
+                }
+            });
+        });
+    }
 
     // Function to wait for the GianhQuyen
     setInterval(function() {
