@@ -1110,7 +1110,7 @@ body{
     $(document).bind('keypress', function(e) {
       if (!((e.shiftKey) && (e.keyCode == 38))) return; // shift + 7
 
-      html2canvas(document.querySelector("#crossword")).then(canvas => {
+      html2canvas(document.querySelector("#crossword"), {background: "#ffffff"}).then(canvas => {
           var img = canvas.toDataURL("image/png");
           $.ajax({
               url: "{% url 'gameState' %}",
