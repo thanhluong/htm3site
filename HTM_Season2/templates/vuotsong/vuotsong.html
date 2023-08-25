@@ -226,6 +226,10 @@ body{
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script src="{% static 'reconnecting-websocket.min.js' %}"></script>
 
+<audio id="audioBellSound" preload="auto">
+  <source src="{% static 'vuotsong/bellsound.mp3' %}" type="audio/mpeg" />
+</audio>
+
 <div class="container-fluid">
   <div class="row">
     <div class="col-md-8">
@@ -365,6 +369,7 @@ body{
 
 {% csrf_token %} {% endblock %} {% block scripts %}
 <script>
+    document.getElementById("audioBellSound").load();
 
     // Do not open the ringingDialog if nothing happenned
     ringingDialog = $("#ringingDialog");
@@ -1062,13 +1067,14 @@ body{
       }
       else{
         // the dialog has not been opened yet
-        bell_sound.play(); // make a sound
+        // bell_sound.play(); // make a sound
+        document.getElementById("audioBellSound").play();
         $("#ringingDialogContent").text(ringerName + " đã nhấn chuông xin trả lời CNV!");
         ringingDialog.dialog("open");
       }
     }
 
-    var bell_sound = new Audio("{% static 'vuotsong/bellsound.mp3' %}"); // ok
+    {% comment %} var bell_sound = new Audio("{% static 'vuotsong/bellsound.mp3' %}"); // ok {% endcomment %}
     // Function to wait for the ringing of the bell
     {% comment %} setInterval(function() {
         $.ajax({
@@ -1160,6 +1166,7 @@ body{
     var incomingMessage = JSON.parse(e.data);
     switch (incomingMessage.cmd) {
       case "ringBell":
+        handleRingBell(incomingMessage.params.currentRinger);
         break;
       case "default":
         console.log("Unknown command!");
