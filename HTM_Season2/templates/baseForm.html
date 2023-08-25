@@ -292,6 +292,15 @@
               handleGianhQuyen(data.gianhQuyenUser, data.acceptingGQ)
           }
         }); // fetch gianhQuyen data (ChinhPhuc)
+
+        $.ajax({
+          url: "{% url 'ngoiSaoHiVong' %}",
+          method: "GET",
+          success: function(data) {
+              data = JSON.parse(data);
+              handleNgoiSaoHiVong(data.ringerName);
+          }
+        }); // fetch ngoiSaoHiVong data (ChinhPhuc)
       }
     )
 
@@ -351,6 +360,22 @@
       }
     }
 
+    function handleNgoiSaoHiVong(ringerName) {
+      var ngoiSaoHiVong = $("#ngoiSaoHiVong");
+      if (ringerName.length == 0) {
+        if (ngoiSaoHiVong.prop("disabled")) {
+            ngoiSaoHiVong.prop("disabled", false);
+        }
+      }
+      else {
+          if (ngoiSaoHiVong.prop("disabled")) {
+          }
+          else {
+              ngoiSaoHiVong.prop("disabled", true)
+          }
+      }
+    }
+
     // WebSocket
     const wsHost = "{{ wsHost }}";
     const wsPort = {{ wsPort }};
@@ -378,6 +403,10 @@
       console.log("Message from server:", e.data);
       var incomingMessage = JSON.parse(e.data);
       switch (incomingMessage.cmd) {
+        case "ngoiSaoHiVong":
+          handleNgoiSaoHiVong(incomingMessage.params.currentNSHVer);
+          break;
+
         case "ringBell":
           updateRingerName(incomingMessage.params.currentRinger);
           break;
@@ -499,27 +528,16 @@
     });
 
     // Make AJAX calls to check for ngoiSaoHiVong state
-    setInterval(function() {
-        $.ajax({
-            url: "{% url 'ngoiSaoHiVong' %}",
-            method: "GET",
-            success: function(data) {
-                data = JSON.parse(data);
-                if(data.ringerName.length == 0){
-                    if(ngoiSaoHiVong.prop("disabled")){
-                        ngoiSaoHiVong.prop("disabled", false);
-                    }
-                }
-                else{
-                    if(ngoiSaoHiVong.prop("disabled")){
-                    }
-                    else{
-                        ngoiSaoHiVong.prop("disabled", true)
-                    }
-                }
-            }
-        })
-    }, 1000);
+    // setInterval(function() {
+    //     $.ajax({
+    //         url: "{% url 'ngoiSaoHiVong' %}",
+    //         method: "GET",
+    //         success: function(data) {
+    //             data = JSON.parse(data);
+    //             handleNgoiSaoHiVong(data.ringerName);
+    //         }
+    //     })
+    // }, 1000);
 
     {% endif %}
   </script>
