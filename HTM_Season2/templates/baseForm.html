@@ -133,11 +133,7 @@
             <button id="gianhQuyen" class="btn btn-success" disabled="true">
               Giành quyền trả lời
             </button>
-            <button
-              id="ngoiSaoHiVong"
-              class="btn btn-warning float-none"
-              disabled="true"
-            >
+            <button id="ngoiSaoHiVong" class="btn btn-warning float-none">
               Ngôi sao hi vọng
             </button>
             {% endif %}
@@ -292,15 +288,6 @@
               handleGianhQuyen(data.gianhQuyenUser, data.acceptingGQ)
           }
         }); // fetch gianhQuyen data (ChinhPhuc)
-
-        $.ajax({
-          url: "{% url 'ngoiSaoHiVong' %}",
-          method: "GET",
-          success: function(data) {
-              data = JSON.parse(data);
-              handleNgoiSaoHiVong(data.ringerName);
-          }
-        }); // fetch ngoiSaoHiVong data (ChinhPhuc)
       }
     )
 
@@ -362,18 +349,7 @@
 
     function handleNgoiSaoHiVong(ringerName) {
       var ngoiSaoHiVong = $("#ngoiSaoHiVong");
-      if (ringerName.length == 0) {
-        if (ngoiSaoHiVong.prop("disabled")) {
-            ngoiSaoHiVong.prop("disabled", false);
-        }
-      }
-      else {
-          if (ngoiSaoHiVong.prop("disabled")) {
-          }
-          else {
-              ngoiSaoHiVong.prop("disabled", true)
-          }
-      }
+      return;
     }
 
     // WebSocket
