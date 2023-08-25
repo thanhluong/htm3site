@@ -381,8 +381,13 @@
         case "ringBell":
           updateRingerName(incomingMessage.params.currentRinger);
           break;
+
         case "acceptAnswer":
           $("#answer").prop("readonly", !incomingMessage.params.status);
+          break;
+
+        case "acceptGQ":
+          handleGianhQuyen("", incomingMessage.params.status);
           break;
 
         case "playVideo":
