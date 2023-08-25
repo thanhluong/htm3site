@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views import generic
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 from .forms import VuotSongQuestionForm
 from .models import VuotSongQuestion
@@ -72,4 +73,11 @@ def getQuestions(request):
     questions = [toDict(question) for question in VuotSongQuestion.objects.filter(
         questionSetID=getQuestionSetId()).order_by("questionID")]
     html = "Vuot Song: " + str(request)
-    return render(request, template_name="vuotsong/vuotsong.html", context=dict(questions=questions))
+    return render(
+        request,
+        template_name="vuotsong/vuotsong.html",
+        context=dict(
+            questions=questions,
+            useWss=settings.USE_WSS
+        )
+    )
