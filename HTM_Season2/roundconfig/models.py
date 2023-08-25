@@ -5,10 +5,11 @@ from django.db import models
 
 class QuestionSetConfig(models.Model):
     ROUND_CHOICES = (
-        ("khoidong", "Khởi động"),
+        ("khoidong", "Nhổ neo"),
         ("vuotsong", "Vượt sóng"),
         ("chinhphuc", "Chinh phục"),
-        ("phanluot", "Phân lượt")
+        ("phanluot", "Phân lượt"),
+        ("tangtoc", "Bứt phá"),
     )
 
     questionSetId = models.IntegerField(
