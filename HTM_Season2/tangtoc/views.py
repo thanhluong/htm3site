@@ -82,8 +82,7 @@ def getNewQuestion(request, field):
         return HttpResponseBadRequest("Bad request")
 
     # Get all questions of this query set
-    questionsSets = TangTocQuestion.objects.filter(
-        questionField=field).filter(questionSetID=getQuestionSetId())
+    questionsSets = TangTocQuestion.objects.filter(questionField=field)
 
     # Mark the field as unavailable
     field.used = True
