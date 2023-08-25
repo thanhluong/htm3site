@@ -1049,35 +1049,37 @@ body{
       $(".letter.redLetter").css("background-color", "green");
     });
 
+    function handleRingBell(ringerName) {
+      console.log("Ten nguoi nhan chuong:", ringerName);
+      // no one ringed the bell
+      if(ringerName.length == 0){
+        return null;
+      }
+      // check the ringingDialog
+      if(ringingDialog.dialog("isOpen")){
+        // already open
+      }
+      else{
+        // the dialog has not been opened yet
+        bell_sound.play(); // make a sound
+        $("#ringingDialogContent").text(ringerName + " đã nhấn chuông xin trả lời CNV!");
+        ringingDialog.dialog("open");
+      }
+    }
+
     var bell_sound = new Audio("{% static 'vuotsong/bellsound.mp3' %}"); // ok
     // Function to wait for the ringing of the bell
-    setInterval(function() {
+    {% comment %} setInterval(function() {
         $.ajax({
             url: "{% url 'ringBell' %}",
             method: "GET",
             success: function(data) {
                 data = JSON.parse(data);
                 var ringerName = data.ringerName;
-                console.log("Ten nguoi nhan chuong:", ringerName);
-                // no one ringed the bell
-                if(ringerName.length == 0){
-                  return null;
-                }
-                // check the ringingDialog
-                if(ringingDialog.dialog("isOpen")){
-                  // already open
-                }
-                else{
-                  // the dialog has not been opened yet
-
-                  // make a sound
-                  bell_sound.play();
-                  $("#ringingDialogContent").text(ringerName + " đã nhấn chuông xin trả lời CNV!");
-                  ringingDialog.dialog("open");
-                }
+                handleRingBell(ringerName);
             }
         })
-    }, 250);
+    }, 250); {% endcomment %}
 
     $("#resetStateBtn").click(function(){
       $.ajax({
@@ -1127,6 +1129,40 @@ body{
 
   $(document).on("ready", function() {
     // one-time fetching
+  });
+
+  // WebSocket
+  const wsHost = "{{ wsHost }}";
+  const wsPort = {{ wsPort }};
+
+  {% if useWss %}
+  const connectionString = `wss://htmnbk.com/wsevents`;
+  {% else %}
+  const connectionString = `ws://${wsHost}:${wsPort}`;
+  {% endif %}
+
+  var ws = new ReconnectingWebSocket(connectionString);
+
+  ws.addEventListener("open", (e) => {
+    console.log("Hello WebSocket Server!");
+    var wsTimer = setInterval(() => {
+      ws.send("ping");
+      if (ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
+        console.log("WebSocket connection closed! Reconnecting ...");
+        clearInterval(wsTimer);
+      }
+    }, 1500);
+  });
+
+  ws.addEventListener("message", (e) => {
+    console.log("Message from server:", e.data);
+    var incomingMessage = JSON.parse(e.data);
+    switch (incomingMessage.cmd) {
+      case "ringBell":
+        break;
+      case "default":
+        console.log("Unknown command!");
+    }
   });
 </script>
 {% endblock %}
