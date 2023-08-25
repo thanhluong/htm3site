@@ -80,6 +80,7 @@ def getQuestions(request):
         context=dict(
             questions=questions,
             wsHost=settings.WS_HOSTNAME_FOR_CLIENT,
-            wsPort=settings.WS_PORT
+            wsPort=settings.WS_PORT,
+            useWss=settings.WS_USE_WSS
         )
     )
