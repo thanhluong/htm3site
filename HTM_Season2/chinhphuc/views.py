@@ -3,6 +3,7 @@ from django.http import HttpResponse
 from django.views import generic
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 from .forms import ChinhPhucQuestionForm
 from .models import ChinhPhucQuestion
@@ -73,4 +74,12 @@ def getQuestions(request):
 
     questions = [toDict(question) for question in ChinhPhucQuestion.objects.filter(
         questionSetID=getQuestionSetId()).order_by("questionID")]
-    return render(request, template_name="chinhphuc/chinhphuc.html", context=dict(questions=questions))
+    return render(
+        request,
+        template_name="chinhphuc/chinhphuc.html",
+        context=dict(
+            questions=questions,
+            wsHost=settings.WS_HOSTNAME_FOR_CLIENT,
+            wsPort=settings.WS_PORT
+        )
+    )
