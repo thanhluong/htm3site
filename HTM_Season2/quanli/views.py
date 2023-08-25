@@ -377,14 +377,17 @@ def ringBell(request):
     global allRingers
 
     currentRinger = getRoundState()["currentRinger"]
+    print("Got current ringer: ", currentRinger)
+    print("All ringers: ", allRingers)
 
     if request.method == "GET":
         # The person is already ringed
         if str(request.user) in allRingers:
-            result = {"ringerName": "luong"}
+            result = {"ringerName": ""}
             return JsonResponse(json.dumps(result), safe=False)
         # Return currentRinger
         result = {"ringerName": currentRinger}
+        print("Returning current ringer: ", result)
         return JsonResponse(json.dumps(result), safe=False)
     elif request.method == "POST":
         # Another person ringed
@@ -396,7 +399,9 @@ def ringBell(request):
         # Update currentRinger
         currentRinger = str(request.user)
         setCurrentRinger(currentRinger)
-        allRingers.append(currentRinger)
+
+        sendWebSocketMessage(cmd="ringBell", params={
+                             "currentRinger": currentRinger})
         print(currentRinger, "ringed a bell!")
         return HttpResponse("Ringed!")
 
@@ -412,7 +417,12 @@ def resetRingingState(request):
 
     if request.user.is_staff:
         # Reset by assigning currentRinger to be an empty string
+        currentRinger = getRoundState()["currentRinger"]
+        if len(currentRinger) > 0:
+            global allRingers
+            allRingers.append(currentRinger)  # marked as ringed
         setCurrentRinger("")
+        sendWebSocketMessage(cmd="ringBell", params={"currentRinger": ""})
         return HttpResponse("Already reset!")
     else:
         return HttpResponseForbidden()
@@ -427,7 +437,7 @@ def ngoiSaoHiVong(request):
     if request.method == "GET":
         # The person is already ringed
         if str(request.user) in allNSHVers:
-            result = {"ringerName": "luong"}
+            result = {"ringerName": ""}
             return JsonResponse(json.dumps(result), safe=False)
         # Return currentRinger
         result = {"ringerName": currentNSHVer}
@@ -442,7 +452,9 @@ def ngoiSaoHiVong(request):
         # Update currentNSHVer
         currentNSHVer = str(request.user)
         setCurrentNSHVer(currentNSHVer)
-        allNSHVers.append(currentNSHVer)
+
+        sendWebSocketMessage(cmd="ngoiSaoHiVong", params={
+                             "currentNSHVer": currentNSHVer})
         print(currentNSHVer, " da chon NSHV!")
         return HttpResponse("Ngoi sao hi vong!")
 
@@ -458,7 +470,12 @@ def resetNSHVState(request):
 
     if request.user.is_staff:
         # Reset by assigning currentRinger to be an empty string
+        currentNSHVer = getRoundState()["currentNSHVer"]
+        if len(currentNSHVer) > 0:
+            global allNSHVers
+            allNSHVers.append(currentNSHVer)
         setCurrentNSHVer("")
+        sendWebSocketMessage(cmd="resetNSHVState", params={"status": "ok"})
         return HttpResponse("Already reset!")
     else:
         return HttpResponseForbidden()
@@ -495,6 +512,7 @@ def beginAcceptingGQ(request):
     """
     if request.user.is_staff:
         setAcceptingGQ(True)
+        sendWebSocketMessage(cmd="acceptGQ", params={"status": True})
 
     return HttpResponse("Success")
 
@@ -506,6 +524,7 @@ def stopAcceptingGQ(request):
     """
     if request.user.is_staff:
         setAcceptingGQ(False)
+        sendWebSocketMessage(cmd="acceptGQ", params={"status": False})
 
     return HttpResponse("Success")
 
@@ -514,6 +533,7 @@ def stopAcceptingGQ(request):
 def resetGQState(request):
     if request.user.is_staff:
         setGianhQuyenUser("")
+        sendWebSocketMessage(cmd="resetGQState", params={"status": "ok"})
 
     return HttpResponse("Success")
 
@@ -534,6 +554,8 @@ def gianhQuyen(request):
             return HttpResponseForbidden()
         if gianhQuyenUser == "":
             setGianhQuyenUser(str(request.user))
+            sendWebSocketMessage(cmd="gianhQuyen", params={
+                                 "gianhQuyenUser": str(request.user)})
             print(gianhQuyenUser, "gianh quyen tra loi!")
         return HttpResponse("Success")
 
