@@ -777,6 +777,26 @@
         }
     }
 
+    function handleNgoiSaoHiVong(ringerName) {
+        // no one ringed the bell
+        if (ringerName.length == 0){ 
+            return null;
+        }
+        // check the ringingDialog
+        if (ngoiSaoHiVongDialog.dialog("isOpen")) {
+            // already open
+        }
+        else {
+            // the dialog has not been opened yet
+
+            // make a sound
+            // bell_sound.play();
+            setTimeout(() => {bell_sound.play();}, 0);
+            $("#ngoiSaoHiVongContent").text(ringerName + " đã chọn ngôi sao hi vọng!");
+            ngoiSaoHiVongDialog.dialog("open");
+        }
+    }
+
     // Function to wait for the GianhQuyen
     // setInterval(function() {
     //     $.ajax({
@@ -810,33 +830,17 @@
     });
 
     // Function to wait for the NgoiSaoHiVong
-    setInterval(function() {
-        $.ajax({
-            url: "{% url 'ngoiSaoHiVong' %}",
-            method: "GET",
-            success: function(data) {
-                data = JSON.parse(data);
-                var ringerName = data.ringerName;
-                // no one ringed the bell
-                if(ringerName.length == 0){ 
-                    return null;
-                }
-                // check the ringingDialog
-                if(ngoiSaoHiVongDialog.dialog("isOpen")){
-                    // already open
-                }
-                else{
-                    // the dialog has not been opened yet
-
-                    // make a sound
-                    // bell_sound.play();
-                    setTimeout(() => {bell_sound.play();}, 0);
-                    $("#ngoiSaoHiVongContent").text(ringerName + " đã chọn ngôi sao hi vọng!");
-                  ngoiSaoHiVongDialog.dialog("open");
-                }
-            }
-        })
-    }, 1000);
+    // setInterval(function() {
+    //     $.ajax({
+    //         url: "{% url 'ngoiSaoHiVong' %}",
+    //         method: "GET",
+    //         success: function(data) {
+    //             data = JSON.parse(data);
+    //             var ringerName = data.ringerName;
+    //             handleNgoiSaoHiVong(ringerName);
+    //         }
+    //     })
+    // }, 1000);
 
     // append opening music
     ost_path = "{% static 'ost/ChinhPhuc_MoDau.mp3' %}";
@@ -873,6 +877,10 @@
                     incomingMessage.params.gianhQuyenUser, 
                     incomingMessage.params.acceptingGQ
                 );
+                break;
+
+            case "ngoiSaoHiVong":
+                handleNgoiSaoHiVong(incomingMessage.params.ringerName);
                 break;
 
             default:
