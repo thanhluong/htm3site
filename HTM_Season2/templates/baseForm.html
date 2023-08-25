@@ -159,6 +159,8 @@
   <script src="{% static 'jquery.js' %}"></script>
   <script src="{% static 'popper.min.js' %}"></script>
   <script src="{% static 'bootstrap.min.js' %}"></script>
+  <script src="{% static 'reconnecting-websocket.min.js' %}"></script>
+
   <script>
 
     var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
@@ -308,17 +310,17 @@
     const connectionString = `ws://${wsHost}:${wsPort}`;
     {% endif %}
 
-    var ws = new WebSocket(connectionString);
+    var ws = new ReconnectingWebSocket(connectionString);
 
     ws.addEventListener("open", (e) => {
       console.log("Hello WebSocket Server!");
-      setInterval(() => {
+      var wsTimer = setInterval(() => {
         ws.send("ping");
         if (ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
-          console.log("WebSocket connection closed! Reloading ...");
-          location.reload();
+          console.log("WebSocket connection closed! Reconnecting ...");
+          clearInterval(wsTimer);
         }
-      }, 1000);
+      }, 1500);
     });
 
     ws.addEventListener("message", (e) => {
