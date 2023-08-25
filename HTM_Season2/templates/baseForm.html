@@ -273,7 +273,16 @@
               data = JSON.parse(data);
               $("#answer").prop("readonly", !data.acceptingAnswer);
           }
-      });
+        }); // fetch round state to allow thisinh enters answer
+
+        $.ajax({
+          url: "{% url 'ringBell' %}",
+          method: "GET",
+          success: function(data) {
+                 data = JSON.parse(data);
+                 updateRingerName(data.ringerName);
+          }
+        }); // fetch ringer name (VuotSong)
       }
     )
 
@@ -300,6 +309,22 @@
         handleSubmitAnswerBtn();
       }
     });
+
+    function updateRingerName(ringerName) {
+      var ringBtn = $("#ringBell");
+      if (ringerName.length == 0){
+        if(ringBtn.prop("disabled")) {
+            ringBtn.prop("disabled", false);
+        }
+      }
+      else{
+          if (ringBtn.prop("disabled")){
+          }
+          else{
+              ringBtn.prop("disabled", true)
+          }
+      }
+    }
 
     // WebSocket
     const wsHost = "{{ wsHost }}";
@@ -328,6 +353,9 @@
       console.log("Message from server:", e.data);
       var incomingMessage = JSON.parse(e.data);
       switch (incomingMessage.cmd) {
+        case "ringBell":
+          updateRingerName(incomingMessage.params.currentRinger);
+          break;
         case "acceptAnswer":
           $("#answer").prop("readonly", !incomingMessage.params.status);
           break;
@@ -387,28 +415,27 @@
     });
 
     // Make AJAX calls to check for ringing state
-    setInterval(function() {
-        $.ajax({
-            url: "{% url 'ringBell' %}",
-            method: "GET",
-            success: function(data) {
-                data = JSON.parse(data);
-                if(data.ringerName.length == 0){
-                    if(ringBtn.prop("disabled")){
-                        ringBtn.prop("disabled", false);
-                    }
-                }
-                else{
-                    if(ringBtn.prop("disabled")){
-                    }
-                    else{
-                        ringBtn.prop("disabled", true)
-                    }
-                }
-            }
-        })
-    }, 500);
-
+    // setInterval(function() {
+    //     $.ajax({
+    //         url: "{% url 'ringBell' %}",
+    //         method: "GET",
+    //         success: function(data) {
+    //             data = JSON.parse(data);
+    //             if(data.ringerName.length == 0){
+    //                 if(ringBtn.prop("disabled")){
+    //                     ringBtn.prop("disabled", false);
+    //                 }
+    //             }
+    //             else{
+    //                 if(ringBtn.prop("disabled")){
+    //                 }
+    //                 else{
+    //                     ringBtn.prop("disabled", true)
+    //                 }
+    //             }
+    //         }
+    //     })
+    // }, 500);
     {% endif %}
 
     {% if currentRound == "chinhphuc" %}
