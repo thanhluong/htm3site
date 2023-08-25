@@ -78,6 +78,8 @@ def getQuestions(request):
         template_name="vuotsong/vuotsong.html",
         context=dict(
             questions=questions,
+            wsHost=settings.WS_HOSTNAME_FOR_CLIENT,
+            wsPort=settings.WS_PORT_FOR_CLIENT,
             useWss=settings.WS_USE_WSS
         )
     )
