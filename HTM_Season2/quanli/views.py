@@ -554,8 +554,13 @@ def gianhQuyen(request):
             return HttpResponseForbidden()
         if gianhQuyenUser == "":
             setGianhQuyenUser(str(request.user))
-            sendWebSocketMessage(cmd="gianhQuyen", params={
-                                 "gianhQuyenUser": str(request.user)})
+            sendWebSocketMessage(
+                cmd="gianhQuyen",
+                params={
+                    "gianhQuyenUser": str(request.user),
+                    "acceptingGQ": acceptingGQ
+                }
+            )
             print(gianhQuyenUser, "gianh quyen tra loi!")
         return HttpResponse("Success")
 

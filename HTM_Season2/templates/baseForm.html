@@ -283,6 +283,15 @@
                  updateRingerName(data.ringerName);
           }
         }); // fetch ringer name (VuotSong)
+
+        $.ajax({
+          url: "{% url 'gianhQuyen' %}",
+          method: "GET",
+          success: function(data) {
+              data = JSON.parse(data);
+              handleGianhQuyen(data.gianhQuyenUser, data.acceptingGQ)
+          }
+        }); // fetch gianhQuyen data (ChinhPhuc)
       }
     )
 
@@ -322,6 +331,22 @@
           }
           else{
               ringBtn.prop("disabled", true)
+          }
+      }
+    }
+
+    function handleGianhQuyen(gianhQuyenUser, acceptingGQ) {
+      var gianhQuyen = $("#gianhQuyen");
+      if(gianhQuyenUser.length == 0 && acceptingGQ) {
+        if(gianhQuyen.prop("disabled")) {
+            gianhQuyen.prop("disabled", false);
+        }
+      }
+      else {
+          if(gianhQuyen.prop("disabled")) {
+          }
+          else {
+              gianhQuyen.prop("disabled", true)
           }
       }
     }
@@ -449,27 +474,16 @@
     });
 
     // Make AJAX calls to check for ngoiSaoHiVong state
-    setInterval(function() {
-        $.ajax({
-            url: "{% url 'gianhQuyen' %}",
-            method: "GET",
-            success: function(data) {
-                data = JSON.parse(data);
-                if(data.gianhQuyenUser.length == 0 && data.acceptingGQ) {
-                    if(gianhQuyen.prop("disabled")){
-                        gianhQuyen.prop("disabled", false);
-                    }
-                }
-                else{
-                    if(gianhQuyen.prop("disabled")){
-                    }
-                    else{
-                        gianhQuyen.prop("disabled", true)
-                    }
-                }
-            }
-        })
-    }, 1000);
+    // setInterval(function() {
+    //     $.ajax({
+    //         url: "{% url 'gianhQuyen' %}",
+    //         method: "GET",
+    //         success: function(data) {
+    //             data = JSON.parse(data);
+    //             handleGianhQuyen(data.gianhQuyenUser, data.acceptingGQ)
+    //         }
+    //     })
+    // }, 1000);
 
     let ngoiSaoHiVong = $("#ngoiSaoHiVong");
 
