@@ -83,126 +83,149 @@
 </div>
 {% csrf_token %} {% endblock %} {% block scripts %}
 <script>
-  var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-  function csrfSafeMethod(method) {
-      // these HTTP methods do not require CSRF protection
-      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-  }
-  $.ajaxSetup({
-      beforeSend: function (xhr, settings) {
-          if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-              xhr.setRequestHeader("X-CSRFToken", csrftoken);
-          }
-      }
-  });
+    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+    function csrfSafeMethod(method) {
+        // these HTTP methods do not require CSRF protection
+        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+        beforeSend: function (xhr, settings) {
+            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                xhr.setRequestHeader("X-CSRFToken", csrftoken);
+            }
+        }
+    });
 
 
-  function makeAjaxCall(questionContent, currentQuestionID) {
-      // Make the AJAX call to notify the current question to the server and other screen of contestant
+    function makeAjaxCall(questionContent, currentQuestionID) {
+        // Make the AJAX call to notify the current question to the server and other screen of contestant
+        $.ajax({
+            url: "{% url 'currentQuestion'%}",
+            method: "POST",
+            data: {"question":questionContent, "questionID":currentQuestionID, "round": "tangtoc"},
+            dataType: "json",
+            traditional: true,
+            success: function (data) {
+                // Do nothing
+            }
+        });
+    }
+
+    function updateQuestionInfo(questionContent, questionInfo) {
       $.ajax({
-          url: "{% url 'currentQuestion'%}",
+          url: "{% url 'currentQuestion' %}",
           method: "POST",
-          data: {"question":questionContent, "questionID":currentQuestionID, "round": "tangtoc"},
-          dataType: "json",
+          data: {
+            "question": questionContent,
+            "questionID": questionInfo.questionID,
+            "questionFileType": questionInfo.questionFileType,
+            "questionFile": questionInfo.questionFile,
+          },
           traditional: true,
           success: function (data) {
               // Do nothing
           }
-      });
+      })
   }
 
-  let countDownBox = $("#countDown");
+    let countDownBox = $("#countDown");
 
-  var demgio = new Audio("{% static 'tangtoc/ButToc_60s.mp3' %}"); // ok
-  countDownBox.click(function() {
-      // Disable the button to avoid second click
-      countDownBox.attr("disabled", "disabled");
+    var demgio = new Audio("{% static 'tangtoc/ButToc_60s.mp3' %}"); // ok
+    countDownBox.click(function() {
+        // Disable the button to avoid second click
+        countDownBox.attr("disabled", "disabled");
 
-      demgio.play();
+        demgio.play();
 
-      // Countdown 10s
-      var countDownInterval = null;
-      countDownInterval =  setInterval(function () {
-          var newTime = parseInt(countDownBox.text()) - 1;
-          if (newTime >= 0) {
-              countDownBox.html("<span></span><span></span><span></span><span></span>" + newTime);
-          } else {
-              clearInterval(countDownInterval);
-              // 60s per question-set
-              countDownBox.html("<span></span><span></span><span></span><span></span>60");
-              // Enable the box again for next question
-              countDownBox.removeAttr("disabled");
-          }
-      }, 1000);
-  });
-
-
-  // Store all questions in an array
-  let questions = {{ questions|safe }};
-
-  var currentQuestionID = 0;
-
-  function showNextQuestion(){
-      let currentQuestion = questions[currentQuestionID]
-
-      // Get all the information of this question
-      let questionContent = currentQuestion["questionText"];
-      let questionFileType = currentQuestion["fileType"];
-      let questionFile = currentQuestion["file"];
-      let fileDisplay = $("#questionFile");
-      fileDisplay.empty();
-
-      console.log(`====> Question file ${questionFile}`);
-
-      if (questionFile) {
-
-          console.log(`=====> ${questionFileType}`);
-
-          if (questionFileType == "image") {
-              fileDisplay.append("<img width='576' height='432' src=" + questionFile + ">");
-          } else if (questionFileType == "video") {
-              fileDisplay.append("<video width='576' height='432' controls><source src=" + questionFile + " type='video/mp4'></video>");
-          } else if (questionFileType == "sound") {
-              let htmlString = "<audio controls><source src="+ questionFile + " type='audio/mpeg'>Your browser does not support the audio element.</audio>"
-              fileDisplay.append(htmlString);
-          }
-      }
-
-      $("#questionContent").text(questionContent);
-      // currentQuestionID begin with 0 for array index, but should be 1 in the database
-      currentQuestionID++;
-      $("#questionNumber").text(currentQuestionID);
-      $("#showDapAnThiSinh").prop("disabled", false);
-      $("#dapAnThiSinh").html();
+        // Countdown 10s
+        var countDownInterval = null;
+        countDownInterval =  setInterval(function () {
+            var newTime = parseInt(countDownBox.text()) - 1;
+            if (newTime >= 0) {
+                countDownBox.html("<span></span><span></span><span></span><span></span>" + newTime);
+            } else {
+                clearInterval(countDownInterval);
+                // 60s per question-set
+                countDownBox.html("<span></span><span></span><span></span><span></span>60");
+                // Enable the box again for next question
+                countDownBox.removeAttr("disabled");
+            }
+        }, 1000);
+    });
 
 
-      // Update the current question to the server
-      makeAjaxCall(questionContent, currentQuestionID);
-  }
+    // Store all questions in an array
+    let questions = {{ questions|safe }};
 
-  function showAnswer(){
-      let currentQuestion = questions[currentQuestionID - 1]
-      let questionAnswer = currentQuestion["answer"];
-      $("#questionAnswer").text("Đáp án: " + questionAnswer);
-  }
+    var currentQuestionID = 0;
 
-  $("#nextQuestion").click(function(event) {
-      $("#questionAnswer").text("");
-      if (currentQuestionID >= questions.length) {
-          showAnswer();
-          $("#questionContent").text("Kết thúc phần thi");
-      } else {
-          if(currentQuestionID > 0){
-              showAnswer();
-              setTimeout(function(){
-                  $("#questionAnswer").text("");
-                  showNextQuestion();
-              }, 300);
-          }
-          else{
-              showNextQuestion();
-          }
-      }
-  });
+    function showNextQuestion(){
+        let currentQuestion = questions[currentQuestionID]
+
+        // Get all the information of this question
+        let questionContent = currentQuestion["questionText"];
+        let questionFileType = currentQuestion["fileType"];
+        let questionFile = currentQuestion["file"];
+        let fileDisplay = $("#questionFile");
+        fileDisplay.empty();
+
+        console.log(`====> Question file ${questionFile}`);
+
+        if (questionFile) {
+
+            console.log(`=====> ${questionFileType}`);
+
+            if (questionFileType == "image") {
+                fileDisplay.append("<img width='576' height='432' src=" + questionFile + ">");
+            } else if (questionFileType == "video") {
+                fileDisplay.append("<video width='576' height='432' controls><source src=" + questionFile + " type='video/mp4'></video>");
+            } else if (questionFileType == "sound") {
+                let htmlString = "<audio controls><source src="+ questionFile + " type='audio/mpeg'>Your browser does not support the audio element.</audio>"
+                fileDisplay.append(htmlString);
+            }
+        }
+
+        $("#questionContent").text(questionContent);
+        // currentQuestionID begin with 0 for array index, but should be 1 in the database
+        currentQuestionID++;
+        $("#questionNumber").text(currentQuestionID);
+        $("#showDapAnThiSinh").prop("disabled", false);
+        $("#dapAnThiSinh").html();
+
+
+        // Update the current question to the server
+        // makeAjaxCall(questionContent, currentQuestionID);
+        let currentQuestionInfo = {
+            "questionID": currentQuestionID,
+            "questionFileType": "None",
+            "questionFile": "",
+        }
+        updateQuestionInfo(questionContent, currentQuestionInfo);
+    }
+
+    function showAnswer(){
+        let currentQuestion = questions[currentQuestionID - 1]
+        let questionAnswer = currentQuestion["answer"];
+        $("#questionAnswer").text("Đáp án: " + questionAnswer);
+    }
+
+    $("#nextQuestion").click(function(event) {
+        $("#questionAnswer").text("");
+        if (currentQuestionID >= questions.length) {
+            showAnswer();
+            $("#questionContent").text("Kết thúc phần thi");
+        } else {
+            if(currentQuestionID > 0){
+                showAnswer();
+                setTimeout(function(){
+                    $("#questionAnswer").text("");
+                    showNextQuestion();
+                }, 300);
+            }
+            else{
+                showNextQuestion();
+            }
+        }
+    });
 </script>
 {% endblock %}
