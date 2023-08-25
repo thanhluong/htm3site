@@ -1058,6 +1058,7 @@ body{
             success: function(data) {
                 data = JSON.parse(data);
                 var ringerName = data.ringerName;
+                console.log("Ten nguoi nhan chuong:", ringerName);
                 // no one ringed the bell
                 if(ringerName.length == 0){
                   return null;
@@ -1122,6 +1123,10 @@ body{
               }
           });
       });
+  });
+
+  $(document).on("ready", function() {
+    // one-time fetching
   });
 </script>
 {% endblock %}
