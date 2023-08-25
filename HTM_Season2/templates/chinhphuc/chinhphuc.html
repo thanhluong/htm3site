@@ -3,6 +3,7 @@
 
 {% block style %}
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="{% static 'reconnecting-websocket.min.js' %}"></script>
 <style>
 
     table{
@@ -753,38 +754,42 @@
         });
     });
 
-    // Function to wait for the GianhQuyen
-    setInterval(function() {
-        $.ajax({
-            url: "{% url 'gianhQuyen' %}",
-            method: "GET",
-            success: function(data) {
-                data = JSON.parse(data);
-                var gianhQuyenUser = data.gianhQuyenUser;
-                var acceptingGQ = data.acceptingGQ;
-                if(!acceptingGQ) return 0;
-                // no one ringed the bell
-                if(gianhQuyenUser.length == 0){ 
-                    return null;
-                }
-                // stop countdown audio
-                demgioBamChuong.pause();
-                // check the ringingDialog
-                if(gianhQuyenDialog.dialog("isOpen")){
-                    // already open
-                }
-                else{
-                    // the dialog has not been opened yet
+    function handleGianhQuyen(gianhQuyenUser, acceptingGQ) {
+        if (!acceptingGQ) return 0;
+        // no one ringed the bell
+        if (gianhQuyenUser.length == 0){ 
+            return null;
+        }
+        // stop countdown audio
+        demgioBamChuong.pause();
+        // check the ringingDialog
+        if (gianhQuyenDialog.dialog("isOpen")) {
+            // already open
+        }
+        else {
+            // the dialog has not been opened yet
 
-                    // make a sound
-                    // bell_sound_cpbc.play();
-                    setTimeout(() => {bell_sound_cpbc.play();}, 0);
-                    $("#gianhQuyenContent").text(gianhQuyenUser + " đã nhấn chuông giành quyền trả lời!");
-                    gianhQuyenDialog.dialog("open");
-                }
-            }
-        })
-    }, 1000);    
+            // make a sound
+            // bell_sound_cpbc.play();
+            setTimeout(() => {bell_sound_cpbc.play();}, 0);
+            $("#gianhQuyenContent").text(gianhQuyenUser + " đã nhấn chuông giành quyền trả lời!");
+            gianhQuyenDialog.dialog("open");
+        }
+    }
+
+    // Function to wait for the GianhQuyen
+    // setInterval(function() {
+    //     $.ajax({
+    //         url: "{% url 'gianhQuyen' %}",
+    //         method: "GET",
+    //         success: function(data) {
+    //             data = JSON.parse(data);
+    //             var gianhQuyenUser = data.gianhQuyenUser;
+    //             var acceptingGQ = data.acceptingGQ;
+    //             handleGianhQuyen(gianhQuyenUser, acceptingGQ);
+    //         }
+    //     })
+    // }, 1000);    
 
     ngoiSaoHiVongDialog = $("#ngoiSaoHiVongDialog");
 
@@ -836,5 +841,43 @@
     // append opening music
     ost_path = "{% static 'ost/ChinhPhuc_MoDau.mp3' %}";
 
+    // WebSocket
+    const wsHost = "{{ wsHost }}";
+    const wsPort = {{ wsPort }};
+
+    {% if useWss %}
+    const connectionString = `wss://htmnbk.com/wsevents`;
+    {% else %}
+    const connectionString = `ws://${wsHost}:${wsPort}`;
+    {% endif %}
+
+    var ws = new ReconnectingWebSocket(connectionString);
+
+    ws.addEventListener("open", (e) => {
+        console.log("Hello WebSocket Server!");
+        var wsTimer = setInterval(() => {
+        ws.send("ping");
+        if (ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
+            console.log("WebSocket connection closed! Reconnecting ...");
+            clearInterval(wsTimer);
+        }
+        }, 1500);
+    });
+
+    ws.addEventListener("message", (e) => {
+        console.log("Message from server:", e.data);
+        var incomingMessage = JSON.parse(e.data);
+        switch (incomingMessage.cmd) {
+            case "gianhQuyen":
+                handleGianhQuyen(
+                    incomingMessage.params.gianhQuyenUser, 
+                    incomingMessage.params.acceptingGQ
+                );
+                break;
+
+            default:
+                console.log("Unknown command!");
+        }
+    });
 </script>
 {% endblock %}
