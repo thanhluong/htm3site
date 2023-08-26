@@ -260,6 +260,7 @@
             success: function(data) {
                 data = JSON.parse(data);
                 $("#questionContent").text(data.question);
+                updateQuestion(data.questionInfo);
             }
         }); // fetch question content
 
@@ -352,6 +353,32 @@
       return;
     }
 
+    function updateQuestion(questionInfo) {
+      let questionContentDisplay = $("#questionContent");
+      let questionFileDisplay = $("#questionFile");
+
+      // Clear current question
+      questionContentDisplay.text("");
+      questionFileDisplay.html("");
+
+      // Display new question
+      let questionInfo = incomingMessage.params;
+
+      questionContentDisplay.text(questionInfo.currentQuestionContent);
+
+      if (!questionInfo.hasOwnProperty("currentQuestionFileType")) break; // No file to display
+
+      let questionFileSrc = questionInfo.currentQuestionFile;
+      if (questionInfo.currentQuestionFileType == "image")
+        questionFileDisplay.append("<img width='460' height='345' src=" + questionFileSrc + ">");
+      else if (questionInfo.currentQuestionFileType == "video")
+        questionFileDisplay.append("<video muted='muted' id='questionVideo' width='460' height='345' controls><source src=" + questionFileSrc + " type='video/mp4'></video>");
+      else if (questionInfo.currentQuestionFileType == "audio") {
+        let htmlString = "<audio controls><source src="+ questionFileSrc + " type='audio/mpeg'>Your browser does not support the audio element.</audio>"
+        questionFileDisplay.append(htmlString);
+      }
+    }
+
     // WebSocket
     const wsHost = "{{ wsHost }}";
     const wsPort = {{ wsPort }};
@@ -405,29 +432,7 @@
           break;
 
         case "updateQuestion": // Handle new question
-          let questionContentDisplay = $("#questionContent");
-          let questionFileDisplay = $("#questionFile");
-
-          // Clear current question
-          questionContentDisplay.text("");
-          questionFileDisplay.html("");
-
-          // Display new question
-          let questionInfo = incomingMessage.params;
-
-          questionContentDisplay.text(questionInfo.currentQuestionContent);
-
-          if (!questionInfo.hasOwnProperty("currentQuestionFileType")) break; // No file to display
-
-          let questionFileSrc = questionInfo.currentQuestionFile;
-          if (questionInfo.currentQuestionFileType == "image")
-            questionFileDisplay.append("<img width='460' height='345' src=" + questionFileSrc + ">");
-          else if (questionInfo.currentQuestionFileType == "video")
-            questionFileDisplay.append("<video muted='muted' id='questionVideo' width='460' height='345' controls><source src=" + questionFileSrc + " type='video/mp4'></video>");
-          else if (questionInfo.currentQuestionFileType == "audio") {
-            let htmlString = "<audio controls><source src="+ questionFileSrc + " type='audio/mpeg'>Your browser does not support the audio element.</audio>"
-            questionFileDisplay.append(htmlString);
-          }
+          updateQuestion(incomingMessage.params);
           break;
 
         default:

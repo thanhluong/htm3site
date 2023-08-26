@@ -301,8 +301,24 @@ def currentQuestion(request):
 
         if len(lastAnswer) > 0:
             lastAnswer = lastAnswer[0]["answer"]
-            return JsonResponse(json.dumps(dict(question=currentQuestionContent, answer=lastAnswer)), safe=False)
-        return JsonResponse(json.dumps(dict(question=currentQuestionContent)), safe=False)
+            return JsonResponse(
+                json.dumps(
+                    dict(
+                        question=currentQuestionContent,  # actually redundant
+                        questionInfo=currentQuestion,
+                        answer=lastAnswer
+                    )
+                ),
+                safe=False)
+
+        return JsonResponse(
+            json.dumps(
+                dict(
+                    question=currentQuestionContent,  # actually redundant
+                    questionInfo=currentQuestion
+                )
+            ),
+            safe=False)
 
     elif request.method == "POST":
         if request.user.is_staff:
