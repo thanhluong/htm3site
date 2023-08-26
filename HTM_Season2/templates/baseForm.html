@@ -362,11 +362,11 @@
       questionFileDisplay.html("");
 
       // Display new question
-      let questionInfo = incomingMessage.params;
-
       questionContentDisplay.text(questionInfo.currentQuestionContent);
 
-      if (!questionInfo.hasOwnProperty("currentQuestionFileType")) break; // No file to display
+      if (!questionInfo.hasOwnProperty("currentQuestionFileType")) return; // No file to display
+      if (questionInfo.currentQuestionFileType == "None") return; // No file to display
+      if (questionInfo.currentQuestionFile.length == 0) return; // No file to display
 
       let questionFileSrc = questionInfo.currentQuestionFile;
       if (questionInfo.currentQuestionFileType == "image")
