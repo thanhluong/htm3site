@@ -23,8 +23,8 @@ from roundconfig.views import getCurrentQuestion, setCurrentQuestion
 from roundconfig.views import getRoundState
 from roundconfig.views import setAcceptingAnswer
 from roundconfig.views import setAcceptingGQ, setGianhQuyenUser
-from roundconfig.views import setCurrentNSHVer
-from roundconfig.views import setCurrentRinger
+from roundconfig.views import setCurrentNSHVer, getAllNSHVers, addToAllNSHVers
+from roundconfig.views import setCurrentRinger, getAllRingers, addToAllRingers
 from roundconfig.views import getGameState, setGameState
 
 from websocket import create_connection
@@ -41,8 +41,7 @@ FORM_CLASSES = {
     "phanluot": PhanLuotAnswerForm
 }
 
-allRingers = []
-allNSHVers = []
+# allNSHVers = []
 
 # Create your views here.
 
@@ -390,7 +389,7 @@ def ringBell(request):
         GET: Return the current ringer name in JSON format
         POST: Update the current ringer name
     """
-    global allRingers
+    allRingers = getAllRingers()
 
     currentRinger = getRoundState()["currentRinger"]
     print("Got current ringer: ", currentRinger)
@@ -435,8 +434,7 @@ def resetRingingState(request):
         # Reset by assigning currentRinger to be an empty string
         currentRinger = getRoundState()["currentRinger"]
         if len(currentRinger) > 0:
-            global allRingers
-            allRingers.append(currentRinger)  # marked as ringed
+            addToAllRingers(currentRinger)  # marked as ringed
         setCurrentRinger("")
         sendWebSocketMessage(cmd="ringBell", params={"currentRinger": ""})
         return HttpResponse("Already reset!")
@@ -446,7 +444,7 @@ def resetRingingState(request):
 
 @login_required
 def ngoiSaoHiVong(request):
-    global allNSHVers
+    allNSHVers = getAllNSHVers()
 
     currentNSHVer = getRoundState()["currentNSHVer"]
 
@@ -488,8 +486,7 @@ def resetNSHVState(request):
         # Reset by assigning currentRinger to be an empty string
         currentNSHVer = getRoundState()["currentNSHVer"]
         if len(currentNSHVer) > 0:
-            global allNSHVers
-            allNSHVers.append(currentNSHVer)
+            addToAllNSHVers(currentNSHVer)
         setCurrentNSHVer("")
         sendWebSocketMessage(cmd="resetNSHVState", params={"status": "ok"})
         return HttpResponse("Already reset!")

@@ -4,6 +4,8 @@ from .models import QuestionConfig
 from .models import RoundState
 from .models import GameState
 
+from userprofile.models import MyUser
+
 # Create your views here.
 
 
@@ -82,8 +84,10 @@ def getAllNSHVers():
 
 def addToAllNSHVers(NSHVerName):
     allNSHVersObject = RoundState.objects.all().first().allNSHVers
-    allNSHVersObject.add(NSHVerName)
-    allNSHVersObject.save()
+    # Assume all display names are distinct
+    # Otherwise, get only the first one matched in DB
+    NSHVer = MyUser.objects.filter(display_name=NSHVerName).first()
+    allNSHVersObject.add(NSHVer)
 
 
 def setCurrentRinger(currentRinger):
@@ -99,8 +103,8 @@ def getAllRingers():
 
 def addToAllRingers(ringerName):
     allRingersObject = RoundState.objects.all().first().allRingers
-    allRingersObject.add(ringerName)
-    allRingersObject.save()
+    ringer = MyUser.objects.filter(display_name=ringerName).first()
+    allRingersObject.add(ringer)
 
 
 def getGameState():
