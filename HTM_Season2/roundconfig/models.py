@@ -1,4 +1,5 @@
 from django.db import models
+from userprofile.models import MyUser
 
 # Create your models here.
 
@@ -60,10 +61,24 @@ class RoundState(models.Model):
         default=False, verbose_name="Đang chấp nhận giành quyền")
     gianhQuyenUser = models.CharField(
         max_length=64, default="", blank=True, verbose_name="Người giành quyền")
+
     currentRinger = models.CharField(
         max_length=64, default="", blank=True, verbose_name="Người vừa nhấn chuông")
+    allRingers = models.ManyToManyField(
+        MyUser,
+        blank=True,
+        related_name="allRingers",
+        verbose_name="Danh sách nhấn chuông"
+    )
+
     currentNSHVer = models.CharField(
         max_length=64, default="", blank=True, verbose_name="Người vừa chọn Ngôi sao hy vọng")
+    allNSHVers = models.ManyToManyField(
+        MyUser,
+        blank=True,
+        related_name="allNSHVers",
+        verbose_name="Danh sách đã chọn Ngôi sao hy vọng"
+    )
 
 
 class GameState(models.Model):
