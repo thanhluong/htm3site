@@ -75,10 +75,32 @@ def setCurrentNSHVer(currentNSHVer):
     roundStateObject.save()
 
 
+def getAllNSHVers():
+    allNSHVersObject = RoundState.objects.all().first().allNSHVers
+    return [obj.__str__() for obj in allNSHVersObject.all()]
+
+
+def addToAllNSHVers(NSHVerName):
+    allNSHVersObject = RoundState.objects.all().first().allNSHVers
+    allNSHVersObject.add(NSHVerName)
+    allNSHVersObject.save()
+
+
 def setCurrentRinger(currentRinger):
     roundStateObject = RoundState.objects.all().first()
     roundStateObject.currentRinger = currentRinger
     roundStateObject.save()
+
+
+def getAllRingers():
+    allRingersObject = RoundState.objects.all().first().allRingers
+    return [obj.__str__() for obj in allRingersObject.all()]
+
+
+def addToAllRingers(ringerName):
+    allRingersObject = RoundState.objects.all().first().allRingers
+    allRingersObject.add(ringerName)
+    allRingersObject.save()
 
 
 def getGameState():
