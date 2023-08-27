@@ -7,7 +7,7 @@ from django.http import HttpResponseBadRequest
 from .forms import TangTocQuestionForm
 from .models import TangTocQuestion, TangTocQuestionField
 
-from roundconfig import questionSet
+from roundconfig.views import getQuestionSetId
 
 # Create your views here.
 
@@ -17,7 +17,7 @@ class NewQuestion(CreateView):
     Class-based view to handle creating a new question
     Usig a class-based view will provides us a defautl error-handling
     """
-    
+
     form_class = TangTocQuestionForm
     success_url = reverse_lazy("newTangTocQuestion")
     template_name = "baseForm.html"
@@ -40,16 +40,16 @@ def getAvailableFields(request):
     # Check authentication
     if not request.user.is_staff:
         return render(request, template_name="home.html",
-                    context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
+                      context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
     availableFields = []
 
     for field in TangTocQuestionField.objects.all():
         if not field.used:
             availableFields.append(field)
-    
+
     return render(request, template_name="tangtoc/tangtocField.html", context={"fields": availableFields,
-                                                               "numFields": range(len(availableFields))})
+                                                                               "numFields": range(len(availableFields))})
 
 
 def toDict(question: TangTocQuestion):
@@ -73,7 +73,7 @@ def getNewQuestion(request, field):
     # Check authentication
     if not request.user.is_staff:
         return render(request, template_name="home.html",
-                    context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
+                      context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
     # Check to see if this field is available
     field = TangTocQuestionField.objects.get(code=field)
@@ -82,7 +82,7 @@ def getNewQuestion(request, field):
         return HttpResponseBadRequest("Bad request")
 
     # Get all questions of this query set
-    questionsSets = TangTocQuestion.objects.filter(questionField=field).filter(questionSetID=questionSet.SETID)
+    questionsSets = TangTocQuestion.objects.filter(questionField=field)
 
     # Mark the field as unavailable
     field.used = True
@@ -91,5 +91,3 @@ def getNewQuestion(request, field):
     questions = [toDict(question) for question in questionsSets]
 
     return render(request, template_name="tangtoc/tangtoc.html", context=dict(questions=questions))
-    
-    

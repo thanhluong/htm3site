@@ -7,7 +7,7 @@ from django.urls import reverse_lazy
 from .forms import PhanLuotQuestionForm
 from .models import PhanLuotQuestion
 
-from roundconfig import questionSet
+from roundconfig.views import getQuestionSetId
 
 # Create your views here.
 
@@ -40,6 +40,7 @@ def toDict(question: PhanLuotQuestion):
                 questionID=question.questionID,
                 answer=question.answer)
 
+
 @login_required
 def getFirstQuestion(request):
     """
@@ -47,11 +48,13 @@ def getFirstQuestion(request):
     """
     if not request.user.is_staff:
         return render(request, template_name="home.html",
-              context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
+                      context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
-    questions = [toDict(question) for question in PhanLuotQuestion.objects.filter(questionSetID=questionSet.SETID).order_by("questionID")][:3]
+    questions = [toDict(question) for question in PhanLuotQuestion.objects.filter(
+        questionSetID=getQuestionSetId()).order_by("questionID")][:3]
 
     return render(request, template_name="phanluot/phanluot.html", context=dict(questions=questions))
+
 
 @login_required
 def getSecondQuestion(request):
@@ -60,8 +63,9 @@ def getSecondQuestion(request):
     """
     if not request.user.is_staff:
         return render(request, template_name="home.html",
-              context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
+                      context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
-    questions = [toDict(question) for question in PhanLuotQuestion.objects.filter(questionSetID=questionSet.SETID).order_by("questionID")][3:6]
+    questions = [toDict(question) for question in PhanLuotQuestion.objects.filter(
+        questionSetID=getQuestionSetId()).order_by("questionID")][3:6]
 
     return render(request, template_name="phanluot/phanluot.html", context=dict(questions=questions))

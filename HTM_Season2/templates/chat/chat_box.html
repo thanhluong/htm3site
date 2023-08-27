@@ -1,0 +1,16 @@
+<h1>Hello Chat</h1>
+<h2>{{chat_box_name}}</h2>
+
+<script>
+  let chat_box_name = "{{chat_box_name}}";
+
+  let wsAddr = "ws://192.168.1.6:8000/ws/chat/" + chat_box_name + "/";
+  const chatSocket = new WebSocket(
+    wsAddr
+  ); /* ws://localhost:8000/ws/chat/room_name/ */
+
+  chatSocket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+    console.log("new message:", data.message);
+  };
+</script>

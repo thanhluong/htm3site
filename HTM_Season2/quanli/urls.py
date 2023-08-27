@@ -1,10 +1,15 @@
 from django.urls import path
+from django.views.generic import TemplateView
+
 from .views import score, currentQuestion, updateRound
-from .views import NewAnswer
+from .views import NewAnswer, httpSubmitAnswer
+from .views import broadcastSignal
 from .views import ringBell, resetRingingState
 from .views import gianhQuyen, beginAcceptingGQ, stopAcceptingGQ, resetGQState
 from .views import ngoiSaoHiVong, resetNSHVState
-from .views import beginOrStopAcceptingAnswer, getDapAnThiSinh
+from .views import beginAcceptingAnswer, stopAcceptingAnswer, getDapAnThiSinh
+from .views import gameState
+from .views import roundState
 
 urlpatterns = [
     # Handle grading requests
@@ -15,6 +20,9 @@ urlpatterns = [
     path("updateRound/", updateRound, name="updateRound"),
     # Handle submiting answer
     path("answer/", NewAnswer.as_view(), name="answer"),
+    path("httpSubmitAnswer/", httpSubmitAnswer, name="httpSubmitAnswer"),
+    # Handle broadcast signal
+    path("broadcastSignal/", broadcastSignal, name="broadcastSignal"),
     # Handle ringing request
     path("ringBell/", ringBell, name="ringBell"),
     path("resetRingingState/", resetRingingState, name="resetRingingState"),
@@ -27,7 +35,16 @@ urlpatterns = [
     path("ngoiSaoHiVong/", ngoiSaoHiVong, name="ngoiSaoHiVong"),
     path("resetNSHVState/", resetNSHVState, name="resetNSHVState"),
     # Handle accepting new answer or stop accepting answer
-    path("handleAcceptingAnswer/", beginOrStopAcceptingAnswer, name="handleAcceptingAnswer"),
+    path("handleAcceptingAnswer/", beginAcceptingAnswer,
+         name="handleAcceptingAnswer"),
+    path("handleStopAcceptingAnswer/", stopAcceptingAnswer,
+         name="handleStopAcceptingAnswer"),
     # Handle display dapan
-    path("getDapAnThiSinh/", getDapAnThiSinh, name="getDapAnThiSinh")
+    path("getDapAnThiSinh/", getDapAnThiSinh, name="getDapAnThiSinh"),
+    # Handle game state
+    path("gameState/", gameState, name="gameState"),
+    path("viewGameState/",
+         TemplateView.as_view(template_name="quanli/gameState.html"), name="viewGameState"),
+    # Handle round state
+    path("roundState/", roundState, name="roundState")
 ]

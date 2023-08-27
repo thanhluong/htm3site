@@ -2,6 +2,8 @@
 {% load static %}
 
 {% block style %}
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+<script src="{% static 'reconnecting-websocket.min.js' %}"></script>
 <style>
 
     table{
@@ -273,6 +275,23 @@
         });
     }
 
+    function updateQuestionInfo(questionContent, questionInfo) {
+        $.ajax({
+            url: "{% url 'currentQuestion' %}",
+            method: "POST",
+            data: {
+              "question": questionContent,
+              "questionID": questionInfo.questionID,
+              "questionFileType": questionInfo.questionFileType,
+              "questionFile": questionInfo.questionFile,
+            },
+            traditional: true,
+            success: function (data) {
+                // Do nothing
+            }
+        })
+    }
+
     // Board size
     const BOARD_SIZE = 5;
 
@@ -389,8 +408,8 @@
             }
         }
 
-        const easy_pos = ["21", "22", "23", "24", "31", "41", "42", "43", "44"];
-        const medi_pos = ["12", "14", "25", "32", "34", "45", "51", "55"];
+        const easy_pos = ["12", "13", "14", "22", "23", "24", "52", "53", "54"];
+        const medi_pos = ["11", "21", "32", "35", "43", "44", "51", "55"];
         htmlContent = '';
 
         for(i = 0; i <= BOARD_SIZE; i++){
@@ -471,7 +490,8 @@
     let traLoiCountDownProgressBar = $("#traLoiCountDownProgressBar");
 
     traLoiCountDownProgressBar.click(function(){
-        demgio.play();
+        // demgio.play();
+        setTimeout(() => {demgio.play();}, 0);
 
         // Countdown 15s
         var countDownInterval = null;
@@ -492,7 +512,8 @@
     let bamChuongCountDownProgressBar = $("#bamChuongCountDownProgressBar");
 
     bamChuongCountDownProgressBar.click(function(){
-        demgioBamChuong.play();
+        // demgioBamChuong.play();
+        setTimeout(() => {demgioBamChuong.play();}, 0);
         // Start accepting gianhQuyen
         sendSignalGQ(true);
 
@@ -601,21 +622,27 @@
             let questionFileType = currentQuestion["fileType"];
             let questionFile = currentQuestion["file"];
 
-            makeAjaxCall(questionContent, currentQuestionID);
-
             let fileDisplay = $("#questionFile");
             fileDisplay.empty();
 
             console.log(`====> Question file ${questionFile}`);
+            
+            let questionInfo = {
+                "questionID": currentQuestionID,
+                "questionFileType": "None",
+                "questionFile": "",
+            };
 
             if (questionFile) {
 
                 console.log(`=====> ${questionFileType}`);
+                questionInfo.questionFileType = questionFileType;
+                questionInfo.questionFile = questionFile;  
 
                 if (questionFileType == "image") {
                     fileDisplay.append("<img width='576' height='432' src=" + questionFile + ">");
                 } else if (questionFileType == "video") {
-                    fileDisplay.append("<video width='576' height='432' controls><source src=" + questionFile + " type='video/mp4'></video>");
+                    fileDisplay.append("<video onplay='handleQuestionVideoPlay()' onpause='handleQuestionVideoPause()' width='576' height='432' controls><source src=" + questionFile + " type='video/mp4'></video>");
                 } else if (questionFileType == "sound") {
                     let htmlString = "<audio controls style='width: 175px'><source src="+ questionFile + " type='audio/mpeg'>Your browser does not support the audio element.</audio>"
                     fileDisplay.append(htmlString);
@@ -623,8 +650,37 @@
             }
 
             $("#questionContent").text(questionContent);
+
+            // makeAjaxCall(questionContent, currentQuestionID);
+            updateQuestionInfo(questionContent, questionInfo);
         }
     });
+
+    function handleQuestionVideoPlay() {
+        $.ajax({
+          url: "{% url 'broadcastSignal' %}",
+          method: "POST",
+          data: { "cmd": "playVideo"},
+          traditional: true,
+          success: function (data) {
+            console.log("Send signal to play video!")
+              // Do nothing
+          }
+        });
+      }
+    
+      function handleQuestionVideoPause() {
+        $.ajax({
+          url: "{% url 'broadcastSignal' %}",
+          method: "POST",
+          data: { "cmd": "pauseVideo"},
+          traditional: true,
+          success: function (data) {
+            console.log("Send signal to pause video!")
+              // Do nothing
+          }
+        });
+      }
 
     $("#showAnswer").click(function(event){
         currentRow = parseInt(document.getElementById("id_row").value);
@@ -634,7 +690,9 @@
             $("#questionContent").text("Vui lòng chọn tọa độ hợp lệ!");
         }
         else{
-            congratAudio.play();
+            // congratAudio.play();
+            setTimeout(() => {congratAudio.play();}, 0);
+            
 
             $("#questionAnswer").text("Đáp án: " + questionAnswer);
         }
@@ -678,37 +736,80 @@
         gianhQuyenDialog.dialog('close');
     });
 
-    // Function to wait for the GianhQuyen
-    setInterval(function() {
-        $.ajax({
-            url: "{% url 'gianhQuyen' %}",
-            method: "GET",
-            success: function(data) {
-                data = JSON.parse(data);
-                var gianhQuyenUser = data.gianhQuyenUser;
-                var acceptingGQ = data.acceptingGQ;
-                if(!acceptingGQ) return 0;
-                // no one ringed the bell
-                if(gianhQuyenUser.length == 0){ 
-                    return null;
-                }
-                // stop countdown audio
-                demgioBamChuong.pause();
-                // check the ringingDialog
-                if(gianhQuyenDialog.dialog("isOpen")){
-                    // already open
-                }
-                else{
-                    // the dialog has not been opened yet
+    // Update game screenshot 
+    $(document).bind('keypress', function(e) {
+        if (!((e.shiftKey) && (e.keyCode == 38))) return; // shift + 7
 
-                    // make a sound
-                    bell_sound_cpbc.play();
-                    $("#gianhQuyenContent").text(gianhQuyenUser + " đã nhấn chuông giành quyền trả lời!");
-                    gianhQuyenDialog.dialog("open");
+        html2canvas(document.querySelector("#gomoku")).then(canvas => {
+            var img = canvas.toDataURL("image/png");
+            $.ajax({
+                url: "{% url 'gameState' %}",
+                method: "POST",
+                data: {"base64img": img},
+                traditional: true,
+                success: function(data) {
+                    console.log("Game state updated!");
                 }
-            }
-        })
-    }, 250);    
+            });
+        });
+    });
+
+    function handleGianhQuyen(gianhQuyenUser, acceptingGQ) {
+        if (!acceptingGQ) return 0;
+        // no one ringed the bell
+        if (gianhQuyenUser.length == 0){ 
+            return null;
+        }
+        // stop countdown audio
+        demgioBamChuong.pause();
+        // check the ringingDialog
+        if (gianhQuyenDialog.dialog("isOpen")) {
+            // already open
+        }
+        else {
+            // the dialog has not been opened yet
+
+            // make a sound
+            // bell_sound_cpbc.play();
+            setTimeout(() => {bell_sound_cpbc.play();}, 0);
+            $("#gianhQuyenContent").text(gianhQuyenUser + " đã nhấn chuông giành quyền trả lời!");
+            gianhQuyenDialog.dialog("open");
+        }
+    }
+
+    function handleNgoiSaoHiVong(ringerName) {
+        // no one ringed the bell
+        if (ringerName.length == 0){ 
+            return null;
+        }
+        // check the ringingDialog
+        if (ngoiSaoHiVongDialog.dialog("isOpen")) {
+            // already open
+        }
+        else {
+            // the dialog has not been opened yet
+
+            // make a sound
+            // bell_sound.play();
+            setTimeout(() => {bell_sound.play();}, 0);
+            $("#ngoiSaoHiVongContent").text(ringerName + " đã chọn ngôi sao hi vọng!");
+            ngoiSaoHiVongDialog.dialog("open");
+        }
+    }
+
+    // Function to wait for the GianhQuyen
+    // setInterval(function() {
+    //     $.ajax({
+    //         url: "{% url 'gianhQuyen' %}",
+    //         method: "GET",
+    //         success: function(data) {
+    //             data = JSON.parse(data);
+    //             var gianhQuyenUser = data.gianhQuyenUser;
+    //             var acceptingGQ = data.acceptingGQ;
+    //             handleGianhQuyen(gianhQuyenUser, acceptingGQ);
+    //         }
+    //     })
+    // }, 1000);    
 
     ngoiSaoHiVongDialog = $("#ngoiSaoHiVongDialog");
 
@@ -729,35 +830,62 @@
     });
 
     // Function to wait for the NgoiSaoHiVong
-    setInterval(function() {
-        $.ajax({
-            url: "{% url 'ngoiSaoHiVong' %}",
-            method: "GET",
-            success: function(data) {
-                data = JSON.parse(data);
-                var ringerName = data.ringerName;
-                // no one ringed the bell
-                if(ringerName.length == 0){ 
-                    return null;
-                }
-                // check the ringingDialog
-                if(ngoiSaoHiVongDialog.dialog("isOpen")){
-                    // already open
-                }
-                else{
-                    // the dialog has not been opened yet
-
-                    // make a sound
-                    bell_sound.play();
-                    $("#ngoiSaoHiVongContent").text(ringerName + " đã chọn ngôi sao hi vọng!");
-                  ngoiSaoHiVongDialog.dialog("open");
-                }
-            }
-        })
-    }, 250);
+    // setInterval(function() {
+    //     $.ajax({
+    //         url: "{% url 'ngoiSaoHiVong' %}",
+    //         method: "GET",
+    //         success: function(data) {
+    //             data = JSON.parse(data);
+    //             var ringerName = data.ringerName;
+    //             handleNgoiSaoHiVong(ringerName);
+    //         }
+    //     })
+    // }, 1000);
 
     // append opening music
     ost_path = "{% static 'ost/ChinhPhuc_MoDau.mp3' %}";
 
+    // WebSocket
+    const wsHost = "{{ wsHost }}";
+    const wsPort = {{ wsPort }};
+
+    {% if useWss %}
+    const connectionString = `wss://htmnbk.com/wsevents`;
+    {% else %}
+    const connectionString = `ws://${wsHost}:${wsPort}`;
+    {% endif %}
+
+    var ws = new ReconnectingWebSocket(connectionString);
+
+    ws.addEventListener("open", (e) => {
+        console.log("Hello WebSocket Server!");
+        var wsTimer = setInterval(() => {
+        ws.send("ping");
+        if (ws.readyState === WebSocket.CLOSED || ws.readyState === WebSocket.CLOSING) {
+            console.log("WebSocket connection closed! Reconnecting ...");
+            clearInterval(wsTimer);
+        }
+        }, 1500);
+    });
+
+    ws.addEventListener("message", (e) => {
+        console.log("Message from server:", e.data);
+        var incomingMessage = JSON.parse(e.data);
+        switch (incomingMessage.cmd) {
+            case "gianhQuyen":
+                handleGianhQuyen(
+                    incomingMessage.params.gianhQuyenUser, 
+                    incomingMessage.params.acceptingGQ
+                );
+                break;
+
+            case "ngoiSaoHiVong":
+                handleNgoiSaoHiVong(incomingMessage.params.currentNSHVer);
+                break;
+
+            default:
+                console.log("Unknown command!");
+        }
+    });
 </script>
 {% endblock %}

@@ -1,115 +1,122 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block style %}
-    <style>
-        .col, .row {
-            text-align: center;
-        }
-        button {
-            margin-bottom: 0.3em;
-            margin-top: 0.5em;
-        }
-        #question {
-            border-radius: 20px;
-            box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
-            background: rgb(204,240,241);
-            background: radial-gradient(circle, rgba(204,240,241,1) 0%, rgba(105,188,231,1) 51%, rgba(29,172,247,1) 77%);
-            margin-top: 2em;
-        }
-        #questionContent, .questionNumber {
-            font-size: 40px;
-        }
-        #questionAnswer{
-            font-size: 30px;
-        }
-        .questionNumber {
-            margin-top: 0.1em;
-        }
-        .questionNumber {
-            margin-bottom: 0;
-            color: #0b3555;
-            /*color: red;*/
-        }
+{% extends 'base.html' %} {% load static %} {% block style %}
+<style>
+  .col,
+  .row {
+    text-align: center;
+  }
+  button {
+    margin-bottom: 0.3em;
+    margin-top: 0.5em;
+  }
+  #question {
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset,
+      rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset,
+      rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset,
+      rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px,
+      rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px,
+      rgba(0, 0, 0, 0.09) 0px 32px 16px;
+    background: rgb(204, 240, 241);
+    background: radial-gradient(
+      circle,
+      rgba(204, 240, 241, 1) 0%,
+      rgba(105, 188, 231, 1) 51%,
+      rgba(29, 172, 247, 1) 77%
+    );
+    margin-top: 2em;
+  }
+  #questionContent,
+  .questionNumber {
+    font-size: 40px;
+  }
+  #questionAnswer {
+    font-size: 30px;
+  }
+  .questionNumber {
+    margin-top: 0.1em;
+  }
+  .questionNumber {
+    margin-bottom: 0;
+    color: #0b3555;
+    /*color: red;*/
+  }
 
-        .col, .row {
-           text-align: center;
-        }
+  .col,
+  .row {
+    text-align: center;
+  }
 
-        .answer {
-            text-align: left;
-            color: black;
-            padding-left: 1em;
-            padding-right: 1em;
-            font-size: 25px;
-            margin: 10px;
-            min-height: 70px;
-            border-radius: 20px;
-            /*box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;*/
-            background-color: #e6f3dc;
-            /* min-width: 300px; */
-        }
-
-    </style>
-{% endblock %}
-
-{% block content %}
-    <div class="col-md-8" id="question">
-        <div class="row">
-            <div class="col-md-12">
-                <p class="questionNumber" style="font-size: 70px"><b><span id="questionNumber">0</span><span>/3</span></b></p>
-                <center>
-                    <nav class="btn-bar nav-dark nav-khoidong">
-                        <a href="#" class="btn btn-glass new-btn-danger" id="showAnswer">
-                          <i class="fa fa-check"></i> Hiện đáp án
-                        </a>
-                        <a href="#" class="btn btn-glass new-btn-primary" id="nextQuestion">
-                          <i class="fa fa-arrow-circle-right"></i> Câu hỏi tiếp theo
-                        </a>
-                    </nav>
-                </center>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <p id="questionContent"></p>
-            </div>
-            <div class="col-md-12">
-                <i><b><p id="questionAnswer"></p></b></i>
-            </div>
-        </div>
-        <br><br>
+  .answer {
+    text-align: left;
+    color: black;
+    padding-left: 1em;
+    padding-right: 1em;
+    font-size: 25px;
+    margin: 10px;
+    min-height: 70px;
+    border-radius: 20px;
+    /*box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;*/
+    background-color: #e6f3dc;
+    /* min-width: 300px; */
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="col-md-8" id="question">
+  <div class="row">
+    <div class="col-md-12">
+      <p class="questionNumber" style="font-size: 70px">
+        <b><span id="questionNumber">0</span><span>/3</span></b>
+      </p>
+      <center>
+        <nav class="btn-bar nav-dark nav-khoidong">
+          <a href="#" class="btn btn-glass new-btn-danger" id="showAnswer">
+            <i class="fa fa-check"></i> Hiện đáp án
+          </a>
+          <a href="#" class="btn btn-glass new-btn-primary" id="nextQuestion">
+            <i class="fa fa-arrow-circle-right"></i> Câu hỏi tiếp theo
+          </a>
+        </nav>
+      </center>
     </div>
-    <div class="col-md-4" id="manageAnswer">
-        <div class="row">
-            <div class="col-sm-12">
-                <a id="countDown" class="animated-button8">
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                  <span></span>
-                  15
-                </a>
-            </div>
-        <!-- </div> -->
-        <!-- <div class="row"> -->
-            <div class="col-sm-12">
-                <center>
-                    <nav class="btn-bar nav-dark nav-answer">
-                        <a href="#" class="btn btn-glass new-btn-info" id="showDapAnThiSinh">
-                          <i class="fa fa-check"></i> Câu trả lời thí sinh
-                        </a>
-                    </nav>
-                </center>
-            </div>
-            <div class="col-sm-12" id="dapAnThiSinh" style="display:none">
-            </div>
-        </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <p id="questionContent"></p>
     </div>
-    {% csrf_token %}
-
-{% endblock %}
-
-{% block scripts %}
+    <div class="col-md-12">
+      <i
+        ><b><p id="questionAnswer"></p></b
+      ></i>
+    </div>
+  </div>
+  <br /><br />
+</div>
+<div class="col-md-4" id="manageAnswer">
+  <div class="row">
+    <div class="col-sm-12">
+      <a id="countDown" class="animated-button8">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        15
+      </a>
+    </div>
+    <!-- </div> -->
+    <!-- <div class="row"> -->
+    <div class="col-sm-12">
+      <center>
+        <nav class="btn-bar nav-dark nav-answer">
+          <a href="#" class="btn btn-glass new-btn-info" id="showDapAnThiSinh">
+            <i class="fa fa-check"></i> Câu trả lời thí sinh
+          </a>
+        </nav>
+      </center>
+    </div>
+    <div class="col-sm-12" id="dapAnThiSinh" style="display: none"></div>
+  </div>
+</div>
+{% csrf_token %} {% endblock %} {% block scripts %}
 <script>
     var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
     function csrfSafeMethod(method) {
@@ -153,11 +160,38 @@
         });
     }
 
-    
+    function updateQuestionInfo(questionContent, questionInfo) {
+      $.ajax({
+          url: "{% url 'currentQuestion' %}",
+          method: "POST",
+          data: {
+            "question": questionContent,
+            "questionID": questionInfo.questionID,
+            "questionFileType": questionInfo.questionFileType,
+            "questionFile": questionInfo.questionFile,
+          },
+          traditional: true,
+          success: function (data) {
+              // Do nothing
+          }
+      })
+  }
+
     // Send signal to handleAcceptingAnswer
     function signalHandleAcceptingAnswer() {
         $.ajax({
             url: "{% url 'handleAcceptingAnswer' %}",
+            method: "GET",
+            traditional: true,
+            success: function (data) {
+                // Do nothing
+            }
+        })
+    }
+
+    function signalHandleStopAcceptingAnswer() {
+        $.ajax({
+            url: "{% url 'handleStopAcceptingAnswer' %}",
             method: "GET",
             traditional: true,
             success: function (data) {
@@ -174,7 +208,7 @@
 
         // Signal the server to accept answers
         signalHandleAcceptingAnswer();
-        
+
         var demgio = new Audio("{% static 'khoidong/ChinhPhuc_15s.mp3' %}"); // ok
         demgio.play();
 
@@ -186,7 +220,7 @@
                 countDownBox.html("<span></span><span></span><span></span><span></span>" + newTime);
             } else {
                 // Send the request to server to stop received data
-                signalHandleAcceptingAnswer();
+                signalHandleStopAcceptingAnswer();
 
                 // Make request to get the final answer
                 $.ajax({
@@ -227,21 +261,28 @@
         } else {
             let currentQuestion = questions[currentQuestionID];
             let actualQuestionID = currentQuestion["questionID"];
-            
+
             // Get all the information of this question
             let questionContent = currentQuestion["questionText"];
-        
+
+            let questionInfo = {
+              "questionID": actualQuestionID,
+              "questionFileType": "None",
+              "questionFile": "",
+            }
+
             $("#questionContent").html(questionContent);
             // currentQuestionID begin with 0 for array index, but should be 1 in the database
             currentQuestionID++;
             $("#questionNumber").text(currentQuestionID);
             $("#showDapAnThiSinh").removeAttr("disabled");
             $("#dapAnThiSinh").hide();
-            
-            
+
+
             // Update the current question to the server
-            makeAjaxCall(questionContent, actualQuestionID);
-            
+            // makeAjaxCall(questionContent, actualQuestionID);
+            updateQuestionInfo(questionContent, questionInfo);
+
         }
     });
 
@@ -260,9 +301,8 @@
 
     // Show dap an thi sinh
     $("#showDapAnThiSinh").click(function () {
-        this.setAttribute("disabled", "disabled");        
+        this.setAttribute("disabled", "disabled");
         $("#dapAnThiSinh").show();
     });
-
 </script>
 {% endblock %}

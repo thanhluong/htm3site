@@ -3,18 +3,20 @@ from django.http import HttpResponse
 from django.views import generic
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
+from django.conf import settings
 
 from .forms import VuotSongQuestionForm
 from .models import VuotSongQuestion
 
-from roundconfig import questionSet
+from roundconfig.views import getQuestionSetId
 
 # Create your views here.
+
 
 class NewQuestion(generic.CreateView):
     """
     Class-based view to handle creating a new question
-    Usig a class-based view will provides us a defautl error-handling
+    Using a class-based view will provides us a defautl error-handling
     """
 
     form_class = VuotSongQuestionForm
@@ -30,6 +32,7 @@ class NewQuestion(generic.CreateView):
             return render(request, template_name="home.html",
                           context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
+
 def getFileType(fileName):
     """
     Helper fucntion to get the file type of the given file name
@@ -42,6 +45,7 @@ def getFileType(fileName):
         return "image"
     else:
         return "sound"
+
 
 def toDict(question: VuotSongQuestion):
     """
@@ -56,6 +60,7 @@ def toDict(question: VuotSongQuestion):
     else:
         return dict(questionText=question.questionText, questionID=question.questionID, answer=question.answer)
 
+
 @login_required
 def getQuestions(request):
     """
@@ -63,8 +68,18 @@ def getQuestions(request):
     """
     if not request.user.is_staff:
         return render(request, template_name="home.html",
-              context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
+                      context={"message": "Xin lỗi, bạn không được phép truy cập tính năng này"})
 
-    questions = [toDict(question) for question in VuotSongQuestion.objects.filter(questionSetID=questionSet.SETID).order_by("questionID")]
-    html = "Vuot Song: " + str(request) 
-    return render(request, template_name="vuotsong/vuotsong.html", context=dict(questions=questions))
+    questions = [toDict(question) for question in VuotSongQuestion.objects.filter(
+        questionSetID=getQuestionSetId()).order_by("questionID")]
+    html = "Vuot Song: " + str(request)
+    return render(
+        request,
+        template_name="vuotsong/vuotsong.html",
+        context=dict(
+            questions=questions,
+            wsHost=settings.WS_HOSTNAME_FOR_CLIENT,
+            wsPort=settings.WS_PORT_FOR_CLIENT,
+            useWss=settings.WS_USE_WSS
+        )
+    )

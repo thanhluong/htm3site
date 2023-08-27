@@ -1,85 +1,110 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block style %}
-    <style>
-        .col, .row {
-            text-align: center;
-        }
-        button {
-            margin-bottom: 0.3em;
-            margin-top: 0.5em;
-        }
-        .align-middle {
-            margin-top: 4em;
-        }
-        .fieldname{
-            margin-bottom: 1em;
-            margin-top: 0.3em;
-            font-size: 40px;   
-            border-radius: 20px;         
-            box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
-        }
-        #question {
-            background-color: bisque;
-            margin-top: 2em;
-        }
-        #questionContent, .questionNumber {
-            font-size: 40px;
-        }
-        .questionNumber, #nextQuestion {
-            margin-top: 0.1em;
-        }
-        .questionNumber {
-            margin-bottom: 0;
-            color: red;
-        }
-
-    </style>
-{% endblock %}
-
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block style %}
+<style>
+  .col,
+  .row {
+    text-align: center;
+  }
+  button {
+    margin-bottom: 0.3em;
+    margin-top: 0.5em;
+  }
+  .align-middle {
+    margin-top: 4em;
+  }
+  .fieldname {
+    margin-bottom: 1em;
+    margin-top: 0.3em;
+    font-size: 40px;
+    border-radius: 20px;
+    box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset,
+      rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset,
+      rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset,
+      rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px,
+      rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px,
+      rgba(0, 0, 0, 0.09) 0px 32px 16px;
+  }
+  #question {
+    background-color: bisque;
+    margin-top: 2em;
+  }
+  #questionContent,
+  .questionNumber {
+    font-size: 40px;
+  }
+  .questionNumber,
+  #nextQuestion {
+    margin-top: 0.1em;
+  }
+  .questionNumber {
+    margin-bottom: 0;
+    color: red;
+  }
+</style>
+{% endblock %} {% block content %}
 <div class="align-middle">
-    <div class="row">
+  <div class="row">
     {% for field in fields %}
-        <div class="col-md-6">
-            <a class="btn btn-primary btn-block fieldname" href="{% url 'tangtocQuestions' field.code %}">{{field.name}}</a>
-        </div>
-    {% endfor %}
+    <div class="col-md-6">
+      <a
+        class="btn btn-primary btn-block fieldname"
+        href="{% url 'tangtocQuestions' field.code %}"
+        >{{field.name}}</a
+      >
     </div>
+    {% endfor %}
+  </div>
 </div>
-    {% csrf_token %}
-{% endblock %}
-
-{% block scripts %}
+{% csrf_token %} {% endblock %} {% block scripts %}
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script>
-    var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
-    function csrfSafeMethod(method) {
-        // these HTTP methods do not require CSRF protection
-        return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
-    }
-    $.ajaxSetup({
-        beforeSend: function (xhr, settings) {
-            if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
-                xhr.setRequestHeader("X-CSRFToken", csrftoken);
-            }
-        }
+  var csrftoken = jQuery("[name=csrfmiddlewaretoken]").val();
+  function csrfSafeMethod(method) {
+    // these HTTP methods do not require CSRF protection
+    return /^(GET|HEAD|OPTIONS|TRACE)$/.test(method);
+  }
+  $.ajaxSetup({
+    beforeSend: function (xhr, settings) {
+      if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+      }
+    },
+  });
+
+  // append opening music
+  ost_path = "{% static 'ost/ButPha_MoDau.mp3' %}";
+
+  // Update game screenshot
+  $(document).bind("keypress", function (e) {
+    if (!(e.shiftKey && e.keyCode == 38)) return; // shift + 7
+
+    html2canvas(document.querySelector("#content"), {
+      backgroundColor: null,
+    }).then((canvas) => {
+      var img = canvas.toDataURL("image/png");
+      $.ajax({
+        url: "{% url 'gameState' %}",
+        method: "POST",
+        data: { base64img: img },
+        traditional: true,
+        success: function (data) {
+          console.log("Game state updated!");
+        },
+      });
     });
+  });
 
-    // append opening music
-    ost_path = "{% static 'ost/ButPha_MoDau.mp3' %}";
-
-    // function makeAjaxCall(questionContent, currentQuestionID) {
-    //     // Make the AJAX call to notify the current question to the server and other screen of contestant
-    //     $.ajax({
-    //         url: "{% url 'currentQuestion'%}",
-    //         method: "POST",
-    //         data: {"question":questionContent, "questionID":currentQuestionID},
-    //         dataType: "json",
-    //         traditional: true,
-    //         success: function (data) {
-    //             // Do nothing
-    //         }
-    //     });
-    // }
+  // function makeAjaxCall(questionContent, currentQuestionID) {
+  //     // Make the AJAX call to notify the current question to the server and other screen of contestant
+  //     $.ajax({
+  //         url: "{% url 'currentQuestion'%}",
+  //         method: "POST",
+  //         data: {"question":questionContent, "questionID":currentQuestionID},
+  //         dataType: "json",
+  //         traditional: true,
+  //         success: function (data) {
+  //             // Do nothing
+  //         }
+  //     });
+  // }
 </script>
 {% endblock %}

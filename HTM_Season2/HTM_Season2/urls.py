@@ -20,6 +20,8 @@ from django.conf import settings
 from django.views.generic import TemplateView
 from django.contrib.auth.decorators import login_required
 
+from chat.views import chat_box
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,6 +39,9 @@ urlpatterns = [
     path("chinhphuc/", include("chinhphuc.urls")),
     # Handle the PhanLuot app request
     path("phanluot/", include("phanluot.urls")),
+    # Handle WS
+    path("chat/<str:chat_box_name>/", chat_box, name="chat_box"),
     # Using simple class-view to display the homepage (no need for creating an app)
-    path("", login_required(TemplateView.as_view(template_name="home.html")), name="home"),
+    path("", login_required(TemplateView.as_view(
+        template_name="home.html")), name="home"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
