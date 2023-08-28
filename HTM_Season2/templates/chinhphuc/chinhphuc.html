@@ -408,8 +408,11 @@
             }
         }
 
-        const easy_pos = ["12", "13", "14", "22", "23", "24", "52", "53", "54"];
-        const medi_pos = ["11", "21", "32", "35", "43", "44", "51", "55"];
+        // const easy_pos = ["12", "13", "14", "22", "23", "24", "52", "53", "54"];
+        // const medi_pos = ["11", "21", "32", "35", "43", "44", "51", "55"]; 
+        const easy_pos = {{easy_pos | safe}};
+        const medi_pos = {{medi_pos | safe}};
+
         htmlContent = '';
 
         for(i = 0; i <= BOARD_SIZE; i++){

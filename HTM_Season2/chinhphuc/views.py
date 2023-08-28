@@ -7,6 +7,7 @@ from django.conf import settings
 
 from .forms import ChinhPhucQuestionForm
 from .models import ChinhPhucQuestion
+from .models import ChinhPhucMap
 
 from roundconfig.views import getQuestionSetId
 
@@ -63,6 +64,14 @@ def toDict(question: ChinhPhucQuestion):
                     difficulty=question.difficulty)
 
 
+def toStrList(stringVal):
+    """
+    Helper method to convert a string to a list
+    """
+    result = [x.strip() for x in stringVal.split(",")]
+    return result
+
+
 @login_required
 def getQuestions(request):
     """
@@ -74,11 +83,18 @@ def getQuestions(request):
 
     questions = [toDict(question) for question in ChinhPhucQuestion.objects.filter(
         questionSetID=getQuestionSetId()).order_by("questionID")]
+
+    chinhPhucMap = ChinhPhucMap.objects.all().first()
+    easy_pos = toStrList(chinhPhucMap.easyPos)
+    medi_pos = toStrList(chinhPhucMap.mediumPos)
+
     return render(
         request,
         template_name="chinhphuc/chinhphuc.html",
         context=dict(
             questions=questions,
+            easy_pos=easy_pos,
+            medi_pos=medi_pos,
             wsHost=settings.WS_HOSTNAME_FOR_CLIENT,
             wsPort=settings.WS_PORT,
             useWss=settings.WS_USE_WSS
