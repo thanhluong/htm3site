@@ -25,9 +25,10 @@ class ChinhPhucQuestion(models.Model):
                                      verbose_name="Câu hỏi số")
 
     difficulty = models.CharField(max_length=10,
-                                verbose_name="Độ khó",
-                                choices = [("easy", "Dễ"), ("medium", "Trung bình"), ("hard", "Khó")],
-                                blank=True)
+                                  verbose_name="Độ khó",
+                                  choices=[("easy", "Dễ"), ("medium",
+                                                            "Trung bình"), ("hard", "Khó")],
+                                  blank=True)
 
     # The text content of the question
     questionText = models.TextField(blank=True,
@@ -44,7 +45,8 @@ class ChinhPhucQuestion(models.Model):
 
     fileType = models.CharField(max_length=10,
                                 verbose_name="Loại file",
-                                choices = [("sound", "Âm thanh"), ("video", "Video"), ("image", "Hình ảnh")],
+                                choices=[("sound", "Âm thanh"), ("video",
+                                                                 "Video"), ("image", "Hình ảnh")],
                                 blank=True)
 
     def __str__(self):
@@ -57,13 +59,28 @@ class ChinhPhucAnswer(models.Model):
     """
 
     # The question associated with this answer
-    question = models.ForeignKey(to=ChinhPhucQuestion, on_delete=models.CASCADE)
+    question = models.ForeignKey(
+        to=ChinhPhucQuestion, on_delete=models.CASCADE)
     # The contestant associted with this answer
     thisinh = models.ForeignKey(to=MyUser, on_delete=models.CASCADE)
 
     answer = models.CharField(max_length=500)
 
     def __str__(self):
-        return "Câu hỏi số {}, thí sinh: {}: {}".format(self.question.questionID, 
-                                                        self.thisinh, 
+        return "Câu hỏi số {}, thí sinh: {}: {}".format(self.question.questionID,
+                                                        self.thisinh,
                                                         self.answer)
+
+
+class ChinhPhucMap(models.Model):
+    easyPos = models.TextField(
+        default="",
+        blank=True,
+        verbose_name="Tọa độ các ô màu trắng (cách nhau bởi dấu phẩy)"
+    )
+
+    mediumPos = models.TextField(
+        default="",
+        blank=True,
+        verbose_name="Tọa độ các ô chấm than (cách nhau bởi dấu phẩy)"
+    )
