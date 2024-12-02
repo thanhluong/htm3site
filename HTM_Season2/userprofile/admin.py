@@ -9,7 +9,6 @@ class UserAdmin(admin.ModelAdmin):
     fieldsets = [
         ('Thông tin cá nhân', {'fields': ['full_name', 'phone', 'email']}),
         ('Thông tin đăng nhập', {'fields': ['username', 'password']}),
-        ('Thông tin hệ thống', {'fields': ['date_joined', 'last_login']}),
     ]
 
 # Register your models here.
