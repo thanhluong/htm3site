@@ -10,7 +10,6 @@ class UserAdmin(admin.ModelAdmin):
         ('Thông tin cá nhân', {'fields': ['first_name', 'last_name', 'email']}),
         ('Thông tin đăng nhập', {'fields': ['username', 'password']}),
         ('Thông tin quyền hạn', {'fields': ['is_superuser', 'is_staff', 'is_active']}),
-        ('Thông tin hệ thống', {'fields': ['date_joined', 'last_login']}),
     ]
 
 # Register your models here.
