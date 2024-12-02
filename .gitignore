@@ -8,8 +8,9 @@ env/
 # Ignore the database
 db.sqlite3
 
-# Ignore vscode settings
+# Ignore vscode and intellij settings
 .vscode/
+.idea/
 
 # Ignore the media file
 media/*
