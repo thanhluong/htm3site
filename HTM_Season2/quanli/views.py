@@ -111,6 +111,30 @@ def score(request, username=None, score=None):
                 return HttpResponse("Not allowed to access")
 
 
+@login_required
+def scoreUpdate(request):
+    """
+    Function to handle the request to set grading page
+
+    Accepted methods:
+        GET
+    """
+    if request.method != "GET":
+        return HttpResponseForbidden()
+
+    if not request.user.is_staff:
+        return HttpResponseForbidden()
+
+    diemThiSinhManager = DiemThiSinh.objects
+    scores = diemThiSinhManager.getAllScore()
+    userlist = []
+    for score in scores:
+        print("***", score.user.profile_pic)
+        userlist.append(
+            {"score": score.score, "user": score.user, "avatar": score.user.profile_pic})
+    return render(request, template_name="quanli/setScore.html", context={"scores": scores, "userlist": userlist, "footerDisplay": True})
+
+
 class NewAnswer(generic.CreateView):
     """
     Class-based view to submit a new answer to the database

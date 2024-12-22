@@ -1,0 +1,131 @@
+{% extends 'base.html' %} {% load static %} {% block style %}
+<style>
+  .thisinh {
+    display: block;
+    font-size: 40px;
+    margin-top: 30px;
+    margin-bottom: 30px;
+  }
+  .name {
+    color: white;
+    margin: 0 auto;
+  }
+  .diem {
+    display: inline-block;
+    border-style: none;
+    width: 2.5em;
+    height: 2.5em;
+    text-align: center;
+    border-radius: 50%;
+    box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset,
+      rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset,
+      rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset,
+      rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px,
+      rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px,
+      rgba(0, 0, 0, 0.09) 0px 32px 16px;
+    background-color: #ccf0f1;
+  }
+  textarea:focus,
+  input:focus {
+    outline: none;
+  }
+  .profile-pic {
+    width: 2.7em !important;
+    height: 2.7em !important;
+    float: right;
+  }
+  .headshot {
+    flex-shrink: 0;
+    height: calc(150px + 6vw);
+    width: calc(150px + 6vw);
+    border: calc(2px + 0.2vw) solid transparent;
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+    background-size: cover;
+    box-sizing: border-box;
+    box-shadow: 0 0 5px 5px rgba(0, 0, 0, 0.5);
+  }
+</style>
+{% endblock %} {% block content %} {% for thisinh in userlist %}
+<div class="thisinh col-md-12">
+  <div class="row" width="100%">
+    <!-- <center> -->
+    <div class="col-md-4">
+      <div
+        class="headshot profile-pic img-responsive"
+        style="border-radius: 30%; background-image: url('/media/{{ thisinh.avatar}}'), linear-gradient(#fde9b4, #4dacf7);"
+      ></div>
+      <!-- <img class="profile-pic img-responsive" src="/media/{{ thisinh.avatar }}"> -->
+    </div>
+
+    <div class="col-md-4">
+      <span class="name">{{ thisinh.user }} </span>
+    </div>
+
+    <div class="col-md-4">
+      <input
+        class="diem"
+        type="number"
+        id="{{thisinh.user.username}}"
+        value="{{thisinh.score}}"
+      />
+    </div>
+
+<table>
+<tr><td>
+      <button onclick="addScore('{{thisinh.user.username}}', 5)">+5</button>
+      <button onclick="addScore('{{thisinh.user.username}}', 10)">+10</button>
+      <button onclick="addScore('{{thisinh.user.username}}', 15)">+15</button>
+      <button onclick="addScore('{{thisinh.user.username}}', 20)">+20</button>
+      </td>
+      </tr>
+      <tr>
+      <td>
+            <button onclick="addScore('{{thisinh.user.username}}', -5)">-5</button>
+      <button onclick="addScore('{{thisinh.user.username}}', -10)">-10</button>
+      <button onclick="addScore('{{thisinh.user.username}}', -15)">-15</button>
+      <button onclick="addScore('{{thisinh.user.username}}', -20)">-20</button>
+      </td>
+      </tr>
+      </table>
+    <!-- </center> -->
+  </div>
+</div>
+{% endfor %} {% endblock %} {% block scripts %}
+<script>
+  $(".diem").keyup(function () {
+    // Get the id
+    var username = $(this).attr("id");
+    // Get the grade
+    var grade = $(this).val();
+    console.log("CHANGED");
+    $.ajax({
+      url: "{% url 'score' %}" + username + "/" + grade,
+      success: function () {},
+    });
+  });
+
+  function addScore(username, add) {
+      let inputDOM = $(`#${username}`);
+      let grade = inputDOM.val();
+      let newGrade = parseInt(grade) + add;
+      inputDOM.val(newGrade);
+          $.ajax({
+      url: "{% url 'score' %}" + username + "/" + newGrade,
+      success: function () {},
+    });
+  }
+
+  var soundtrack = new Audio("{% static 'score/CongBoDiemSo.mp3' %}"); // ok
+
+  $(document).bind("keypress", function (e) {
+    if (e.ctrlKey && e.keyCode == 10)
+      // press M
+      soundtrack.play();
+  });
+
+  ost_path = "{% static 'ost/Britains_Brainiest_Theme_Song.mp3' %}";
+
+  document.title = "Điểm số";
+</script>
+{% endblock %}

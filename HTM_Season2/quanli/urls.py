@@ -1,7 +1,7 @@
 from django.urls import path
 from django.views.generic import TemplateView
 
-from .views import score, currentQuestion, updateRound
+from .views import score, currentQuestion, updateRound, scoreUpdate
 from .views import NewAnswer, httpSubmitAnswer
 from .views import broadcastSignal
 from .views import ringBell, resetRingingState
@@ -15,6 +15,7 @@ urlpatterns = [
     # Handle grading requests
     path("score/", score, name="score"),
     path("score/<str:username>/<int:score>", score, name="updateScore"),
+    path("scoreUpdate/", scoreUpdate, name="updateScore"),
     path("currentQuestion/", currentQuestion, name="currentQuestion"),
     # Handle round updating
     path("updateRound/", updateRound, name="updateRound"),
